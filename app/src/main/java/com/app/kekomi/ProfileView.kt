@@ -33,10 +33,29 @@ fun ProfileDetailsScreen() {
         Text(text = "Profile Details", modifier = Modifier.padding(top=20.dp))
         TextBox("Username")
         TextBox("Email")
+        pesoYAltura()
         // add profile view and functionality here
         CheckBoxes()
 
     }
+}
+
+@Composable
+fun pesoYAltura() {
+    Row(modifier = Modifier.fillMaxWidth()) {
+        OutlinedTextField(
+            value = "",
+            onValueChange = { },
+            label = { Text("Peso") },
+            modifier = Modifier.weight(1f).padding(8.dp)
+        )
+        OutlinedTextField(
+            value = "",
+            onValueChange = { },
+            label = { Text("Altura") },
+            modifier = Modifier.weight(1f).padding(8.dp)
+        )
+    } 
 }
 
 @Composable
