@@ -31,6 +31,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@Preview
 @Composable
 private fun App() {
     val navController = rememberNavController()
