@@ -36,11 +36,11 @@ fun ProfileDetailsScreen() {
 //        verticalArrangement = Arrangement.Center
     ) {
         MyImage()
-        Text(text = "Profile Details", modifier = Modifier.padding(top=20.dp), fontSize = 20.sp, color = Color.White)
-        TextBox("Username")
-        TextBox("Email")
+        Text(text = "Profile Details", modifier = Modifier.padding(top=20.dp), fontSize = 26.sp, color = Color.White)
+        TextBox("Name")
+       // TextBox("Email")
         pesoYAltura()
-        Text(text = "Select what you wish to track:", modifier = Modifier.padding(top=20.dp), fontSize = 20.sp, color = Color.White)
+        Text(text = "Select what you wish to track:", modifier = Modifier.padding(top=20.dp), fontSize = 26.sp, color = Color.White)
         CheckBoxes()
 
     }
@@ -52,14 +52,14 @@ fun pesoYAltura() {
         OutlinedTextField(
             value = "",
             onValueChange = { },
-            label = { Text("Weight") },
+            label = { Text("Weight", fontSize = 18.sp) },
             modifier = Modifier.weight(1f).padding(8.dp).background(Color.White)
 
         )
         OutlinedTextField(
             value = "",
             onValueChange = { },
-            label = { Text("Height") },
+            label = { Text("Height", fontSize = 18.sp) },
             modifier = Modifier.weight(1f).padding(8.dp).background(Color.White)
         )
     } 
@@ -71,7 +71,7 @@ fun TextBox(s: String) {
     OutlinedTextField(
         value = "",
         onValueChange = { },
-        label = { Text(text = s) },
+        label = { Text(text = s,fontSize = 18.sp) },
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 16.dp, horizontal = 32.dp)
@@ -82,14 +82,14 @@ fun TextBox(s: String) {
 
 @Composable
 fun MyImage() {
-    val image = painterResource(R.drawable.ic_mati)
+    val image = painterResource(R.drawable.ic_profile)
     Image(
         painter = image,
         contentDescription = "hola soy mati",
         modifier = Modifier
             .size(250.dp)
             .clip(CircleShape)
-            .border(5.dp, Color.Gray, CircleShape)
+            .border(10.dp, Color.White, CircleShape)
     )
 }
 
@@ -127,12 +127,13 @@ fun CheckBoxes() {
                         Text(
                             text = item,
                             color = Color.White,
+                            fontSize = 20.sp,
                             modifier = Modifier.padding(start = 8.dp)
                         )
                     }
                 }
             }
-            Spacer(Modifier.width(20.dp))
+            Spacer(Modifier.width(40.dp))
             Column {
                 items.takeLast(items.size / 2).forEachIndexed { index, item ->
                     Row(modifier = Modifier.padding(vertical = 8.dp)) {
@@ -153,6 +154,7 @@ fun CheckBoxes() {
                         Text(
                             text = item,
                             color = Color.White,
+                            fontSize = 20.sp,
                             modifier = Modifier.padding(start = 8.dp)
                         )
                     }
