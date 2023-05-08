@@ -65,12 +65,12 @@ fun ProfileScreen() {
             .wrapContentSize(Alignment.Center)
     ) {
         Text(
-            text = "Profile Screen",
+            text = "Profile",
             fontWeight = FontWeight.Bold,
             color = Color.White,
             modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 15.dp),
             textAlign = TextAlign.Center,
-            fontSize = 20.sp
+            fontSize = 30.sp
         )
         ProfileDetailsScreen()
     }

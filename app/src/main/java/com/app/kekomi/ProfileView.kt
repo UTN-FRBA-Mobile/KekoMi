@@ -1,6 +1,7 @@
 package com.app.kekomi
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Button
@@ -10,7 +11,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.foundation.border
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -18,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Preview
 @Composable
@@ -25,16 +30,17 @@ fun ProfileDetailsScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 10.dp, top = 20.dp),
+            .verticalScroll(rememberScrollState())
+            .padding(start = 10.dp, top = 20.dp, bottom = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
 //        verticalArrangement = Arrangement.Center
     ) {
         MyImage()
-        Text(text = "Profile Details", modifier = Modifier.padding(top=20.dp))
+        Text(text = "Profile Details", modifier = Modifier.padding(top=20.dp), fontSize = 20.sp, color = Color.White)
         TextBox("Username")
         TextBox("Email")
         pesoYAltura()
-        // add profile view and functionality here
+        Text(text = "Select what you wish to track:", modifier = Modifier.padding(top=20.dp), fontSize = 20.sp, color = Color.White)
         CheckBoxes()
 
     }
@@ -46,20 +52,22 @@ fun pesoYAltura() {
         OutlinedTextField(
             value = "",
             onValueChange = { },
-            label = { Text("Peso") },
-            modifier = Modifier.weight(1f).padding(8.dp)
+            label = { Text("Weight") },
+            modifier = Modifier.weight(1f).padding(8.dp).background(Color.White)
+
         )
         OutlinedTextField(
             value = "",
             onValueChange = { },
-            label = { Text("Altura") },
-            modifier = Modifier.weight(1f).padding(8.dp)
+            label = { Text("Height") },
+            modifier = Modifier.weight(1f).padding(8.dp).background(Color.White)
         )
     } 
 }
 
 @Composable
 fun TextBox(s: String) {
+
     OutlinedTextField(
         value = "",
         onValueChange = { },
@@ -67,6 +75,8 @@ fun TextBox(s: String) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 16.dp, horizontal = 32.dp)
+            .background(Color.White)
+
     )
 }
 
@@ -85,7 +95,7 @@ fun MyImage() {
 
 @Composable
 fun CheckBoxes() {
-    val items = listOf("Opción 1", "Opción 2", "Opción 3", "Opción 4", "Opción 5", "Opción 6")
+    val items = listOf("Calories", "Sodium", "Sugar", "Fats", "Protein", "Opción 6")
     val checkedItems = remember { mutableStateListOf<Boolean>() }
 
     // Initialize the list of selected items with false values
@@ -100,28 +110,51 @@ fun CheckBoxes() {
             Column {
                 items.take(items.size / 2).forEachIndexed { index, item ->
                     Row(modifier = Modifier.padding(vertical = 8.dp)) {
-                        Checkbox(
-                            checked = checkedItems[index],
-                            onCheckedChange = { isChecked ->
-                                checkedItems[index] = isChecked
-                            },
-                            modifier = Modifier.padding(end = 16.dp)
+                        Box(
+                            modifier = Modifier
+                                .background(Color.White)
+                                .clip(shape = RoundedCornerShape(4.dp))
+                                .size(18.dp)
+                        ) {
+                            Checkbox(
+                                checked = checkedItems[index],
+                                onCheckedChange = { isChecked ->
+                                    checkedItems[index] = isChecked
+                                },
+                                //modifier = Modifier.padding(end = 8.dp)
+                            )
+                        }
+                        Text(
+                            text = item,
+                            color = Color.White,
+                            modifier = Modifier.padding(start = 8.dp)
                         )
-                        Text(text = item,modifier = Modifier.padding(vertical = 8.dp))
                     }
                 }
             }
+            Spacer(Modifier.width(20.dp))
             Column {
                 items.takeLast(items.size / 2).forEachIndexed { index, item ->
                     Row(modifier = Modifier.padding(vertical = 8.dp)) {
-                        Checkbox(
-                            checked = checkedItems[index + items.size / 2],
-                            onCheckedChange = { isChecked ->
-                                checkedItems[index + items.size / 2] = isChecked
-                            },
-                            modifier = Modifier.padding(end = 16.dp)
+                        Box(
+                            modifier = Modifier
+                                .background(Color.White)
+                                .clip(shape = RoundedCornerShape(4.dp))
+                                .size(18.dp)
+                        ) {
+                            Checkbox(
+                                checked = checkedItems[index + items.size / 2],
+                                onCheckedChange = { isChecked ->
+                                    checkedItems[index + items.size / 2] = isChecked
+                                },
+                               // modifier = Modifier.padding(end = 8.dp)
+                            )
+                        }
+                        Text(
+                            text = item,
+                            color = Color.White,
+                            modifier = Modifier.padding(start = 8.dp)
                         )
-                        Text(text = item,modifier = Modifier.padding(vertical = 8.dp))
                     }
                 }
             }
