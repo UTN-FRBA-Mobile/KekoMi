@@ -1,5 +1,6 @@
 package com.app.kekomi
 
+import android.widget.CalendarView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -52,7 +53,9 @@ fun CalendarScreen() {
             textAlign = TextAlign.Center,
             fontSize = 20.sp
         )
+        CalendarView()
     }
+
 }
 
 @Preview
