@@ -11,13 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+@Preview
 @Composable
 fun HomeScreen() {
     Column(
@@ -35,6 +34,7 @@ fun HomeScreen() {
             fontSize = 20.sp
         )
     }
+    HomeView()
 }
 
 @Composable
@@ -53,12 +53,12 @@ fun CalendarScreen() {
             textAlign = TextAlign.Center,
             fontSize = 20.sp
         )
-        CalendarView()
+       // CalendarView(Modifier.Companion.fillMaxWidth())
     }
 
 }
 
-@Preview
+
 @Composable
 fun ProfileScreen() {
     Column(
@@ -71,7 +71,9 @@ fun ProfileScreen() {
             text = "Profile",
             fontWeight = FontWeight.Bold,
             color = Color.White,
-            modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 15.dp),
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(top = 15.dp),
             textAlign = TextAlign.Center,
             fontSize = 30.sp
         )
