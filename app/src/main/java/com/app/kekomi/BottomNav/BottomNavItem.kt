@@ -1,4 +1,6 @@
-package com.app.kekomi
+package com.app.kekomi.BottomNav
+
+import com.app.kekomi.R
 
 sealed class BottomNavItem(var title:String, var icon:Int, var screen_route:String){
 

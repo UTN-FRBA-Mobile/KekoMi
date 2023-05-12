@@ -1,4 +1,4 @@
-package com.app.kekomi
+package com.app.kekomi.Extras
 
 import android.graphics.Paint
 import androidx.compose.animation.core.Animatable

@@ -1,10 +1,9 @@
-package com.app.kekomi
+package com.app.kekomi.Views
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.kekomi.R
 
 @Preview
 @Composable
@@ -35,7 +35,7 @@ fun ProfileDetailsScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
 //        verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "Profile Details", modifier = Modifier.padding(top=20.dp), fontSize = 26.sp, color = Color(android.graphics.Color.parseColor("#008080")))
+        Text(text = "Profile Details", modifier = Modifier.padding(bottom =10.dp),fontSize = 26.sp, color = Color(android.graphics.Color.parseColor("#008080")))
         MyImage()
         TextBox("Name")
        // TextBox("Email")
@@ -82,14 +82,15 @@ fun TextBox(s: String) {
 
 @Composable
 fun MyImage() {
-    val image = painterResource(R.drawable.ic_profile)
+    val image = painterResource(R.drawable.ic_profile2)
     Image(
         painter = image,
         contentDescription = "hola soy mati",
         modifier = Modifier
-            .size(250.dp)
-            .clip(CircleShape)
-            .border(10.dp, Color.White, CircleShape)
+            .size(200.dp)
+            //.clip(CircleShape)
+            //.border(5.dp, Color.Black, CircleShape)
+            .padding(10.dp)
     )
 }
 

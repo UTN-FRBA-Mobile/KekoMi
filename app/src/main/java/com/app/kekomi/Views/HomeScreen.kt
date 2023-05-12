@@ -1,6 +1,5 @@
-package com.app.kekomi
+package com.app.kekomi.Views
 
-import android.widget.CalendarView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +15,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.kekomi.Views.HomeView
+import com.app.kekomi.Views.ProfileDetailsScreen
+
 @Preview
 @Composable
 fun HomeScreen() {
