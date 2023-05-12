@@ -22,17 +22,17 @@ fun HomeScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color(0xFF9B6E9B))
+            .background(color = Color.White)
             .wrapContentSize(Alignment.Center)
     ) {
-        Text(
+       /* Text(
             text = "Home Screen",
             fontWeight = FontWeight.Bold,
             color = Color.White,
             modifier = Modifier.align(Alignment.CenterHorizontally),
             textAlign = TextAlign.Center,
             fontSize = 20.sp
-        )
+        )*/
     }
     HomeView()
 }
@@ -42,11 +42,11 @@ fun CalendarScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color(0xFF9B6E9B))
+            .background(color = Color.White)
             .wrapContentSize(Alignment.Center)
     ) {
         Text(
-            text = "Calendar Screen",
+            text = "Calendar",
             fontWeight = FontWeight.Bold,
             color = Color.White,
             modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -64,7 +64,7 @@ fun ProfileScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color(0xFF9B6E9B))
+            .background(color = Color.White)
             .wrapContentSize(Alignment.Center)
     ) {
         Text(

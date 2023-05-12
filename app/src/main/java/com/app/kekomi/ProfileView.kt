@@ -31,16 +31,16 @@ fun ProfileDetailsScreen() {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(start = 10.dp, top = 20.dp, bottom = 50.dp),
+            .padding(start = 10.dp, bottom = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
 //        verticalArrangement = Arrangement.Center
     ) {
+        Text(text = "Profile Details", modifier = Modifier.padding(top=20.dp), fontSize = 26.sp, color = Color(android.graphics.Color.parseColor("#008080")))
         MyImage()
-        Text(text = "Profile Details", modifier = Modifier.padding(top=20.dp), fontSize = 26.sp, color = Color.White)
         TextBox("Name")
        // TextBox("Email")
         pesoYAltura()
-        Text(text = "Select what you wish to track:", modifier = Modifier.padding(top=20.dp), fontSize = 26.sp, color = Color.White)
+        Text(text = "Select what you wish to track:", modifier = Modifier.padding(top=20.dp), fontSize = 26.sp, color = Color(android.graphics.Color.parseColor("#008080")))
         CheckBoxes()
 
     }
@@ -126,7 +126,7 @@ fun CheckBoxes() {
                         }
                         Text(
                             text = item,
-                            color = Color.White,
+                            color = Color.Black,
                             fontSize = 20.sp,
                             modifier = Modifier.padding(start = 8.dp)
                         )
@@ -153,7 +153,7 @@ fun CheckBoxes() {
                         }
                         Text(
                             text = item,
-                            color = Color.White,
+                            color = Color.Black,
                             fontSize = 20.sp,
                             modifier = Modifier.padding(start = 8.dp)
                         )
