@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.kekomi.Extras.DonutChart
 
 @Preview
 @Composable
@@ -51,7 +52,12 @@ fun HomeView() {
                         .padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("ACA VA EL DONUT CHART") //TODO DONUT CHART
+                    val data = listOf(20f, 30f, 50f)
+                    val colors = listOf(Color.Blue, Color.Green, Color.Red)
+                    val labels = listOf("Label 1", "Label 2", "Label 3")
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        DonutChart(data = data, colors = colors, labels = labels)
+                    }
                 }
                 Column(
                     modifier = Modifier
