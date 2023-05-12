@@ -9,9 +9,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.foundation.border
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.mutableStateListOf
@@ -26,12 +24,12 @@ import com.app.kekomi.R
 
 @Preview
 @Composable
-fun ProfileDetailsScreen() {
+fun ProfileView() {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(start = 10.dp, bottom = 50.dp),
+            .padding(start = 10.dp, bottom = 50.dp, top = 60.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
 //        verticalArrangement = Arrangement.Center
     ) {
@@ -39,7 +37,7 @@ fun ProfileDetailsScreen() {
         MyImage()
         TextBox("Name")
        // TextBox("Email")
-        pesoYAltura()
+        PesoYAltura()
         Text(text = "Select what you wish to track:", modifier = Modifier.padding(top=20.dp), fontSize = 26.sp, color = Color(android.graphics.Color.parseColor("#008080")))
         CheckBoxes()
 
@@ -47,7 +45,7 @@ fun ProfileDetailsScreen() {
 }
 
 @Composable
-fun pesoYAltura() {
+fun PesoYAltura() {
     Row(modifier = Modifier.fillMaxWidth()) {
         OutlinedTextField(
             value = "",

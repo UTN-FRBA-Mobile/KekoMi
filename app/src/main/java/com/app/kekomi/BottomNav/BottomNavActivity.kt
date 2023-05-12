@@ -4,21 +4,19 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.app.kekomi.Views.CalendarScreen
-import com.app.kekomi.Views.HomeScreen
-import com.app.kekomi.Views.ProfileScreen
+import com.app.kekomi.Views.*
 
 @Composable
 fun NavigationGraph(navController: NavHostController) {
     NavHost(navController, startDestination = BottomNavItem.Home.screen_route) {
         composable(BottomNavItem.Home.screen_route) {
-            HomeScreen()
+            HomeView()
         }
         composable(BottomNavItem.Calendar.screen_route) {
-            CalendarScreen()
+            CalendarView()
         }
         composable(BottomNavItem.Profile.screen_route) {
-            ProfileScreen()
+            ProfileView()
         }
     }
 }

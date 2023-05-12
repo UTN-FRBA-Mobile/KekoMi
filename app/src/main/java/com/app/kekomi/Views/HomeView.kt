@@ -39,6 +39,9 @@ import com.app.kekomi.Extras.DonutChart
 @Preview
 @Composable
 fun HomeView() {
+    var openDialog by remember {
+        mutableStateOf(false) // Initially dialog is closed
+    }
     Box(modifier = Modifier.fillMaxSize()) {
         Column (modifier = Modifier
             .fillMaxSize()
@@ -78,7 +81,7 @@ fun HomeView() {
                     .align(Alignment.CenterHorizontally),
                 contentAlignment = Alignment.Center
             ) {
-                Button(onClick = { /* TODO PANTALLA DE AGREGAR UN ALIMENTO */ },
+                Button(onClick = { openDialog = true },
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color(android.graphics.Color.parseColor("#008080"))),
                             modifier = Modifier
@@ -96,6 +99,11 @@ fun HomeView() {
                     FoodGroup("Dinner")
                     Spacer(Modifier.height(9.dp))
                     FoodGroup("Snacks")
+            }
+        }
+        if (openDialog) {
+            AddFoodView {
+                openDialog = false
             }
         }
     }
