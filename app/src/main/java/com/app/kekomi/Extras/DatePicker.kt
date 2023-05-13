@@ -81,7 +81,7 @@ fun DatePicker() {
         datepicker(
             initialDate = DateSelected.pickedDate,
             title = "Pick a date",
-
+            colors = DatePickerDefaults.colors(headerBackgroundColor = Color.Gray,dateActiveBackgroundColor = Color(android.graphics.Color.parseColor("#008080")))
         ) {
             DateSelected.pickedDate = it
         }
