@@ -42,7 +42,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.kekomi.Extras.DatePicker2
 import com.app.kekomi.Extras.DonutChart
-import com.app.kekomi.Extras.DonutChart3
 
 @Preview
 @Composable
@@ -82,7 +81,7 @@ fun HomeView() {
                             .padding(16.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        DonutChart3()
+                        DonutChart()
                         /*val data = listOf(20f, 30f, 50f)
                         val colors = listOf(Color.Blue, Color.Green, Color.Red)
                         val labels = listOf("Label 1", "Label 2", "Label 3")

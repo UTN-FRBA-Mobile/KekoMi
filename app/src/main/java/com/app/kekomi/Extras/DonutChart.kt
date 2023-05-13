@@ -1,98 +1,118 @@
 package com.app.kekomi.Extras
 
-import android.graphics.Paint
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import kotlin.math.min
-import kotlin.math.roundToInt
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
-
-
+import java.lang.Math.ceil
 
 @Preview
 @Composable
-fun PruebaDonut(){
-    val data = listOf(20f, 30f, 50f)
-    val colors = listOf(Color.Blue, Color.Green, Color.Red)
-    val labels = listOf("Label 1", "Label 2", "Label 3")
-    Box(modifier = Modifier.fillMaxSize()) {
-        DonutChart(data = data, colors = colors, labels = labels)
+fun DonutChart(
+    values: List<Float> = listOf(65f, 40f, 25f, 20f),
+    colors: List<Color> = listOf(
+        Color(android.graphics.Color.parseColor("#008080")),
+        Color(android.graphics.Color.parseColor("#195e5e")),
+        Color(android.graphics.Color.parseColor("#669494")),
+        Color(android.graphics.Color.parseColor("#99b7b7"))
+    ),
+    legend: List<String> = listOf("Thing1", "Thing2", "Thing3", "Thing4"),//TODO aca se llama a la lista de preferences
+) {
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+
+        CreateArcs(values, colors)
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Calculate the number of rows required based on number of items
+        val numberOfRows = ceil(legend.size / 2.0).toInt()
+
+        for (rowIndex in 0 until numberOfRows) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    //contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
+                ) {
+                    for (colIndex in 0 until 2) {
+                        val legendIndex = (rowIndex * 2) + colIndex
+                        if (legendIndex >= legend.size) {
+                            // If there are no more legends, break out of the loop
+                            break
+                        }
+                            DisplayLegend(color = colors[legendIndex], legend = legend[legendIndex])
+                    }
+                }
+        }
     }
 }
 
-
 @Composable
-fun DonutChart(
-    data: List<Float>,
-    colors: List<Color>,
-    modifier: Modifier = Modifier,
-    labels: List<String>
-) {
-    var currentAngle = -90f
-    var angleAccumulator = 0f
-    Canvas(
-        modifier = modifier
-            .aspectRatio(1f),
-        onDraw = {
-            val canvasWidth = size.minDimension
-            val strokeWidth = canvasWidth * 0.1f
-            val center = Offset(size.width / 2, size.height / 2)
-            data.forEachIndexed { index, value ->
-                val sweepAngle = value * 360f
-                drawArc(
-                    brush = SolidColor(colors[index]),
-                    startAngle = currentAngle + angleAccumulator,
-                    sweepAngle = sweepAngle,
-                    useCenter = false,
-                    style = Stroke(width = strokeWidth),
-                    topLeft = Offset(0f, 0f),
-                    size = Size(canvasWidth, canvasWidth)
-                )
-                val textOffset = Offset(
-                    center.x + ((canvasWidth / 2 - strokeWidth / 2) * cos(Math.toRadians((currentAngle + angleAccumulator + sweepAngle / 2).toDouble())).toFloat()),
-                    center.y + ((canvasWidth / 2 - strokeWidth / 2) * sin(Math.toRadians((currentAngle + angleAccumulator + sweepAngle / 2).toDouble())).toFloat())
-                )
+fun CreateArcs(values: List<Float>, colors: List<Color>, size: Dp = 100.dp, thickness: Dp = 25.dp){
+    // Sum of all the values
+    val sumOfValues = values.sum()
 
-                drawIntoCanvas {
-                    val label = labels[index]
-                    val textPaint = Paint().apply {
-                        color = Color.Black.toArgb()
-                        textAlign = Paint.Align.CENTER
-                        textSize = 32.sp.toPx()
-                    }
-                    it.nativeCanvas.drawText(label, textOffset.x, textOffset.y, textPaint)
-                }
-                angleAccumulator += sweepAngle
-            }
+    // Calculate each proportion
+    val proportions = values.map {
+        it * 100 / sumOfValues
+    }
+
+    // Convert each proportion to angle
+    val sweepAngles = proportions.map {
+        360 * it / 100
+    }
+
+    Canvas(
+        modifier = Modifier
+            .size(size = size)
+    ) {
+        var startAngle = -90f
+
+        for (i in values.indices) {
+            drawArc(
+                color = colors[i],
+                startAngle = startAngle,
+                sweepAngle = sweepAngles[i],
+                useCenter = false,
+                style = Stroke(width = thickness.toPx(), cap = StrokeCap.Butt)
+            )
+            startAngle += sweepAngles[i]
         }
-    )
+    }
 }
 
+@Composable
+fun DisplayLegend(color: Color, legend: String) {
+
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(10.dp)
+                .background(color = color, shape = CircleShape)
+        )
+
+        Spacer(modifier = Modifier.width(4.dp))
+
+        Text(
+            text = legend,
+            color = Color.Black
+        )
+    }
+}
