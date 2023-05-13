@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 
 @Composable
-fun AddFoodView(navController: NavHostController) {
+fun FoodDetailsView(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()

@@ -10,13 +10,19 @@ import com.app.kekomi.Views.*
 fun NavigationGraph(navController: NavHostController) {
     NavHost(navController, startDestination = BottomNavItem.Home.screen_route) {
         composable(BottomNavItem.Home.screen_route) {
-            HomeView()
+            HomeView(navController)
         }
         composable(BottomNavItem.Calendar.screen_route) {
             CalendarView()
         }
         composable(BottomNavItem.Profile.screen_route) {
             ProfileView()
+        }
+        composable("AddFoodView") {
+            AddFoodView(navController)
+        }
+        composable("FoodDetailsView") {
+            FoodDetailsView(navController)
         }
     }
 }

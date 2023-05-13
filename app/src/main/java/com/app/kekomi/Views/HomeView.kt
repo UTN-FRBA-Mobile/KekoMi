@@ -37,19 +37,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.app.kekomi.Extras.DatePicker2
 import com.app.kekomi.Extras.DonutChart
 
-@Preview
 @Composable
-fun HomeView() {
-    var openDialog by remember {
-        mutableStateOf(false)
-    }
-
+fun HomeView(navController: NavHostController) {
     Column {
         TopAppBar(
             backgroundColor = Color(android.graphics.Color.parseColor("#008080")),
@@ -109,7 +104,9 @@ fun HomeView() {
                     contentAlignment = Alignment.Center
                 ) {
                     Button(
-                        onClick = { openDialog = true },
+                        onClick = {
+                            navController.navigate("AddFoodView")
+                        },
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = Color(android.graphics.Color.parseColor("#008080"))
                         ),
@@ -122,19 +119,13 @@ fun HomeView() {
                     }
                 }
                 Column() {
-                    FoodGroup("Breakfast")
+                    FoodGroup("Breakfast", navController)
                     Spacer(Modifier.height(9.dp))
-                    FoodGroup("Lunch")
+                    FoodGroup("Lunch", navController)
                     Spacer(Modifier.height(9.dp))
-                    FoodGroup("Dinner")
+                    FoodGroup("Dinner", navController)
                     Spacer(Modifier.height(9.dp))
-                    FoodGroup("Snacks")
-                }
-            }
-
-            if (openDialog) {
-                AddFoodView {
-                    openDialog = false
+                    FoodGroup("Snacks", navController)
                 }
             }
         }
@@ -144,7 +135,7 @@ fun HomeView() {
 
 @Composable
 fun ProgressBarWithText(percentage: Float) {
-    var progress by remember { mutableStateOf(percentage) }
+    val progress by remember { mutableStateOf(percentage) }
 
     Text("Progress: ${progress * 100}%", fontWeight = FontWeight.Bold)
     Spacer(modifier = Modifier.height(4.dp))
@@ -157,17 +148,17 @@ fun ProgressBarWithText(percentage: Float) {
 }
 
 @Composable
-fun FoodGroup(foodGroup:String){
+fun FoodGroup(foodGroup:String, navController: NavHostController){
 //TODO esta funcion va a hacer que por cada item en la lista de desayuno por ej, se agregue un boton. For each
 
     Text(text = foodGroup,fontSize = 20.sp, color = Color.Black)
     Spacer(Modifier.height(6.dp))
-    FoodButton()
+    FoodButton(navController)
 
 }@Composable
-fun FoodButton() {
+fun FoodButton(navController: NavHostController) {
     Button(
-        onClick = { /* TODO va a abrir el detalle del alimento, y se puede borrar */ },
+        onClick = { navController.navigate("FoodDetailsView") },
         colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
         modifier = Modifier
             .width(330.dp)
