@@ -21,8 +21,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.kekomi.Extras.DatePicker2
 import com.app.kekomi.Extras.DonutChart
 
 @Preview
@@ -42,56 +49,79 @@ fun HomeView() {
     var openDialog by remember {
         mutableStateOf(false) // Initially dialog is closed
     }
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column (modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(start = 10.dp, bottom = 50.dp),
-            horizontalAlignment = Alignment.CenterHorizontally){
-            Row() {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    val data = listOf(20f, 30f, 50f)
-                    val colors = listOf(Color.Blue, Color.Green, Color.Red)
-                    val labels = listOf("Label 1", "Label 2", "Label 3")
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        DonutChart(data = data, colors = colors, labels = labels)
+
+    Column {
+        TopAppBar(
+            backgroundColor = Color(android.graphics.Color.parseColor("#008080")),
+            navigationIcon = {
+                IconButton(onClick = { /*TODO DIA ANTES*/}) {
+                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Cambia fecha para atras")
+                }
+            },
+            title = { DatePicker2() },
+            actions = {
+                IconButton(onClick = { /*TODO DIA DPS*/}) {
+                    Icon(imageVector = Icons.Filled.ArrowForward, contentDescription = "Cambia fecha para adelante")
+                }
+            }
+        )
+
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(start = 10.dp, bottom = 50.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row() {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = "DONUT CHART")
+                        /*val data = listOf(20f, 30f, 50f)
+                        val colors = listOf(Color.Blue, Color.Green, Color.Red)
+                        val labels = listOf("Label 1", "Label 2", "Label 3")
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            DonutChart(data = data, colors = colors, labels = labels)
+                        }*/
+                    }
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        ProgressBarWithText(0.5f)
+                        ProgressBarWithText(0.5f)
+                        ProgressBarWithText(0.5f)
                     }
                 }
-                Column(
+                Box(
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .wrapContentHeight()
+                        .align(Alignment.CenterHorizontally),
+                    contentAlignment = Alignment.Center
                 ) {
-                    ProgressBarWithText(0.5f)
-                    ProgressBarWithText(0.5f)
-                    ProgressBarWithText(0.5f)
+                    Button(
+                        onClick = { openDialog = true },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color(android.graphics.Color.parseColor("#008080"))
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(80.dp)
+                            .padding(16.dp)
+                    ) {
+                        Text("+     Add food", fontSize = 20.sp, color = Color.White)
+                    }
                 }
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .wrapContentHeight()
-                    .align(Alignment.CenterHorizontally),
-                contentAlignment = Alignment.Center
-            ) {
-                Button(onClick = { openDialog = true },
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color(android.graphics.Color.parseColor("#008080"))),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(80.dp)
-                                .padding(16.dp)) {
-                    Text("+     Add food",fontSize = 20.sp, color = Color.White)
-                }
-            }
-            Column() {
+                Column() {
                     FoodGroup("Breakfast")
                     Spacer(Modifier.height(9.dp))
                     FoodGroup("Lunch")
@@ -99,11 +129,13 @@ fun HomeView() {
                     FoodGroup("Dinner")
                     Spacer(Modifier.height(9.dp))
                     FoodGroup("Snacks")
+                }
             }
-        }
-        if (openDialog) {
-            AddFoodView {
-                openDialog = false
+
+            if (openDialog) {
+                AddFoodView {
+                    openDialog = false
+                }
             }
         }
     }
@@ -132,9 +164,7 @@ fun FoodGroup(foodGroup:String){
     Spacer(Modifier.height(6.dp))
     FoodButton()
 
-}
-@Preview
-@Composable
+}@Composable
 fun FoodButton() {
     Button(
         onClick = { /* TODO va a abrir el detalle del alimento, y se puede borrar */ },

@@ -64,4 +64,12 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.material:material:$compose_ui_version"
+
+    implementation "io.github.vanpra.compose-material-dialogs:datetime:0.8.1-rc"
+
+    implementation "io.github.boguszpawlowski.composecalendar:composecalendar:1.1.0"
+
+    // separate artifact with utilities for working with kotlinx-datetime
+    implementation "io.github.boguszpawlowski.composecalendar:kotlinx-datetime:1.1.0"
+
 }
