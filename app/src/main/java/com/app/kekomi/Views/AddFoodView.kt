@@ -12,11 +12,22 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.app.kekomi.entities.Food
+import com.app.kekomi.entities.Meal
+import com.app.kekomi.storage.FoodRepository
+import java.util.*
 
 @Composable
 fun AddFoodView(navController: NavHostController) {
+
+    val context = LocalContext.current
+    val repo:FoodRepository by lazy {
+        FoodRepository(context)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -37,6 +48,23 @@ fun AddFoodView(navController: NavHostController) {
             ) {
                 Icon(Icons.Default.Close, contentDescription = "Localized description", tint = Color.Black)
             }
+        }
+
+        TextButton(
+            onClick = {
+                repo.insertFood(Food(foodName = "hamburguesa",
+                    calories = 1,
+                    sodium = 2,
+                    sugar = 3,
+                    fats = 4,
+                    protein = 5,
+                    date = Date(),
+                    quantity = 6,
+                    meal = Meal.BREAKFAST))
+            },
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+        ) {
+            Icon(Icons.Default.Close, contentDescription = "Localized description", tint = Color.Black)
         }
 
     }
