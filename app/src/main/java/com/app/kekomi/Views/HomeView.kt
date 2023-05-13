@@ -41,8 +41,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.app.kekomi.Extras.DatePicker2
+import com.app.kekomi.Extras.DatePicker
+import com.app.kekomi.Extras.DateSelected
 import com.app.kekomi.Extras.DonutChart
+import com.app.kekomi.Extras.decrementDay
+import com.app.kekomi.Extras.incrementDate
+import com.app.kekomi.Extras.showDate
 
 @Preview
 @Composable
@@ -51,18 +55,26 @@ fun HomeView() {
         mutableStateOf(false)
     }
 
+
     Column {
         TopAppBar(
             backgroundColor = Color(android.graphics.Color.parseColor("#008080")),
             navigationIcon = {
-                IconButton(onClick = { /*TODO DIA ANTES*/}) {
-                    Icon(imageVector = Icons.Filled.DateRange, contentDescription = "xx")
-                }
+                DatePicker()
             },
-            title = { DatePicker2() },
-            actions = {
-                IconButton(onClick = { /*TODO DIA DPS*/}) {
-                    Icon(imageVector = Icons.Filled.ArrowForward, contentDescription = "Cambia fecha para adelante")
+            title = {
+                Row(
+                    modifier = Modifier.padding(start = 25.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    IconButton(onClick = { decrementDay()}) {
+                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Cambia fecha para atrás")
+                    }
+                    showDate()
+                    IconButton(onClick = { incrementDate()}) {
+                        Icon(imageVector = Icons.Filled.ArrowForward, contentDescription = "Cambia fecha para adelante")
+                    }
                 }
             }
         )
@@ -132,6 +144,7 @@ fun HomeView() {
                     openDialog = false
                 }
             }
+
         }
     }
 }

@@ -3,6 +3,7 @@ package com.app.kekomi.Extras
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -20,7 +21,30 @@ private val defaultMaxHeight = 200.dp
 @Preview
 @Composable
 fun TestBarChart(){
-    BarChart(values = listOf(65f, 40f, 25f, 20f))
+    BarChartByTimePeriod("week")
+}
+
+//TODO LOGICA DE ESTO CUANDO VEAMOS LA DB
+@Composable
+fun BarChartByTimePeriod( timePeriod: String){
+    when (timePeriod) {
+        "week" -> {
+            // agarro data los ultimos 7 dias, una barra por dia
+            BarChart(values = listOf(65f, 40f, 25f, 20f,10f,40f,30f))
+        }
+        "month" -> {
+            // agarro los ultimos 28 dias (a fines practicos), una barra por semana
+            BarChart(values = listOf(65f, 40f, 25f, 20f))
+        }
+        "sixMonths" -> {
+            // agarro los ultimos 6 meses, una barra por mes
+            BarChart(values = listOf(65f, 40f, 25f, 20f,10f,40f))
+        }
+        "year" -> {
+            // agarro los ultimos 12 meses, una barra por mes
+            BarChart(values = listOf(65f, 40f, 25f, 20f,10f,40f,30f,50f,80f,90f,40f,27f))
+        }
+    }
 }
 
 

@@ -41,9 +41,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.app.kekomi.Extras.DatePicker2
+import com.app.kekomi.Extras.BarChart
+
 import com.app.kekomi.Extras.DonutChart
 import com.app.kekomi.Extras.SelectableCalendar
+import com.app.kekomi.Extras.TestBarChart
 
 
 @Preview
@@ -52,7 +54,9 @@ fun CalendarView() {
     Column {
         TopAppBar(
             backgroundColor = Color(android.graphics.Color.parseColor("#008080")),
-            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
             title = {
                 Text(
                     text = "Stats",
@@ -72,34 +76,57 @@ fun CalendarView() {
 @Preview
 @Composable
 fun ButtonToggleGroupCall() {
-    val semana = "Week"
-    val mes = "Month"
-    val seisMeses = "6Months"
-    val anio = "Year"
-    val options = listOf(semana, mes, seisMeses, anio)
+    val week = "Week"
+    val month= "Month"
+    val sixMonths = "6Months"
+    val year = "Year"
+    val options = listOf(week, month, sixMonths, year)
 
     var selectedOption by remember { mutableStateOf(options[0]) }
+
+    var selectionString ="week"
 
     ButtonToggleGroup(
         options = options,
         selectedOption = selectedOption,
         onOptionSelect = { selectedOption = it
             when (it) {
-                semana -> {
+                week -> {
                     // función a ejecutar cuando se selecciona la opción 'Week'
+                    selectionString = "week"
                 }
-                mes -> {
+                month -> {
                     // función a ejecutar cuando se selecciona la opción 'Month'
+                    selectionString = "month"
                 }
-                seisMeses -> {
+                sixMonths -> {
                     // función a ejecutar cuando se selecciona la opción '6Months'
+                    selectionString = "6months"
                 }
-                anio -> {
+                year -> {
                     // función a ejecutar cuando se selecciona la opción 'Year'
+                    selectionString = "year"
                 }
             } },
     )
-}
+    //TODO ESTO ES UNA PORQUERIA
+    when (selectionString) {
+        "week" -> {
+            // función a ejecutar cuando se selecciona la opción 'Week'
+            BarChart(values = listOf(65f, 40f, 25f, 20f))
+        }
+        "month" -> {
+            // función a ejecutar cuando se selecciona la opción 'Month'
+        }
+        "sixMonths" -> {
+            // función a ejecutar cuando se selecciona la opción '6Months'
+            BarChart(values = listOf(65f, 40f, 25f, 20f))
+        }
+        "year" -> {
+            // función a ejecutar cuando se selecciona la opción 'Year'
+            BarChart(values = listOf(65f, 40f, 25f, 20f))
+        }
+    }}
 
 @Composable
 private fun ButtonToggleGroup(
@@ -162,4 +189,11 @@ private fun ButtonToggleGroup(
             }
         }
     }
+}
+
+
+
+@Composable
+fun BarChartCall(){
+
 }
