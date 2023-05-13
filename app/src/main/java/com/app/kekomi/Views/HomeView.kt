@@ -42,12 +42,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.kekomi.Extras.DatePicker2
 import com.app.kekomi.Extras.DonutChart
+import com.app.kekomi.Extras.DonutChart3
 
 @Preview
 @Composable
 fun HomeView() {
     var openDialog by remember {
-        mutableStateOf(false) // Initially dialog is closed
+        mutableStateOf(false)
     }
 
     Column {
@@ -71,7 +72,7 @@ fun HomeView() {
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(start = 10.dp, bottom = 50.dp),
+                    .padding(start = 10.dp, bottom = 50.dp, top = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row() {
@@ -81,7 +82,7 @@ fun HomeView() {
                             .padding(16.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = "DONUT CHART")
+                        DonutChart3()
                         /*val data = listOf(20f, 30f, 50f)
                         val colors = listOf(Color.Blue, Color.Green, Color.Red)
                         val labels = listOf("Label 1", "Label 2", "Label 3")

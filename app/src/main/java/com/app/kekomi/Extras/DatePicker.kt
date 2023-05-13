@@ -62,7 +62,7 @@ fun DatePicker2() {
 
                             Toast.makeText(
                                 applicationContext,
-                                "Clicked ok",
+                                "Date updated",
                                 Toast.LENGTH_LONG
                             ).show()
                         }
@@ -72,9 +72,7 @@ fun DatePicker2() {
                     datepicker(
                         initialDate = LocalDate.now(),
                         title = "Pick a date",
-                        allowedDateValidator = {
-                            it.dayOfMonth % 2 == 1
-                        }
+
                     ) {
                         pickedDate = it
                     }

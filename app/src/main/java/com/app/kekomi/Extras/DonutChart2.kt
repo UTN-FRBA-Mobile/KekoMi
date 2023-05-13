@@ -42,7 +42,7 @@ private val defaultSliceWidth = 20.dp
 private val defaultSlicePadding = 5.dp
 private val defaultSliceClickPadding = 10.dp
 
-@Preview
+
 @Composable
 fun PruebaDonut2(){
     val data = listOf(20f, 30f, 50f)
@@ -53,9 +53,9 @@ fun PruebaDonut2(){
     }
 }
 
-
+@Preview
 @Composable
-fun DonutChart2(
+internal fun DonutChart2(
     modifier: Modifier = Modifier,
     colors: List<Color>,
     inputValues: List<Float>,
