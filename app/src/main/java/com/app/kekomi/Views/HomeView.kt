@@ -29,6 +29,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,7 +56,7 @@ fun HomeView() {
             backgroundColor = Color(android.graphics.Color.parseColor("#008080")),
             navigationIcon = {
                 IconButton(onClick = { /*TODO DIA ANTES*/}) {
-                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Cambia fecha para atras")
+                    Icon(imageVector = Icons.Filled.DateRange, contentDescription = "xx")
                 }
             },
             title = { DatePicker2() },
@@ -82,12 +83,6 @@ fun HomeView() {
                         contentAlignment = Alignment.Center
                     ) {
                         DonutChart()
-                        /*val data = listOf(20f, 30f, 50f)
-                        val colors = listOf(Color.Blue, Color.Green, Color.Red)
-                        val labels = listOf("Label 1", "Label 2", "Label 3")
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            DonutChart(data = data, colors = colors, labels = labels)
-                        }*/
                     }
                     Column(
                         modifier = Modifier
