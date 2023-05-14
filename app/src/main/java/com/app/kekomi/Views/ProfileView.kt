@@ -12,6 +12,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +30,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.kekomi.Extras.DatePicker
+import com.app.kekomi.Extras.decrementDay
+import com.app.kekomi.Extras.incrementDate
+import com.app.kekomi.Extras.showDate
 import com.app.kekomi.R
 
 @Preview
@@ -37,11 +44,25 @@ fun ProfileView() {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(start = 10.dp, bottom = 50.dp, top = 30.dp),
+            .padding(bottom = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
 //        verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "Profile Details", modifier = Modifier.padding(bottom =10.dp),fontSize = 26.sp, color = Color(android.graphics.Color.parseColor("#008080")))
+        TopAppBar(
+            modifier = Modifier.padding(bottom =20.dp),
+            backgroundColor = Color(android.graphics.Color.parseColor("#008080")),
+            title = {
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+
+                    Text(text = "Profile Details", fontSize = 26.sp, color = Color.White)
+
+                }
+            }
+        )
         MyImage()
         TextBox("Name")
         PesoYAltura()
@@ -66,7 +87,10 @@ fun PesoYAltura() {
             value = inputValueW,
             onValueChange = { newValue -> inputValueW = newValue},
             label = { Text("Weight", fontSize = 18.sp) },
-            modifier = Modifier.weight(1f).padding(8.dp).background(Color.White),
+            modifier = Modifier
+                .weight(1f)
+                .padding(8.dp)
+                .background(Color.White),
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number
             ),
@@ -76,7 +100,10 @@ fun PesoYAltura() {
             value = inputValueH,
             onValueChange = {newValue -> inputValueH = newValue},
             label = { Text("Height", fontSize = 18.sp) },
-            modifier = Modifier.weight(1f).padding(8.dp).background(Color.White),
+            modifier = Modifier
+                .weight(1f)
+                .padding(8.dp)
+                .background(Color.White),
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number
             ),
@@ -120,7 +147,7 @@ fun MyImage() {
 
 @Composable
 fun CheckBoxes() {
-    val items = listOf("Calories", "Sodium", "Sugar", "Fats", "Protein", "Opción 6")
+    val items = listOf("Calories", "Sodium", "Sugar", "Fats", "Protein")
     var checkedItems = remember { mutableStateListOf<Boolean>() }
 
     // Initialize the list of selected items with false values
@@ -184,7 +211,7 @@ fun goal(item: String, isChecked: Boolean) {
         label = { Text( "Set goal", fontSize = 15.sp, textAlign = TextAlign.Center) },
         placeholder = { Text("") },
         modifier = Modifier
-            .padding( 1.dp)
+            .padding(1.dp)
             .background(Color.White)
             .width(100.dp),
         keyboardOptions = KeyboardOptions.Default.copy(
