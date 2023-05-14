@@ -1,5 +1,6 @@
 package com.app.kekomi.Views
 
+import android.widget.Space
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
@@ -17,13 +19,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,23 +32,48 @@ import com.app.kekomi.R
 @Preview
 @Composable
 fun ProfileView() {
+    Column{
+        TopAppBar(
+            backgroundColor = Color(android.graphics.Color.parseColor("#008080")),
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            title = {
+                Text(
+                    text = "Settings",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                )
+            }
+        )
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 50.dp)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+//            verticalArrangement = Arrangement.Center
+        ) {
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(start = 10.dp, bottom = 50.dp, top = 30.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-//        verticalArrangement = Arrangement.Center
-    ) {
-        Text(text = "Profile Details", modifier = Modifier.padding(bottom =10.dp),fontSize = 26.sp, color = Color(android.graphics.Color.parseColor("#008080")))
-        MyImage()
-        TextBox("Name")
-        PesoYAltura()
-        Text(text = "Select what you wish to track:", modifier = Modifier.padding(top=20.dp), fontSize = 26.sp, color = Color(android.graphics.Color.parseColor("#008080")))
-        CheckBoxes()
+            MyImage()
 
+            InformacionPersonal()
+
+            Text(text = "Select what you wish to track:", modifier = Modifier.padding(top=20.dp), fontSize = 26.sp, color = Color(android.graphics.Color.parseColor("#008080")))
+            CheckBoxes()
+
+        }
     }
+
+}
+
+@Composable
+fun InformacionPersonal() {
+    TextBox("Name")
+    Spacer(modifier = Modifier.height(10.dp))
+    PesoYAltura()
 }
 
 @Composable
@@ -60,26 +85,61 @@ fun PesoYAltura() {
     var inputValueH by remember {
         mutableStateOf("")
     }
+    val focusManager = LocalFocusManager.current
+
+    val outlineTextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
+        focusedBorderColor = Color(0xFF008080), // change the border color when focused
+        textColor = Color.Black, // change the text color
+        focusedLabelColor = Color(0xFF008080),
+        unfocusedBorderColor = Color.Gray,
+        disabledBorderColor = Color.Gray,
+
+        )
 
     Row(modifier = Modifier.fillMaxWidth()) {
         OutlinedTextField(
             value = inputValueW,
             onValueChange = { newValue -> inputValueW = newValue},
             label = { Text("Weight", fontSize = 18.sp) },
-            modifier = Modifier.weight(1f).padding(8.dp).background(Color.White),
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 20.dp, end = 10.dp)
+                .background(Color.White),
             keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Number
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
             ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    focusManager.clearFocus()
+                }
+            ),
+            textStyle = TextStyle(textAlign = TextAlign.End),
+            visualTransformation = SuffixVisualTransformation(" kg"),
+            colors = outlineTextFieldColors
+
 
         )
         OutlinedTextField(
             value = inputValueH,
             onValueChange = {newValue -> inputValueH = newValue},
             label = { Text("Height", fontSize = 18.sp) },
-            modifier = Modifier.weight(1f).padding(8.dp).background(Color.White),
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 10.dp, end = 20.dp)
+                .background(Color.White),
             keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Number
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
             ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    focusManager.clearFocus()
+                }
+            ),
+            textStyle = TextStyle(textAlign = TextAlign.End),
+            visualTransformation = SuffixVisualTransformation(" cm"),
+            colors = outlineTextFieldColors
         )
     }
 }
@@ -89,16 +149,36 @@ fun TextBox(s: String){
     var inputValue by remember {
         mutableStateOf("")
     }
+    val focusManager = LocalFocusManager.current
+    val outlineTextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
+        focusedBorderColor = Color(0xFF008080), // change the border color when focused
+        textColor = Color.Black, // change the text color
+        focusedLabelColor = Color(0xFF008080),
+        unfocusedBorderColor = Color.Gray,
+        disabledBorderColor = Color.Gray,
+
+    )
 
     OutlinedTextField(
         value = inputValue,
-        onValueChange = {newValue -> inputValue = newValue},
+        onValueChange = {newValue ->
+            inputValue = newValue},
         label = { Text(text = s,fontSize = 18.sp) },
         placeholder = { Text(s) },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 16.dp, horizontal = 32.dp)
-            .background(Color.White)
+            .padding(start = 20.dp, top = 16.dp, end = 20.dp)
+            .background(Color.White),
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Done // Set the keyboard button to "Done"
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                focusManager.clearFocus()
+            }
+        ),
+        visualTransformation = SuffixVisualTransformation("  "),
+        colors = outlineTextFieldColors
 
     )
 
@@ -114,13 +194,13 @@ fun MyImage() {
             .size(120.dp)
             //.clip(CircleShape)
             //.border(5.dp, Color.Black, CircleShape)
-            .padding(10.dp)
+            .padding(top = 20.dp)
     )
 }
 
 @Composable
 fun CheckBoxes() {
-    val items = listOf("Calories", "Sodium", "Sugar", "Fats", "Protein", "Opción 6")
+    val items = listOf("Calories", "Sodium", "Sugar", "Fats", "Protein", "Opción 6","dea")
     var checkedItems = remember { mutableStateListOf<Boolean>() }
 
     // Initialize the list of selected items with false values
@@ -138,10 +218,10 @@ fun CheckBoxes() {
         items.take(items.size).forEachIndexed { index, item ->
             Row(
                 modifier = Modifier
-                    .padding(vertical = 8.dp)
+                    .padding(vertical = 8.dp, horizontal = 10.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.Start
             ) {
                 Checkbox(
                     checked = checkedItems[index],
@@ -157,9 +237,11 @@ fun CheckBoxes() {
                 Text(
                     text = item,
                     color = Color.Black,
-                    fontSize = 15.sp,
-                    modifier = Modifier.padding(start = 8.dp)
+                    fontSize = 20.sp,
+                    modifier = Modifier.padding(start = 10.dp, end = 80.dp),
+                    textAlign = TextAlign.Left
                 )
+                Spacer(modifier = Modifier.weight(1f))
 
                 goal(item,  checkedItems[index])
             }
@@ -175,26 +257,39 @@ fun goal(item: String, isChecked: Boolean) {
         focusedBorderColor = Color(0xFF008080), // change the border color when focused
         textColor = Color.Black, // change the text color
         focusedLabelColor = Color(0xFF008080),
-
+        unfocusedBorderColor = Color.Gray,
+        disabledBorderColor = Color.Gray,
+//        backgroundColor = Color(red = 209, green = 209, blue = 209)
     )
-
-    TextField(
+    val focusManager = LocalFocusManager.current
+    OutlinedTextField(
         value = inputValueG,
         onValueChange = { newValue -> inputValueG = newValue },
         label = { Text( "Set goal", fontSize = 15.sp, textAlign = TextAlign.Center) },
         placeholder = { Text("") },
         modifier = Modifier
-            .padding( 1.dp)
-            .background(Color.White)
-            .width(100.dp),
+            .padding(end = 10.dp)
+            .width(100.dp)
+            .height(50.dp),
         keyboardOptions = KeyboardOptions.Default.copy(
-            keyboardType = KeyboardType.Number
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                focusManager.clearFocus()
+            }
         ),
         textStyle = TextStyle(textAlign = TextAlign.End),
         enabled = isChecked,
         readOnly = !isChecked,
-        visualTransformation = SuffixVisualTransformation(" g"),
-        colors = outlineTextFieldColors
+        visualTransformation = if (item != "Calories") {
+            SuffixVisualTransformation(" g")
+        } else {
+            SuffixVisualTransformation("  ")
+        },
+        colors = outlineTextFieldColors,
+        shape = RoundedCornerShape(percent = 10)
 
 
     )
