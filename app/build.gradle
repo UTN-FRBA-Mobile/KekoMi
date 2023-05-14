@@ -72,4 +72,5 @@ dependencies {
     // separate artifact with utilities for working with kotlinx-datetime
     implementation "io.github.boguszpawlowski.composecalendar:kotlinx-datetime:1.1.0"
 
+    //implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }

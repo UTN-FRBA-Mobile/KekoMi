@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.app.kekomi.Extras.BarChart
+import com.app.kekomi.Extras.BarChartByTimePeriod
 
 import com.app.kekomi.Extras.DonutChart
 import com.app.kekomi.Extras.SelectableCalendar
@@ -85,49 +86,14 @@ fun ButtonToggleGroupCall() {
 
     var selectedOption by remember { mutableStateOf(options[0]) }
 
-    var selectionString ="week"
-
     ButtonToggleGroup(
         options = options,
         selectedOption = selectedOption,
         onOptionSelect = { selectedOption = it
-            when (it) {
-                week -> {
-                    // función a ejecutar cuando se selecciona la opción 'Week'
-                    selectionString = "week"
-                }
-                month -> {
-                    // función a ejecutar cuando se selecciona la opción 'Month'
-                    selectionString = "month"
-                }
-                sixMonths -> {
-                    // función a ejecutar cuando se selecciona la opción '6Months'
-                    selectionString = "6months"
-                }
-                year -> {
-                    // función a ejecutar cuando se selecciona la opción 'Year'
-                    selectionString = "year"
-                }
-            } },
+ },
     )
-    //TODO ESTO ES UNA PORQUERIA
-    when (selectionString) {
-        "week" -> {
-            // función a ejecutar cuando se selecciona la opción 'Week'
-            BarChart(values = listOf(65f, 40f, 25f, 20f))
-        }
-        "month" -> {
-            // función a ejecutar cuando se selecciona la opción 'Month'
-        }
-        "sixMonths" -> {
-            // función a ejecutar cuando se selecciona la opción '6Months'
-            BarChart(values = listOf(65f, 40f, 25f, 20f))
-        }
-        "year" -> {
-            // función a ejecutar cuando se selecciona la opción 'Year'
-            BarChart(values = listOf(65f, 40f, 25f, 20f))
-        }
-    }}
+    BarChartByTimePeriod(selectedOption)
+}
 
 @Composable
 private fun ButtonToggleGroup(
@@ -188,13 +154,7 @@ private fun ButtonToggleGroup(
             ) {
                 Text(option)
             }
-        }
+
+            }
     }
-}
-
-
-
-@Composable
-fun BarChartCall(){
-
 }

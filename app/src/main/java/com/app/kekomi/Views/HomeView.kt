@@ -102,9 +102,9 @@ fun HomeView() {
                             .padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        ProgressBarWithText(0.5f)
-                        ProgressBarWithText(0.5f)
-                        ProgressBarWithText(0.5f)
+                        ProgressBarWithText(0.5f, "Calories")
+                        ProgressBarWithText(0.5f, "Thing1")
+                        ProgressBarWithText(0.5f, "Thing2")
                     }
                 }
                 Box(
@@ -151,10 +151,10 @@ fun HomeView() {
 
 
 @Composable
-fun ProgressBarWithText(percentage: Float) {
+fun ProgressBarWithText(percentage: Float, label:String) {
     var progress by remember { mutableStateOf(percentage) }
 
-    Text("Progress: ${progress * 100}%", fontWeight = FontWeight.Bold)
+    Text("${label}: ${progress * 100}%", fontWeight = FontWeight.Bold)
     Spacer(modifier = Modifier.height(4.dp))
     LinearProgressIndicator(
                 progress = progress,
