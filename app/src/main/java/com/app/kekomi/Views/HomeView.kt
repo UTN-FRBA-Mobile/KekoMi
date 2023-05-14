@@ -134,6 +134,7 @@ fun HomeView(navController: NavHostController) {
                     FoodGroup("Dinner", navController)
                     Spacer(Modifier.height(9.dp))
                     FoodGroup("Snacks", navController)
+                    Spacer(Modifier.height(15.dp))
                 }
             }
 

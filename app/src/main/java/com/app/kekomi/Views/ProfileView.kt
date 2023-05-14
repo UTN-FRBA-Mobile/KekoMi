@@ -30,11 +30,10 @@ import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.app.kekomi.Extras.DatePicker
-import com.app.kekomi.Extras.decrementDay
-import com.app.kekomi.Extras.incrementDate
-import com.app.kekomi.Extras.showDate
 import com.app.kekomi.R
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.flow.Flow
 
 @Preview
 @Composable
@@ -70,7 +69,10 @@ fun ProfileView() {
 
             InformacionPersonal()
 
-            Text(text = "Select what you wish to track:", modifier = Modifier.padding(top=20.dp), fontSize = 26.sp, color = Color(android.graphics.Color.parseColor("#008080")))
+            Text(text = "Select what you wish to track:",
+                modifier = Modifier.padding(top=20.dp),
+                fontSize = 26.sp,
+                color = Color(android.graphics.Color.parseColor("#008080")))
             CheckBoxes()
 
         }
@@ -209,7 +211,8 @@ fun MyImage() {
 
 @Composable
 fun CheckBoxes() {
-    val items = listOf("Calories", "Sodium", "Sugar", "Fats", "Protein", "Opción 6","dea")
+    val items = listOf("Calories", "Sodium", "Sugar", "Fats", "Protein")
+
     var checkedItems = remember { mutableStateListOf<Boolean>() }
 
     // Initialize the list of selected items with false values
@@ -259,6 +262,13 @@ fun CheckBoxes() {
     }
 }
 
+
+
+
+
+
+
+
 @Composable
 fun goal(item: String, isChecked: Boolean) {
     var inputValueG by remember { mutableStateOf("") }
@@ -279,7 +289,7 @@ fun goal(item: String, isChecked: Boolean) {
         modifier = Modifier
             .padding(end = 10.dp)
             .width(100.dp)
-            .height(50.dp),
+            .height(55.dp),
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Number,
             imeAction = ImeAction.Done

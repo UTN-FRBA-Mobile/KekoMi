@@ -50,22 +50,22 @@ fun AddFoodView(navController: NavHostController) {
             }
         }
 
-        TextButton(
-            onClick = {
-                repo.insertFood(Food(foodName = "hamburguesa",
-                    calories = 1,
-                    sodium = 2,
-                    sugar = 3,
-                    fats = 4,
-                    protein = 5,
-                    date = Date(),
-                    quantity = 6,
-                    meal = Meal.BREAKFAST))
-            },
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
-        ) {
-            Icon(Icons.Default.Close, contentDescription = "Localized description", tint = Color.Black)
-        }
+//        TextButton(
+//            onClick = {
+//                repo.insertFood(Food(foodName = "hamburguesa",
+//                    calories = 1,
+//                    sodium = 2,
+//                    sugar = 3,
+//                    fats = 4,
+//                    protein = 5,
+//                    date = Date(),
+//                    quantity = 6,
+//                    meal = Meal.BREAKFAST))
+//            },
+//            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+//        ) {
+//            Icon(Icons.Default.Close, contentDescription = "Localized description", tint = Color.Black)
+//        }
 
     }
 }

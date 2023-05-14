@@ -1,16 +1,22 @@
 package com.app.kekomi
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.compose.rememberNavController
 import com.app.kekomi.BottomNav.BottomNavigation
 import com.app.kekomi.ui.theme.KekoMiTheme
 import com.app.kekomi.BottomNav.NavigationGraph
+import com.app.kekomi.storage.userPreferences
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,6 +27,7 @@ class MainActivity : ComponentActivity() {
                 setContent {
                     App()
                 }
+
             //}
         //}
     }
@@ -36,6 +43,10 @@ private fun App() {
     ) {
         NavigationGraph(navController = navController)
     }
+    val context = LocalContext.current
+
+    // datastore Email
+    val dataStore = userPreferences(context)
 }
 
 @Preview(showBackground = true)
