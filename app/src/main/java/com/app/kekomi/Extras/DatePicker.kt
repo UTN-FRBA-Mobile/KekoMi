@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
@@ -40,6 +41,7 @@ fun showDate(){
     Text(
         text = DateSelected.pickedDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy")),
         modifier = Modifier.padding(horizontal = 8.dp)
+        , fontSize = 26.sp, color = Color.White
     )
 }
 
@@ -60,6 +62,7 @@ fun DatePicker() {
             Icon(
                 imageVector = Icons.Filled.DateRange,
                 contentDescription = "Select date",
+                tint = Color.White
             )
         }
         //Text(text = formattedDate)

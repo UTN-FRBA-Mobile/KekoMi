@@ -64,16 +64,16 @@ fun HomeView() {
             },
             title = {
                 Row(
-                    modifier = Modifier.padding(start = 25.dp),
+                    modifier = Modifier.padding(start = 5.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
                     IconButton(onClick = { decrementDay()}) {
-                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Cambia fecha para atrás")
+                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Cambia fecha para atrás",tint = Color.White)
                     }
                     showDate()
                     IconButton(onClick = { incrementDate()}) {
-                        Icon(imageVector = Icons.Filled.ArrowForward, contentDescription = "Cambia fecha para adelante")
+                        Icon(imageVector = Icons.Filled.ArrowForward, contentDescription = "Cambia fecha para adelante", tint = Color.White)
                     }
                 }
             }
