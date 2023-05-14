@@ -66,14 +66,20 @@ fun PesoYAltura() {
             value = inputValueW,
             onValueChange = { newValue -> inputValueW = newValue},
             label = { Text("Weight", fontSize = 18.sp) },
-            modifier = Modifier.weight(1f).padding(8.dp).background(Color.White)
+            modifier = Modifier.weight(1f).padding(8.dp).background(Color.White),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number
+            ),
 
         )
         OutlinedTextField(
             value = inputValueH,
             onValueChange = {newValue -> inputValueH = newValue},
             label = { Text("Height", fontSize = 18.sp) },
-            modifier = Modifier.weight(1f).padding(8.dp).background(Color.White)
+            modifier = Modifier.weight(1f).padding(8.dp).background(Color.White),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number
+            ),
         )
     }
 }
@@ -165,6 +171,12 @@ fun CheckBoxes() {
 @Composable
 fun goal(item: String, isChecked: Boolean) {
     var inputValueG by remember { mutableStateOf("") }
+    val outlineTextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
+        focusedBorderColor = Color(0xFF008080), // change the border color when focused
+        textColor = Color.Black, // change the text color
+        focusedLabelColor = Color(0xFF008080),
+
+    )
 
     TextField(
         value = inputValueG,
@@ -181,7 +193,8 @@ fun goal(item: String, isChecked: Boolean) {
         textStyle = TextStyle(textAlign = TextAlign.End),
         enabled = isChecked,
         readOnly = !isChecked,
-        visualTransformation = SuffixVisualTransformation(" g")
+        visualTransformation = SuffixVisualTransformation(" g"),
+        colors = outlineTextFieldColors
 
 
     )
