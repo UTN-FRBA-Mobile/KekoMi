@@ -49,6 +49,8 @@ fun ProfileView() {
                 Text(
                     text = "Settings",
                     textAlign = TextAlign.Center,
+                    fontSize = 26.sp,
+                    color = Color.White,
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
