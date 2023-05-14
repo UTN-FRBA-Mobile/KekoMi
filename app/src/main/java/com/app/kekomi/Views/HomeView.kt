@@ -29,6 +29,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,24 +40,48 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+<<<<<<< HEAD
 import androidx.navigation.NavHostController
 import com.app.kekomi.Extras.DatePicker2
+=======
+import com.app.kekomi.Extras.DatePicker
+import com.app.kekomi.Extras.DateSelected
+>>>>>>> 2ecfbb3bb49e2f7552bba83929bf5ecc186d7b0c
 import com.app.kekomi.Extras.DonutChart
+import com.app.kekomi.Extras.decrementDay
+import com.app.kekomi.Extras.incrementDate
+import com.app.kekomi.Extras.showDate
 
 @Composable
+<<<<<<< HEAD
 fun HomeView(navController: NavHostController) {
+=======
+fun HomeView() {
+    var openDialog by remember {
+        mutableStateOf(false)
+    }
+
+
+>>>>>>> 2ecfbb3bb49e2f7552bba83929bf5ecc186d7b0c
     Column {
         TopAppBar(
             backgroundColor = Color(android.graphics.Color.parseColor("#008080")),
             navigationIcon = {
-                IconButton(onClick = { /*TODO DIA ANTES*/}) {
-                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Cambia fecha para atras")
-                }
+                DatePicker()
             },
-            title = { DatePicker2() },
-            actions = {
-                IconButton(onClick = { /*TODO DIA DPS*/}) {
-                    Icon(imageVector = Icons.Filled.ArrowForward, contentDescription = "Cambia fecha para adelante")
+            title = {
+                Row(
+                    modifier = Modifier.padding(start = 5.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    IconButton(onClick = { decrementDay()}) {
+                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Cambia fecha para atrás",tint = Color.White)
+                    }
+                    showDate()
+                    IconButton(onClick = { incrementDate()}) {
+                        Icon(imageVector = Icons.Filled.ArrowForward, contentDescription = "Cambia fecha para adelante", tint = Color.White)
+                    }
                 }
             }
         )
@@ -77,12 +102,6 @@ fun HomeView(navController: NavHostController) {
                         contentAlignment = Alignment.Center
                     ) {
                         DonutChart()
-                        /*val data = listOf(20f, 30f, 50f)
-                        val colors = listOf(Color.Blue, Color.Green, Color.Red)
-                        val labels = listOf("Label 1", "Label 2", "Label 3")
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            DonutChart(data = data, colors = colors, labels = labels)
-                        }*/
                     }
                     Column(
                         modifier = Modifier
@@ -90,9 +109,9 @@ fun HomeView(navController: NavHostController) {
                             .padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        ProgressBarWithText(0.5f)
-                        ProgressBarWithText(0.5f)
-                        ProgressBarWithText(0.5f)
+                        ProgressBarWithText(0.5f, "Calories")
+                        ProgressBarWithText(0.5f, "Thing1")
+                        ProgressBarWithText(0.5f, "Thing2")
                     }
                 }
                 Box(
@@ -128,16 +147,22 @@ fun HomeView(navController: NavHostController) {
                     FoodGroup("Snacks", navController)
                 }
             }
+
         }
     }
 }
 
 
 @Composable
+<<<<<<< HEAD
 fun ProgressBarWithText(percentage: Float) {
     val progress by remember { mutableStateOf(percentage) }
+=======
+fun ProgressBarWithText(percentage: Float, label:String) {
+    var progress by remember { mutableStateOf(percentage) }
+>>>>>>> 2ecfbb3bb49e2f7552bba83929bf5ecc186d7b0c
 
-    Text("Progress: ${progress * 100}%", fontWeight = FontWeight.Bold)
+    Text("${label}: ${progress * 100}%", fontWeight = FontWeight.Bold)
     Spacer(modifier = Modifier.height(4.dp))
     LinearProgressIndicator(
                 progress = progress,

@@ -6,75 +6,88 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
+object DateSelected {
+    var pickedDate: LocalDate by mutableStateOf(LocalDate.now())
+}
+fun incrementDate() {
+    DateSelected.pickedDate = DateSelected.pickedDate.plusDays(1)
+}
+
+fun decrementDay() {
+    DateSelected.pickedDate = DateSelected.pickedDate.minusDays(1)
+}
+@Composable
+fun showDate(){
+    Text(
+        text = DateSelected.pickedDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy")),
+        modifier = Modifier.padding(horizontal = 8.dp)
+        , fontSize = 26.sp, color = Color.White
+    )
+}
 
 @Composable
-fun DatePicker2() {
+fun DatePicker() {
     val applicationContext = LocalContext.current
-                var pickedDate by remember {
-                    mutableStateOf(LocalDate.now())
-                }
-                val formattedDate by remember {
-                    derivedStateOf {
-                        DateTimeFormatter
-                            .ofPattern("MMM dd yyyy")
-                            .format(pickedDate)
-                    }
-                }
-                val dateDialogState = rememberMaterialDialogState()
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Button(onClick = {
-                        dateDialogState.show()
-                    }, colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color(android.graphics.Color.parseColor("#008080"))
-                    )) {
-                        val formattedDate: String = pickedDate.format(
-                            DateTimeFormatter.ofLocalizedDate(
-                                FormatStyle.LONG
-                            )
-                        )
-                        Text(text = "$formattedDate")
-                    }
-                    //Text(text = formattedDate)
-                }
-                MaterialDialog(
-                    dialogState = dateDialogState,
-                    buttons = {
-                        positiveButton(text = "Ok") {
+    val dateDialogState = rememberMaterialDialogState()
 
-                            Toast.makeText(
-                                applicationContext,
-                                "Date updated",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-                        negativeButton(text = "Cancel")
-                    }
-                ) {
-                    datepicker(
-                        initialDate = LocalDate.now(),
-                        title = "Pick a date",
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        IconButton(onClick = {
+            dateDialogState.show()
+        }) {
+            Icon(
+                imageVector = Icons.Filled.DateRange,
+                contentDescription = "Select date",
+                tint = Color.White
+            )
+        }
+        //Text(text = formattedDate)
+    }
 
-                    ) {
-                        pickedDate = it
-                    }
-                }
+    MaterialDialog(
+        dialogState = dateDialogState,
+        buttons = {
+            positiveButton(text = "Ok") {
+                Toast.makeText(
+                    applicationContext,
+                    "Date updated",
+                    Toast.LENGTH_LONG
+                ).show()
             }
+            negativeButton(text = "Cancel")
+        }
+    ) {
+        datepicker(
+            initialDate = DateSelected.pickedDate,
+            title = "Pick a date",
+            colors = DatePickerDefaults.colors(headerBackgroundColor = Color.Gray,dateActiveBackgroundColor = Color(android.graphics.Color.parseColor("#008080")))
+        ) {
+            DateSelected.pickedDate = it
+        }
+    }
+}
+
