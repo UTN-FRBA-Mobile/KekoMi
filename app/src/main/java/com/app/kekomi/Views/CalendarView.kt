@@ -41,12 +41,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.app.kekomi.Extras.BarChart
+//import com.app.kekomi.Extras.BarChart
 import com.app.kekomi.Extras.BarChartByTimePeriod
 
 import com.app.kekomi.Extras.DonutChart
 import com.app.kekomi.Extras.SelectableCalendar
-import com.app.kekomi.Extras.TestBarChart
+//import com.app.kekomi.Extras.TestBarChart
 
 
 @Preview
