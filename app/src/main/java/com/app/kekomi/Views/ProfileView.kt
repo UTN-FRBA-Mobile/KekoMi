@@ -307,7 +307,7 @@ fun CheckBoxes() {
                 Spacer(modifier = Modifier.weight(1f))
 
 //                Toast.makeText(context, goalsValues[index], Toast.LENGTH_SHORT).show()
-                goal(item,  checkedItems[index], index, context, dataStore, scope)
+                Goal(item,  checkedItems[index], index, dataStore, scope)
 
             }
 
@@ -332,11 +332,10 @@ suspend fun checkUpdateGoals(
 
 
 @Composable
-fun goal(
+fun Goal(
     item: String,
     isChecked: Boolean,
     index: Int,
-    context: Context,
     dataStore: userPreferences,
     scope: CoroutineScope
 ){
