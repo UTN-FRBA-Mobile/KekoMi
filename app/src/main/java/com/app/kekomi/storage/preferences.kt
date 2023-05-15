@@ -18,8 +18,8 @@ class userPreferences(private val context: Context) {
     companion object {
         private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("userInfo")
         var NAME_KEY = stringPreferencesKey("user_name")
-        var WEIGHT_KEY = intPreferencesKey("user_weight")
-        var HEIGHT_KEY = intPreferencesKey("user_height")
+        var WEIGHT_KEY = stringPreferencesKey("user_weight")
+        var HEIGHT_KEY = stringPreferencesKey("user_height")
         var CALORIES_STATE_KEY = booleanPreferencesKey("user_calories_state")
         var SODIUM_STATE_KEY = booleanPreferencesKey("user_sodium_state")
         var SUGAR_STATE_KEY = booleanPreferencesKey("user_sugar_state")
@@ -33,6 +33,43 @@ class userPreferences(private val context: Context) {
         val statesKeys = listOf(CALORIES_STATE_KEY, SODIUM_STATE_KEY, SUGAR_STATE_KEY, FATS_STATE_KEY, PROTEIN_STATE_KEY)
         val goalKeys = listOf(CALORIES_GOAL_KEY, SODIUM_GOAL_KEY, SUGAR_GOAL_KEY, FATS_GOAL_KEY, PROTEIN_GOAL_KEY)
     }
+
+    val getName: Flow<String?> = context.dataStore.data
+        .map { preferences ->
+            preferences[NAME_KEY] ?: ""
+        }
+
+    // to save the email
+    suspend fun saveName(name: String) {
+        context.dataStore.edit { preferences ->
+            preferences[NAME_KEY] = name
+        }
+    }
+
+    val getHeight: Flow<String?> = context.dataStore.data
+        .map { preferences ->
+            preferences[HEIGHT_KEY] ?: ""
+        }
+
+    // to save the email
+    suspend fun saveHeight(h: String) {
+        context.dataStore.edit { preferences ->
+            preferences[HEIGHT_KEY] = h
+        }
+    }
+
+    val getWeight: Flow<String?> = context.dataStore.data
+        .map { preferences ->
+            preferences[WEIGHT_KEY] ?: ""
+        }
+
+    // to save the email
+    suspend fun saveWeight(w: String) {
+        context.dataStore.edit { preferences ->
+            preferences[WEIGHT_KEY] = w
+        }
+    }
+
 
     fun getGoalKeys(): List<String> {
         return goalKeys.map { key ->

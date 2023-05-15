@@ -10,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
+
 import androidx.compose.material.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -82,21 +83,39 @@ fun ProfileView() {
 
 @Composable
 fun InformacionPersonal() {
-    TextBox("Name")
+    // context
+    val context = LocalContext.current
+
+    //scope
+    val scope = rememberCoroutineScope()
+
+    // datastore
+    val dataStore = userPreferences(context)
+    TextBox("Name", dataStore, scope)
     Spacer(modifier = Modifier.height(10.dp))
-    PesoYAltura()
+    PesoYAltura(dataStore, scope)
 }
 
 @Composable
-fun PesoYAltura() {
-    var inputValueW by remember {
-        mutableStateOf("")
+fun PesoYAltura(dataStore: userPreferences, scope: CoroutineScope) {
+    val focusManager = LocalFocusManager.current
+    val initialValueH = dataStore.getHeight.collectAsState(initial = "").value!!
+    var inputValueH by remember { mutableStateOf(initialValueH) }
+
+    LaunchedEffect(initialValueH) {
+        inputValueH = initialValueH
     }
 
-    var inputValueH by remember {
-        mutableStateOf("")
+    val initialValueW = dataStore.getWeight.collectAsState(initial = "").value!!
+
+    var inputValueW by remember { mutableStateOf(initialValueW) }
+
+    LaunchedEffect(initialValueW) {
+        inputValueW = initialValueW
     }
-    val focusManager = LocalFocusManager.current
+
+
+
 
     val outlineTextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
         focusedBorderColor = Color(0xFF008080), // change the border color when focused
@@ -123,9 +142,12 @@ fun PesoYAltura() {
             keyboardActions = KeyboardActions(
                 onDone = {
                     focusManager.clearFocus()
+                    scope.launch {
+                        dataStore.saveWeight(inputValueW)
+                    }
                 }
             ),
-            textStyle = TextStyle(textAlign = TextAlign.End),
+            textStyle = TextStyle(textAlign = TextAlign.End, fontSize = 20.sp),
             visualTransformation = SuffixVisualTransformation(" kg"),
             colors = outlineTextFieldColors
 
@@ -146,19 +168,28 @@ fun PesoYAltura() {
             keyboardActions = KeyboardActions(
                 onDone = {
                     focusManager.clearFocus()
+                    scope.launch {
+                        dataStore.saveHeight(inputValueH)
+                    }
                 }
             ),
-            textStyle = TextStyle(textAlign = TextAlign.End),
+            textStyle = TextStyle(textAlign = TextAlign.End, fontSize = 20.sp),
             visualTransformation = SuffixVisualTransformation(" cm"),
             colors = outlineTextFieldColors
         )
     }
 }
 
+
+
 @Composable
-fun TextBox(s: String){
-    var inputValue by remember {
-        mutableStateOf("")
+fun TextBox(s: String, dataStore: userPreferences, scope: CoroutineScope){
+    val initialValue = dataStore.getName.collectAsState(initial = "").value!!
+
+    var inputValue by remember { mutableStateOf(initialValue) }
+
+    LaunchedEffect(initialValue) {
+        inputValue = initialValue
     }
     val focusManager = LocalFocusManager.current
     val outlineTextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
@@ -171,6 +202,7 @@ fun TextBox(s: String){
     )
 
     OutlinedTextField(
+        textStyle = TextStyle(fontSize = 20.sp),
         value = inputValue,
         onValueChange = {newValue ->
             inputValue = newValue},
@@ -180,12 +212,16 @@ fun TextBox(s: String){
             .fillMaxWidth()
             .padding(start = 20.dp, top = 16.dp, end = 20.dp)
             .background(Color.White),
+
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Done // Set the keyboard button to "Done"
         ),
         keyboardActions = KeyboardActions(
             onDone = {
                 focusManager.clearFocus()
+                scope.launch {
+                    dataStore.saveName(inputValue)
+                }
             }
         ),
         visualTransformation = SuffixVisualTransformation("  "),
@@ -295,6 +331,7 @@ suspend fun checkUpdateGoals(
 
 
 
+
 @Composable
 fun goal(
     item: String,
@@ -340,7 +377,7 @@ fun goal(
                 updateGoal(inputValueG, index,dataStore, scope)
             }
         ),
-        textStyle = TextStyle(textAlign = TextAlign.End),
+        textStyle = TextStyle(textAlign = TextAlign.End, fontSize = 15.sp),
         enabled = isChecked,
         readOnly = !isChecked,
         visualTransformation = if (item != "Calories") {
