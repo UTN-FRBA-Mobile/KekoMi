@@ -270,6 +270,7 @@ fun CheckBoxes() {
     //Get Items
 
     val items = dataStore.getItems()
+    
 
     // El primero es Calories y lo seteo en true
     checkedItems[0] = true
