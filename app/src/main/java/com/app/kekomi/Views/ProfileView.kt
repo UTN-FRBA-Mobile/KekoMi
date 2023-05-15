@@ -1,6 +1,8 @@
 package com.app.kekomi.Views
 
-import android.widget.Space
+import android.annotation.SuppressLint
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -14,14 +16,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -31,9 +31,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.kekomi.R
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.preferencesDataStore
-import kotlinx.coroutines.flow.Flow
+import com.app.kekomi.storage.userPreferences
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -209,22 +209,35 @@ fun MyImage() {
     )
 }
 
+@SuppressLint("UnrememberedMutableState", "CoroutineCreationDuringComposition")
 @Composable
 fun CheckBoxes() {
     val items = listOf("Calories", "Sodium", "Sugar", "Fats", "Protein")
 
-    var checkedItems = remember { mutableStateListOf<Boolean>() }
+    var checkedItems = mutableStateListOf<Boolean>()
 
-    // Initialize the list of selected items with false values
-    if (checkedItems.isEmpty()) {
-        repeat(items.size) {
-            if (items[it] == "Calories") {
-                checkedItems.add(true)
-            } else {
-                checkedItems.add(false)
-            }
-        }
-    }
+    // context
+    val context = LocalContext.current
+
+    //scope
+    val scope = rememberCoroutineScope()
+
+    // datastore
+    val dataStore = userPreferences(context)
+
+    // get states
+
+    val states = dataStore.getStates.map { item -> item.collectAsState(initial = "").value!!}
+
+    states.forEach{item -> checkedItems.add(item.toString().toBoolean())}
+
+
+
+
+
+
+    // El primero es Calories y lo seteo en true
+    checkedItems[0] = true
 
     Column(modifier = Modifier.padding(10.dp)) {
         items.take(items.size).forEachIndexed { index, item ->
@@ -240,6 +253,9 @@ fun CheckBoxes() {
                     onCheckedChange = { isChecked ->
                         if(items[index] != "Calories"){
                             checkedItems[index] = isChecked
+                            scope.launch {//se necesita para guardar cosas, es horrible
+                                dataStore.saveStates(checkedItems)
+                            }
                         }
 
                     },
@@ -255,36 +271,60 @@ fun CheckBoxes() {
                 )
                 Spacer(modifier = Modifier.weight(1f))
 
-                goal(item,  checkedItems[index])
+//                Toast.makeText(context, goalsValues[index], Toast.LENGTH_SHORT).show()
+                goal(item,  checkedItems[index], index, context, dataStore, scope)
+
             }
 
         }
     }
 }
 
+suspend fun checkUpdateGoals(
+    updatedList: MutableList<String>,
+    goalsValues: MutableList<String>,
+    dataStore: userPreferences,
+    context: Context
+) {
 
-
-
-
+    if (!updatedList.equals(goalsValues)) {
+        Toast.makeText(context, updatedList.joinToString(" ,d "), Toast.LENGTH_SHORT).show()
+        dataStore.saveGoals(updatedList as SnapshotStateList<String>)
+    }
+}
 
 
 
 @Composable
-fun goal(item: String, isChecked: Boolean) {
-    var inputValueG by remember { mutableStateOf("") }
+fun goal(
+    item: String,
+    isChecked: Boolean,
+    index: Int,
+    context: Context,
+    dataStore: userPreferences,
+    scope: CoroutineScope
+){
+
+    val initialValue = dataStore.getGoal(index).collectAsState(initial = "").value!!
+
+    var inputValueG by remember { mutableStateOf(initialValue) }
+
+    LaunchedEffect(initialValue) {
+        inputValueG = initialValue
+    }
+
     val outlineTextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
         focusedBorderColor = Color(0xFF008080), // change the border color when focused
         textColor = Color.Black, // change the text color
         focusedLabelColor = Color(0xFF008080),
         unfocusedBorderColor = Color.Gray,
-        disabledBorderColor = Color.Gray,
-//        backgroundColor = Color(red = 209, green = 209, blue = 209)
+        disabledBorderColor = Color.Gray
     )
     val focusManager = LocalFocusManager.current
     OutlinedTextField(
         value = inputValueG,
         onValueChange = { newValue -> inputValueG = newValue },
-        label = { Text( "Set goal", fontSize = 15.sp, textAlign = TextAlign.Center) },
+        label = { Text("Set goal", fontSize = 15.sp, textAlign = TextAlign.Center) },
         placeholder = { Text("") },
         modifier = Modifier
             .padding(end = 10.dp)
@@ -297,6 +337,7 @@ fun goal(item: String, isChecked: Boolean) {
         keyboardActions = KeyboardActions(
             onDone = {
                 focusManager.clearFocus()
+                updateGoal(inputValueG, index,dataStore, scope)
             }
         ),
         textStyle = TextStyle(textAlign = TextAlign.End),
@@ -309,9 +350,14 @@ fun goal(item: String, isChecked: Boolean) {
         },
         colors = outlineTextFieldColors,
         shape = RoundedCornerShape(percent = 10)
-
-
     )
+
+}
+@SuppressLint("CoroutineCreationDuringComposition")
+fun updateGoal(value: String, index: Int, dataStore: userPreferences, scope: CoroutineScope) {
+    scope.launch {
+        dataStore.saveGoal(value, index)
+    }
 }
 
 
