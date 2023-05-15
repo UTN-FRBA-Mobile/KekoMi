@@ -115,15 +115,26 @@ fun BarChartByTimePeriod( selectedTimePeriod: String){
 
 @Composable
 fun barChartCall(dataPair:  Map<Any, Float>){
-    var showChart by remember {
+    var showChart1 by remember {
+        mutableStateOf(false)
+    }
+    var showChart2 by remember {
         mutableStateOf(false)
     }
     Chart(
         data = dataPair,
         label="Calories",//TODO ACA VA A HABER QUE HACER UN FOR EACH DE LAS COSAS QUE TENGA EN PREFERENCES
-        isExpanded = showChart
+        isExpanded = showChart1
     ) {
-        showChart = !showChart
+        showChart1 = !showChart1
+    }
+
+    Chart(
+        data = dataPair,
+        label="Fat",//TODO ACA VA A HABER QUE HACER UN FOR EACH DE LAS COSAS QUE TENGA EN PREFERENCES, UN FOR EACH A UNA LISTA NOSE
+        isExpanded = showChart2
+    ) {
+        showChart2 = !showChart2
     }
 }
 
