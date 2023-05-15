@@ -4,8 +4,6 @@ package com.app.kekomi.Extras
 //import android.graphics.Color
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -24,7 +22,6 @@ import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
 object DateSelected {
     var pickedDate: LocalDate by mutableStateOf(LocalDate.now())

@@ -31,9 +31,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.kekomi.R
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.preferencesDataStore
-import kotlinx.coroutines.flow.Flow
 
 @Preview
 @Composable

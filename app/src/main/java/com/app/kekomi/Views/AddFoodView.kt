@@ -15,9 +15,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.app.kekomi.Extras.DateSelected
 import com.app.kekomi.entities.Food
 import com.app.kekomi.entities.Meal
 import com.app.kekomi.storage.FoodRepository
+import java.time.LocalDate
+import java.time.ZoneId
 import java.util.*
 
 @Composable
@@ -50,22 +53,24 @@ fun AddFoodView(navController: NavHostController) {
             }
         }
 
-//        TextButton(
-//            onClick = {
-//                repo.insertFood(Food(foodName = "hamburguesa",
-//                    calories = 1,
-//                    sodium = 2,
-//                    sugar = 3,
-//                    fats = 4,
-//                    protein = 5,
-//                    date = Date(),
-//                    quantity = 6,
-//                    meal = Meal.BREAKFAST))
-//            },
-//            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
-//        ) {
-//            Icon(Icons.Default.Close, contentDescription = "Localized description", tint = Color.Black)
-//        }
+        TextButton(
+            onClick = {
+                repo.insertFood(Food(foodName = "hamburguesa",
+                    calories = 1,
+                    sodium = 2,
+                    sugar = 3,
+                    fats = 4,
+                    protein = 5,
+                    date = Date.from(
+                        LocalDate.now().atStartOfDay(ZoneId.systemDefault())
+                        .toInstant()),
+                    quantity = 6,
+                    meal = Meal.BREAKFAST))
+            },
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+        ) {
+            Icon(Icons.Default.Close, contentDescription = "Localized description", tint = Color.Black)
+        }
 
     }
 }
