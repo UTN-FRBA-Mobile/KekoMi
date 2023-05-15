@@ -77,7 +77,7 @@ class userPreferences(private val context: Context) {
         }
     }
 
-    fun getStateKeys(): List<String> {
+    fun getItems(): List<String> {
         return statesKeys.map { key ->
             key.toString().substringAfter("user_").substringBefore("_state").capitalize()
         }

@@ -248,7 +248,7 @@ fun MyImage() {
 @SuppressLint("UnrememberedMutableState", "CoroutineCreationDuringComposition")
 @Composable
 fun CheckBoxes() {
-    val items = listOf("Calories", "Sodium", "Sugar", "Fats", "Protein")
+//    val items = listOf("Calories", "Sodium", "Sugar", "Fats", "Protein")
 
     var checkedItems = mutableStateListOf<Boolean>()
 
@@ -267,10 +267,9 @@ fun CheckBoxes() {
 
     states.forEach{item -> checkedItems.add(item.toString().toBoolean())}
 
+    //Get Items
 
-
-
-
+    val items = dataStore.getItems()
 
     // El primero es Calories y lo seteo en true
     checkedItems[0] = true
