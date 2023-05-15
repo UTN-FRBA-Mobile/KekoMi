@@ -1,6 +1,8 @@
 package com.app.kekomi.Views
 
-import android.widget.Space
+import android.annotation.SuppressLint
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -8,20 +10,19 @@ import androidx.compose.material.Text
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
+
 import androidx.compose.material.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -82,21 +83,39 @@ fun ProfileView() {
 
 @Composable
 fun InformacionPersonal() {
-    TextBox("Name")
+    // context
+    val context = LocalContext.current
+
+    //scope
+    val scope = rememberCoroutineScope()
+
+    // datastore
+    val dataStore = userPreferences(context)
+    TextBox("Name", dataStore, scope)
     Spacer(modifier = Modifier.height(10.dp))
-    PesoYAltura()
+    PesoYAltura(dataStore, scope)
 }
 
 @Composable
-fun PesoYAltura() {
-    var inputValueW by remember {
-        mutableStateOf("")
+fun PesoYAltura(dataStore: userPreferences, scope: CoroutineScope) {
+    val focusManager = LocalFocusManager.current
+    val initialValueH = dataStore.getHeight.collectAsState(initial = "").value!!
+    var inputValueH by remember { mutableStateOf(initialValueH) }
+
+    LaunchedEffect(initialValueH) {
+        inputValueH = initialValueH
     }
 
-    var inputValueH by remember {
-        mutableStateOf("")
+    val initialValueW = dataStore.getWeight.collectAsState(initial = "").value!!
+
+    var inputValueW by remember { mutableStateOf(initialValueW) }
+
+    LaunchedEffect(initialValueW) {
+        inputValueW = initialValueW
     }
-    val focusManager = LocalFocusManager.current
+
+
+
 
     val outlineTextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
         focusedBorderColor = Color(0xFF008080), // change the border color when focused
@@ -123,9 +142,12 @@ fun PesoYAltura() {
             keyboardActions = KeyboardActions(
                 onDone = {
                     focusManager.clearFocus()
+                    scope.launch {
+                        dataStore.saveWeight(inputValueW)
+                    }
                 }
             ),
-            textStyle = TextStyle(textAlign = TextAlign.End),
+            textStyle = TextStyle(textAlign = TextAlign.End, fontSize = 20.sp),
             visualTransformation = SuffixVisualTransformation(" kg"),
             colors = outlineTextFieldColors
 
@@ -146,19 +168,28 @@ fun PesoYAltura() {
             keyboardActions = KeyboardActions(
                 onDone = {
                     focusManager.clearFocus()
+                    scope.launch {
+                        dataStore.saveHeight(inputValueH)
+                    }
                 }
             ),
-            textStyle = TextStyle(textAlign = TextAlign.End),
+            textStyle = TextStyle(textAlign = TextAlign.End, fontSize = 20.sp),
             visualTransformation = SuffixVisualTransformation(" cm"),
             colors = outlineTextFieldColors
         )
     }
 }
 
+
+
 @Composable
-fun TextBox(s: String){
-    var inputValue by remember {
-        mutableStateOf("")
+fun TextBox(s: String, dataStore: userPreferences, scope: CoroutineScope){
+    val initialValue = dataStore.getName.collectAsState(initial = "").value!!
+
+    var inputValue by remember { mutableStateOf(initialValue) }
+
+    LaunchedEffect(initialValue) {
+        inputValue = initialValue
     }
     val focusManager = LocalFocusManager.current
     val outlineTextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
@@ -168,9 +199,10 @@ fun TextBox(s: String){
         unfocusedBorderColor = Color.Gray,
         disabledBorderColor = Color.Gray,
 
-    )
+        )
 
     OutlinedTextField(
+        textStyle = TextStyle(fontSize = 20.sp),
         value = inputValue,
         onValueChange = {newValue ->
             inputValue = newValue},
@@ -180,12 +212,16 @@ fun TextBox(s: String){
             .fillMaxWidth()
             .padding(start = 20.dp, top = 16.dp, end = 20.dp)
             .background(Color.White),
+
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Done // Set the keyboard button to "Done"
         ),
         keyboardActions = KeyboardActions(
             onDone = {
                 focusManager.clearFocus()
+                scope.launch {
+                    dataStore.saveName(inputValue)
+                }
             }
         ),
         visualTransformation = SuffixVisualTransformation("  "),
@@ -209,22 +245,34 @@ fun MyImage() {
     )
 }
 
+@SuppressLint("UnrememberedMutableState", "CoroutineCreationDuringComposition")
 @Composable
 fun CheckBoxes() {
-    val items = listOf("Calories", "Sodium", "Sugar", "Fats", "Protein")
+//    val items = listOf("Calories", "Sodium", "Sugar", "Fats", "Protein")
 
-    var checkedItems = remember { mutableStateListOf<Boolean>() }
+    var checkedItems = mutableStateListOf<Boolean>()
 
-    // Initialize the list of selected items with false values
-    if (checkedItems.isEmpty()) {
-        repeat(items.size) {
-            if (items[it] == "Calories") {
-                checkedItems.add(true)
-            } else {
-                checkedItems.add(false)
-            }
-        }
-    }
+    // context
+    val context = LocalContext.current
+
+    //scope
+    val scope = rememberCoroutineScope()
+
+    // datastore
+    val dataStore = userPreferences(context)
+
+    // get states
+
+    val states = dataStore.getStates.map { item -> item.collectAsState(initial = "").value!!}
+
+    states.forEach{item -> checkedItems.add(item.toString().toBoolean())}
+
+    //Get Items
+
+    val items = dataStore.getItems()
+
+    // El primero es Calories y lo seteo en true
+    checkedItems[0] = true
 
     Column(modifier = Modifier.padding(10.dp)) {
         items.take(items.size).forEachIndexed { index, item ->
@@ -240,6 +288,9 @@ fun CheckBoxes() {
                     onCheckedChange = { isChecked ->
                         if(items[index] != "Calories"){
                             checkedItems[index] = isChecked
+                            scope.launch {//se necesita para guardar cosas, es horrible
+                                dataStore.saveStates(checkedItems)
+                            }
                         }
 
                     },
@@ -255,36 +306,61 @@ fun CheckBoxes() {
                 )
                 Spacer(modifier = Modifier.weight(1f))
 
-                goal(item,  checkedItems[index])
+//                Toast.makeText(context, goalsValues[index], Toast.LENGTH_SHORT).show()
+                goal(item,  checkedItems[index], index, context, dataStore, scope)
+
             }
 
         }
     }
 }
 
+suspend fun checkUpdateGoals(
+    updatedList: MutableList<String>,
+    goalsValues: MutableList<String>,
+    dataStore: userPreferences,
+    context: Context
+) {
 
-
-
+    if (!updatedList.equals(goalsValues)) {
+        Toast.makeText(context, updatedList.joinToString(" ,d "), Toast.LENGTH_SHORT).show()
+        dataStore.saveGoals(updatedList as SnapshotStateList<String>)
+    }
+}
 
 
 
 
 @Composable
-fun goal(item: String, isChecked: Boolean) {
-    var inputValueG by remember { mutableStateOf("") }
+fun goal(
+    item: String,
+    isChecked: Boolean,
+    index: Int,
+    context: Context,
+    dataStore: userPreferences,
+    scope: CoroutineScope
+){
+
+    val initialValue = dataStore.getGoal(index).collectAsState(initial = "").value!!
+
+    var inputValueG by remember { mutableStateOf(initialValue) }
+
+    LaunchedEffect(initialValue) {
+        inputValueG = initialValue
+    }
+
     val outlineTextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
         focusedBorderColor = Color(0xFF008080), // change the border color when focused
         textColor = Color.Black, // change the text color
         focusedLabelColor = Color(0xFF008080),
         unfocusedBorderColor = Color.Gray,
-        disabledBorderColor = Color.Gray,
-//        backgroundColor = Color(red = 209, green = 209, blue = 209)
+        disabledBorderColor = Color.Gray
     )
     val focusManager = LocalFocusManager.current
     OutlinedTextField(
         value = inputValueG,
         onValueChange = { newValue -> inputValueG = newValue },
-        label = { Text( "Set goal", fontSize = 15.sp, textAlign = TextAlign.Center) },
+        label = { Text("Set goal", fontSize = 15.sp, textAlign = TextAlign.Center) },
         placeholder = { Text("") },
         modifier = Modifier
             .padding(end = 10.dp)
@@ -297,9 +373,10 @@ fun goal(item: String, isChecked: Boolean) {
         keyboardActions = KeyboardActions(
             onDone = {
                 focusManager.clearFocus()
+                updateGoal(inputValueG, index,dataStore, scope)
             }
         ),
-        textStyle = TextStyle(textAlign = TextAlign.End),
+        textStyle = TextStyle(textAlign = TextAlign.End, fontSize = 15.sp),
         enabled = isChecked,
         readOnly = !isChecked,
         visualTransformation = if (item != "Calories") {
@@ -309,9 +386,14 @@ fun goal(item: String, isChecked: Boolean) {
         },
         colors = outlineTextFieldColors,
         shape = RoundedCornerShape(percent = 10)
-
-
     )
+
+}
+@SuppressLint("CoroutineCreationDuringComposition")
+fun updateGoal(value: String, index: Int, dataStore: userPreferences, scope: CoroutineScope) {
+    scope.launch {
+        dataStore.saveGoal(value, index)
+    }
 }
 
 
@@ -330,5 +412,4 @@ class SuffixOffsetMapping(private val originalText: String) : OffsetMapping {
         return if (offset > originalText.length) originalText.length else offset
     }
 }
-
 

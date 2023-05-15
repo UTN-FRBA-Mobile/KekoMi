@@ -87,10 +87,10 @@ class userPreferences(private val context: Context) {
             pref[stringPreferencesKey(key)] ?: ""
         }
         suspend fun savePreferences(key: Preferences.Key<String>,  value: String) {
-        context.dataStore.edit { preferences ->
-            preferences[key] = value
+            context.dataStore.edit { preferences ->
+                preferences[key] = value
+            }
         }
-    }
     }
 
     suspend fun createEmptyGoals (): List<String> {
