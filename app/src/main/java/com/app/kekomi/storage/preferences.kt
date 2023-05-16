@@ -70,12 +70,11 @@ class userPreferences(private val context: Context) {
         }
     }
 
-
-    fun getGoalKeys(): List<String> {
-        return goalKeys.map { key ->
-            key.toString().substringAfter("user_").substringBefore("_goal").capitalize()
+    fun getGoalFromKey(key: String)= context.dataStore.data
+        .map { preferences ->
+            preferences[stringPreferencesKey("user_" + key.lowercase() + "_goal")] ?: ""
         }
-    }
+
 
     fun getItems(): List<String> {
         return statesKeys.map { key ->
@@ -86,12 +85,7 @@ class userPreferences(private val context: Context) {
         return dataStore.data.map{ pref ->
             pref[stringPreferencesKey(key)] ?: ""
         }
-        suspend fun savePreferences(key: Preferences.Key<String>,  value: String) {
-            context.dataStore.edit { preferences ->
-                preferences[key] = value
-            }
-        }
-    }
+     }
 
     suspend fun createEmptyGoals (): List<String> {
         val size = goalKeys.size

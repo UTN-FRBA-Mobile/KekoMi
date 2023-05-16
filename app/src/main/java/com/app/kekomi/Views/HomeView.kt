@@ -30,9 +30,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -49,8 +47,10 @@ import com.app.kekomi.Extras.showDate
 import com.app.kekomi.entities.Food
 import com.app.kekomi.entities.Meal
 import com.app.kekomi.storage.FoodRepository
+import com.app.kekomi.storage.userPreferences
 import java.time.ZoneId
 import java.util.*
+import kotlin.math.roundToInt
 
 @Composable
 
@@ -104,9 +104,8 @@ fun HomeView(navController: NavHostController) {
                             .padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        ProgressBarWithText(0.5f, "Calories")
-                        ProgressBarWithText(0.5f, "Thing1")
-                        ProgressBarWithText(0.5f, "Thing2")
+                        progressBars()
+
                     }
                 }
                 Box(
@@ -156,17 +155,68 @@ fun HomeView(navController: NavHostController) {
     }
 }
 
+@Composable
+fun getGoals(dataStore: userPreferences): List<String> {
+    val metrics = getCheckedItems(dataStore = dataStore)
+
+    return metrics.map { metric ->
+        dataStore.getGoalFromKey(metric).collectAsState(initial = "").value!!
+    }
+}
 
 @Composable
-fun ProgressBarWithText(percentage: Float, label:String) {
+fun getCheckedItems(dataStore: userPreferences): List<String> {
+    val items = dataStore.getItems()
+    var states = dataStore.getStates.map { item -> item.collectAsState(initial = "").value!!}
+    states = states.map{ item -> item.toString().toBoolean() }
+
+
+    val checkedItems = items.take(items.size).filterIndexed() { index, _ -> states[index] }
+    return checkedItems
+
+}
+@Composable
+fun progressBars() {
+    val context = LocalContext.current
+    // scope
+    val scope = rememberCoroutineScope()
+    // datastore
+    val dataStore = userPreferences(context)
+
+    val metrics = getCheckedItems(dataStore)
+    val goals = getGoals(dataStore = dataStore)
+
+    for (metric in metrics) {
+        val index = metrics.indexOf(metric)
+        val goal = goals[index]
+        Log.d("goal", goal)
+        val value = 20
+        var percentage by remember { mutableStateOf(0f) }
+
+        LaunchedEffect(goal) {
+            if (goal.isNotEmpty()) {
+                percentage = (value * 100 / goal.toInt()).toFloat()
+                Log.d("p", percentage.toString())
+            }
+        }
+        ProgressBarWithText(percentage, metric)
+    }
+}
+
+@Composable
+fun ProgressBarWithText(percentage: Float, label: String) {
     var progress by remember { mutableStateOf(percentage) }
 
-    Text("${label}: ${progress * 100}%", fontWeight = FontWeight.Bold)
+    LaunchedEffect(percentage) {
+        progress = percentage
+    }
+
+    Text("${label}: ${progress }%", fontWeight = FontWeight.Bold)
     Spacer(modifier = Modifier.height(4.dp))
     LinearProgressIndicator(
-                progress = progress,
-                modifier = Modifier.width(200.dp),
-                color = Color(android.graphics.Color.parseColor("#008080"))
+        progress = progress/100,
+        modifier = Modifier.width(200.dp),
+        color = Color(android.graphics.Color.parseColor("#008080"))
     )
     Spacer(modifier = Modifier.height(10.dp))
 }
