@@ -20,12 +20,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.app.kekomi.Extras.DateSelected
+import com.app.kekomi.R
 import com.app.kekomi.entities.Food
 import com.app.kekomi.entities.Meal
 import com.app.kekomi.storage.FoodRepository
@@ -100,45 +102,89 @@ fun SearchBar(
     val focusManager = LocalFocusManager.current
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(10.dp)
-            .border(width = 2.dp, color = Color.Gray, shape = RoundedCornerShape(percent = 15)),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start,
+        modifier = Modifier.padding(start = 10.dp)
     ) {
-        Spacer(Modifier.width(2.dp))
-        Icon(imageVector = Icons.Filled.Search, contentDescription = "lupa",
-            modifier= Modifier.padding(5.dp))
-        BasicTextField(
-            value = text,
-            onValueChange = { newText ->
-                text = newText
-                onSearch(newText)
-            },
-            textStyle = TextStyle(color = Color.Black),
-            modifier = Modifier
-                .weight(1f)
-                .padding(end = 8.dp),
-            singleLine = true,
-            maxLines = 1,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            keyboardActions = KeyboardActions(onSearch = {
-                focusManager.clearFocus()
-                onSearch(text)
-            }),
-        )
-        IconButton(onClick = {
-            text = ""
-            onClear()
-        }) {
-            Icon(
-                imageVector = Icons.Default.Clear,
-                contentDescription = "Clear",
-                tint = Color.Gray
-            )
+            Row(
+                modifier = modifier
+                    .width(300.dp)
+                    .padding(10.dp)
+                    .border(
+                        width = 2.dp,
+                        color = Color.Gray,
+                        shape = RoundedCornerShape(percent = 10)
+                    ),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+
+                Spacer(Modifier.width(2.dp))
+                Icon(
+                    imageVector = Icons.Filled.Search, contentDescription = "lupa",
+                    modifier = Modifier.padding(5.dp)
+                )
+                BasicTextField(
+                    value = text,
+                    onValueChange = { newText ->
+                        text = newText
+                        onSearch(newText)
+                    },
+                    textStyle = TextStyle(color = Color.Black),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp),
+                    singleLine = true,
+                    maxLines = 1,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                    keyboardActions = KeyboardActions(onSearch = {
+                        focusManager.clearFocus()
+                        onSearch(text)
+                    }),
+                )
+                IconButton(onClick = {
+                    text = ""
+                    onClear()
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = "Clear",
+                        tint = Color.Gray
+                    )
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .width(50.dp)
+                    .border(
+                        width = 2.dp,
+                        color = Color.Gray,
+                        shape = RoundedCornerShape(percent = 10)
+                    )
+                    .padding(end = 1.dp),
+            ) {
+
+
+                IconButton(onClick = {
+                    text = ""
+                    onClear()
+                }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.codigo_de_barras),
+                        contentDescription = "Clear",
+                        tint = Color.Gray,
+                        modifier = Modifier
+                            .padding(start = 5.dp, end = 5.dp)
+                            .size(50.dp)
+                    )
+
+                }
+            }
         }
-    }
 }
+
+
+
 
 @Preview
 @Composable
