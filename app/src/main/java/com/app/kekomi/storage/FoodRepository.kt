@@ -1,6 +1,7 @@
 package com.app.kekomi.storage
 import android.content.Context
 import com.app.kekomi.entities.Food
+import com.app.kekomi.entities.Stats
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -31,5 +32,10 @@ class FoodRepository(context: Context) {
     // Delete food
     fun deleteFood(food: Food) {
         db.deleteFood(food)
+    }
+
+    //
+    fun getStatsFrom(date: Date): Stats{
+        return db.getStatsFrom(date)
     }
 }

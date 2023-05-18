@@ -46,6 +46,7 @@ import com.app.kekomi.Extras.incrementDate
 import com.app.kekomi.Extras.showDate
 import com.app.kekomi.entities.Food
 import com.app.kekomi.entities.Meal
+import com.app.kekomi.entities.Stats
 import com.app.kekomi.storage.FoodRepository
 import com.app.kekomi.storage.userPreferences
 import java.time.ZoneId
@@ -136,9 +137,8 @@ fun HomeView(navController: NavHostController) {
                     LaunchedEffect(DateSelected.pickedDate){
                         food.clear()
                         food.addAll(FoodRepository(context).getAllFood(
-                            Date.from(DateSelected.pickedDate.atStartOfDay(ZoneId.systemDefault())
+                            Date.from(DateSelected.pickedDate.atStartOfDay(ZoneId.of("America/Argentina/Buenos_Aires"))
                                 .toInstant())))
-                        Log.d("comidita",food.filter { food -> food.meal == Meal.BREAKFAST }.toString())
                     }
                     FoodGroup("Breakfast", food.filter { food -> food.meal == Meal.BREAKFAST }.toMutableStateList(), navController)
                     Spacer(Modifier.height(9.dp))

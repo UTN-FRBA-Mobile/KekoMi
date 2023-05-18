@@ -39,14 +39,15 @@ import com.app.kekomi.BarcodeAnalyser.BarCodeAnalyser
 import com.app.kekomi.storage.FoodRepository
 
 
-@ExperimentalPermissionsApi
+//@ExperimentalPermissionsApi
 @Composable
 fun CodeBarScannerView(navController: NavHostController) {
     //Ask for permission if not have
-    val cameraPermissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
-    LaunchedEffect(Unit) {
-        cameraPermissionState.launchPermissionRequest()
-    }
+    // TODO ver de hacerlo de otra manera
+//    val cameraPermissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
+//    LaunchedEffect(Unit) {
+//        cameraPermissionState.launchPermissionRequest()
+//    }
 
     val barcodeValue = remember { mutableStateOf("") }
         Surface(color = MaterialTheme.colors.background) {
