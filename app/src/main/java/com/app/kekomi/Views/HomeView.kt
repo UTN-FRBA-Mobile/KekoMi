@@ -4,60 +4,39 @@ package com.app.kekomi.Views
 //import androidx.compose.foundation.layout.ColumnScopeInstance.weight
 //import androidx.compose.foundation.layout.RowScopeInstance.weight
 import android.util.Log
-import androidx.compose.ui.Modifier
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.LinearProgressIndicator
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.app.kekomi.Extras.DatePicker
-import com.app.kekomi.Extras.DateSelected
-import com.app.kekomi.Extras.DonutChart
-import com.app.kekomi.Extras.decrementDay
-import com.app.kekomi.Extras.incrementDate
-import com.app.kekomi.Extras.showDate
+import com.app.kekomi.Extras.*
 import com.app.kekomi.entities.Food
 import com.app.kekomi.entities.Meal
-import com.app.kekomi.entities.Stats
 import com.app.kekomi.storage.FoodRepository
 import com.app.kekomi.storage.userPreferences
-import java.time.ZoneId
+import java.time.temporal.WeekFields
 import java.util.*
-import kotlin.math.roundToInt
 
 @Composable
 
 fun HomeView(navController: NavHostController) {
 
     val context = LocalContext.current
+    val repository = FoodRepository(context)
+    var food = remember { mutableStateListOf<Food>() }
 
     Column {
         TopAppBar(
@@ -120,6 +99,12 @@ fun HomeView(navController: NavHostController) {
                     Button(
                         onClick = {
                             navController.navigate("AddFoodView")
+//                            repository.insertFood(Food(foodName = "hamburguesa", calories = 23, quantity = 2,
+//                                protein = 32, sugar = 12, fats = 13, sodium = 42, day = DateSelected.pickedDate.dayOfMonth,
+//                                week_number = DateSelected.pickedDate.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()),
+//                                month = DateSelected.pickedDate.monthValue,
+//                                year = DateSelected.pickedDate.year,
+//                                meal = Meal.BREAKFAST))
                         },
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = Color(android.graphics.Color.parseColor("#008080"))
@@ -133,12 +118,11 @@ fun HomeView(navController: NavHostController) {
                     }
                 }
                 Column() {
-                    var food = remember { mutableStateListOf<Food>() }
                     LaunchedEffect(DateSelected.pickedDate){
                         food.clear()
-                        food.addAll(FoodRepository(context).getAllFood(
-                            Date.from(DateSelected.pickedDate.atStartOfDay(ZoneId.of("America/Argentina/Buenos_Aires"))
-                                .toInstant())))
+                        food.addAll(repository.getAllFood(DateSelected.pickedDate))
+                        val weekstats = repository.getWeekStats()
+                        Log.d("stats", weekstats.toString())
                     }
                     FoodGroup("Breakfast", food.filter { food -> food.meal == Meal.BREAKFAST }.toMutableStateList(), navController)
                     Spacer(Modifier.height(9.dp))

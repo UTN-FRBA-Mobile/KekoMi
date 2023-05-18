@@ -8,7 +8,6 @@ import androidx.room.TypeConverters
 import com.app.kekomi.entities.Food
 
 @Database(entities = [Food::class], version = 1, exportSchema = false)
-@TypeConverters(DateConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun foodDao() : FoodDao

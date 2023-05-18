@@ -1,7 +1,6 @@
 package com.app.kekomi.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.*
 
 
 @Entity(tableName = "food")
@@ -14,7 +13,10 @@ data class Food(
     var sugar: Int,
     var fats: Int,
     var protein: Int,
-    var date: Date,
     var quantity: Int,
-    var meal: Meal
+    var meal: Meal,
+    var day: Int,
+    var week_number: Int,
+    var month: Int,
+    var year: Int
     )
