@@ -190,13 +190,20 @@ fun progressBars() {
         val index = metrics.indexOf(metric)
         val goal = goals[index]
         Log.d("goal", goal)
-        val value = 20
+        val value = 200
         var percentage by remember { mutableStateOf(0f) }
 
         LaunchedEffect(goal) {
             if (goal.isNotEmpty()) {
-                percentage = (value * 100 / goal.toInt()).toFloat()
-                Log.d("p", percentage.toString())
+                val goalF = goal.toFloat()
+                if(value < goalF){
+                    val percentageDec = (value * 100 / goalF).toFloat()
+                    percentage = (Math.round(percentageDec * 10.0) / 10.0).toFloat()
+                    Log.d("p", percentage.toString())
+                }
+                else{
+                    percentage = 100F
+                }
             }
         }
         ProgressBarWithText(percentage, metric)

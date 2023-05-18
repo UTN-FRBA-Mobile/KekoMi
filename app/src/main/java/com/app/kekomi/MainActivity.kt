@@ -43,10 +43,7 @@ private fun App() {
     ) {
         NavigationGraph(navController = navController)
     }
-    val context = LocalContext.current
 
-    // datastore Email
-    val dataStore = userPreferences(context)
 }
 
 @Preview(showBackground = true)

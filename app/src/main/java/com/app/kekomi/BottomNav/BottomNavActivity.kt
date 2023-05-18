@@ -24,5 +24,8 @@ fun NavigationGraph(navController: NavHostController) {
         composable("FoodDetailsView") {
             FoodDetailsView(navController)
         }
+        composable("CodeBarScannerView") {
+            CodeBarScannerView(navController)
+        }
     }
 }
