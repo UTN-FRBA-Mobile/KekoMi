@@ -167,6 +167,8 @@ fun progressBars() {
     // datastore
     val dataStore = userPreferences(context)
 
+    val repository = FoodRepository(context)
+
     val metrics = getCheckedItems(dataStore)
     val goals = getGoals(dataStore = dataStore)
 
@@ -174,7 +176,26 @@ fun progressBars() {
         val index = metrics.indexOf(metric)
         val goal = goals[index]
         Log.d("goal", goal)
-        val value = 200
+
+        var value: Int = 0
+        val stats = repository.getStatsFrom(DateSelected.pickedDate)
+
+        when(metric){
+            "Calories" -> {
+                value = stats.calories
+            }
+            "Proteins" -> {
+                value = stats.protein
+            }
+            "Fats" -> {
+                value = stats.fats
+            }
+            "Sodium" -> {
+                value = stats.sodium
+            }
+
+        }
+
         var percentage by remember { mutableStateOf(0f) }
 
         LaunchedEffect(goal) {
