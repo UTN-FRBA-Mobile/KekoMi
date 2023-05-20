@@ -1,6 +1,7 @@
 package com.app.kekomi.Extras
 
 import android.graphics.Paint
+import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
@@ -51,16 +52,27 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.ColorUtils
+import com.app.kekomi.storage.FoodRepository
 import kotlinx.coroutines.delay
+import androidx.compose.ui.platform.LocalContext
+import com.app.kekomi.Views.ProgressBarWithText
+import com.app.kekomi.Views.getGoals
+import com.app.kekomi.storage.userPreferences
+
 import kotlin.math.round
 
 
 //TODO LOGICA DE ESTO CUANDO VEAMOS LA DB
 @Composable
 fun BarChartByTimePeriod( selectedTimePeriod: String){
+    val context = LocalContext.current
+    val repository = FoodRepository(context)
+
     when (selectedTimePeriod) {
         "Week" -> {
             // agarro data los ultimos 7 dias, una barra por dia
+            var weekValues = repository.getWeekStats()
+
             barChartCall(dataPair = mapOf(
                 Pair("Mon", 116f),
                 Pair("Tue", 33.25f),
@@ -115,26 +127,27 @@ fun BarChartByTimePeriod( selectedTimePeriod: String){
 
 @Composable
 fun barChartCall(dataPair:  Map<Any, Float>){
-    var showChart1 by remember {
-        mutableStateOf(false)
-    }
-    var showChart2 by remember {
-        mutableStateOf(false)
-    }
-    Chart(
-        data = dataPair,
-        label="Calories",//TODO ACA VA A HABER QUE HACER UN FOR EACH DE LAS COSAS QUE TENGA EN PREFERENCES
-        isExpanded = showChart1
-    ) {
-        showChart1 = !showChart1
-    }
 
-    Chart(
-        data = dataPair,
-        label="Fat",//TODO ACA VA A HABER QUE HACER UN FOR EACH DE LAS COSAS QUE TENGA EN PREFERENCES, UN FOR EACH A UNA LISTA NOSE
-        isExpanded = showChart2
-    ) {
-        showChart2 = !showChart2
+    val context = LocalContext.current
+    // scope
+    val scope = rememberCoroutineScope()
+    // datastore
+    val dataStore = userPreferences(context)
+
+    val metrics = com.app.kekomi.Views.getCheckedItems(dataStore)
+
+    for (metric in metrics) {
+        var showChart1 by remember {
+            mutableStateOf(false)
+        }
+
+        Chart(
+            data = dataPair,
+            label="${metric}",
+            isExpanded = showChart1
+        ) {
+            showChart1 = !showChart1
+        }
     }
 }
 

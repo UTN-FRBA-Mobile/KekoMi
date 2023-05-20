@@ -39,14 +39,16 @@ fun getCheckedItems(dataStore: userPreferences): List<String> {
 
 
     val checkedItems = items.take(items.size).filterIndexed() { index, _ -> states[index] }
-    return checkedItems
+
+    val updatedItems = checkedItems.filterNot { item -> item == "Calories" }
+    return updatedItems
 
 }
 
 @Preview
 @Composable
 fun DonutChart(
-    values: List<Float> = listOf(65f, 40f, 25f, 20f),
+    values: List<Float> = listOf(65f, 40f, 25f, 20f), //LISTA
     colors: List<Color> = listOf(
         Color(android.graphics.Color.parseColor("#008080")),
         Color(android.graphics.Color.parseColor("#195e5e")),
@@ -56,7 +58,6 @@ fun DonutChart(
 
     legend: List<String> = getMetrics()
 ){
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth(),

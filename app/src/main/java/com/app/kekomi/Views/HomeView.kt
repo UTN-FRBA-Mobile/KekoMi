@@ -99,12 +99,12 @@ fun HomeView(navController: NavHostController) {
                     Button(
                         onClick = {
                             navController.navigate("AddFoodView")
-//                            repository.insertFood(Food(foodName = "hamburguesa", calories = 23, quantity = 2,
-//                                protein = 32, sugar = 12, fats = 13, sodium = 42, day = DateSelected.pickedDate.dayOfMonth,
-//                                week_number = DateSelected.pickedDate.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()),
-//                                month = DateSelected.pickedDate.monthValue,
-//                                year = DateSelected.pickedDate.year,
-//                                meal = Meal.BREAKFAST))
+                           repository.insertFood(Food(foodName = "hamburguesa", calories = 23, quantity = 2,
+                                protein = 32, sugar = 12, fats = 13, sodium = 42, day = DateSelected.pickedDate.dayOfMonth,
+                                week_number = DateSelected.pickedDate.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()),
+                                month = DateSelected.pickedDate.monthValue,
+                                year = DateSelected.pickedDate.year,
+                                meal = Meal.BREAKFAST))
                         },
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = Color(android.graphics.Color.parseColor("#008080"))
@@ -214,7 +214,6 @@ fun ProgressBarWithText(percentage: Float, label: String) {
 
 @Composable
 fun FoodGroup(foodGroup:String, food: MutableList<Food>, navController: NavHostController){
-//TODO esta funcion va a hacer que por cada item en la lista de desayuno por ej, se agregue un boton. For each
     Log.d("comiditaAdentrito",food.toString())
     Text(text = foodGroup,fontSize = 20.sp, color = Color.Black)
     Spacer(Modifier.height(6.dp))
@@ -239,7 +238,7 @@ fun FoodButton(food: Food, navController: NavHostController) {
 
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
                 Column (Modifier.align(Alignment.CenterVertically)){
-                    //TODO HABRIA QUE VER SI SE PUEDE PONER ALGUNA FOTO PERO NO CREO
+
                     Text(text = food.foodName, fontWeight = FontWeight.Bold)
                 }
                 Spacer(modifier = Modifier.width(120.dp))
