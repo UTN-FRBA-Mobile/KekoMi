@@ -182,6 +182,7 @@ fun progressBars() {
 
         when(metric){
             "Calories" -> {
+                //POR ALGUNA RAZON, SI QUIERO USAR STATS.ALGO AL PRINCIPIO SE ROMPE TODO
                 value = stats.calories
             }
             "Proteins" -> {
@@ -193,7 +194,9 @@ fun progressBars() {
             "Sodium" -> {
                 value = stats.sodium
             }
-
+            "Sugar" ->{
+                value = stats.sugar
+            }
         }
 
         var percentage by remember { mutableStateOf(0f) }
@@ -211,7 +214,11 @@ fun progressBars() {
                 }
             }
         }
-        ProgressBarWithText(percentage, metric)
+
+        //SI NO HAY GOAL, NO SE DEBERIA MOSTRAR LA BARRA. ESTO ESTA BIEN????
+        if (goal.isNotEmpty()) {
+            ProgressBarWithText(percentage, metric)
+        }
     }
 }
 

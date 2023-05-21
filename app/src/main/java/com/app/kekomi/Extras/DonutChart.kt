@@ -17,7 +17,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.app.kekomi.storage.FoodRepository
 import com.app.kekomi.storage.userPreferences
+import org.apache.commons.lang3.tuple.MutablePair
 import java.lang.Math.ceil
 
 @Composable
@@ -45,10 +47,49 @@ fun getCheckedItems(dataStore: userPreferences): List<String> {
 
 }
 
+@Composable
+fun getValues(): List<Float> {
+    val context = LocalContext.current
+    val repository = FoodRepository(context)
+
+    val metrics: List<String> = getMetrics()
+
+    var floatValues: List<Float> = listOf()
+
+    for (metric in metrics) {
+
+        var value: Int = 0
+        val stats = repository.getStatsFrom(DateSelected.pickedDate)
+
+        when(metric){
+            "Calories" -> {
+                value = stats.calories
+            }
+            "Proteins" -> {
+                value = stats.protein
+            }
+            "Fats" -> {
+                value = stats.fats
+            }
+            "Sodium" -> {
+                value = stats.sodium
+            }
+            "Sugar" -> {
+                value = stats.sugar
+            }
+        }
+
+        floatValues += value.toFloat()
+
+    }
+    return floatValues
+}
+
+
 @Preview
 @Composable
 fun DonutChart(
-    values: List<Float> = listOf(65f, 40f, 25f, 20f), //LISTA
+    values: List<Float> = getValues(), //listOf(65f, 40f, 25f, 20f) LISTA
     colors: List<Color> = listOf(
         Color(android.graphics.Color.parseColor("#008080")),
         Color(android.graphics.Color.parseColor("#195e5e")),
@@ -83,7 +124,11 @@ fun DonutChart(
                             // If there are no more legends, break out of the loop
                             break
                         }
-                            DisplayLegend(color = colors[legendIndex], legend = legend[legendIndex])
+                        val sumOfValues = values.sum()
+                        val proportions = values.map {
+                            it * 100 / sumOfValues
+                        }
+                            DisplayLegend(color = colors[legendIndex], legend = legend[legendIndex], value = proportions[legendIndex])
                     }
                 }
         }
@@ -125,7 +170,7 @@ fun CreateArcs(values: List<Float>, colors: List<Color>, size: Dp = 100.dp, thic
 }
 
 @Composable
-fun DisplayLegend(color: Color, legend: String) {
+fun DisplayLegend(color: Color, legend: String, value:Float) {
 
     Row(
         horizontalArrangement = Arrangement.Center,
@@ -140,7 +185,7 @@ fun DisplayLegend(color: Color, legend: String) {
         Spacer(modifier = Modifier.width(4.dp))
 
         Text(
-            text = legend,
+            text = "${legend} \n ${value.toInt()}%",
             color = Color.Black
         )
     }
