@@ -69,9 +69,11 @@ fun CalendarView() {
                 )
             }
         )
-
-        ButtonToggleGroupCall()
-
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState()).padding(bottom = 50.dp)
+        ) {
+            ButtonToggleGroupCall()
+        }
     }
 }
 

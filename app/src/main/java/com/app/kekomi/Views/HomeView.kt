@@ -13,6 +13,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,7 +47,7 @@ fun HomeView(navController: NavHostController) {
             },
             title = {
                 Row(
-                    modifier = Modifier.padding(start = 5.dp),
+                    //modifier = Modifier.padding(start = 5.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
@@ -58,7 +59,13 @@ fun HomeView(navController: NavHostController) {
                         Icon(imageVector = Icons.Filled.ArrowForward, contentDescription = "Cambia fecha para adelante", tint = Color.White)
                     }
                 }
+            },
+            actions = {
+                IconButton(onClick = { todayDate()}) {
+                    Icon(imageVector = Icons.Filled.Home, contentDescription = "Cambia fecha a la actual", tint = Color.White)
+                }
             }
+
         )
 
         Box(modifier = Modifier.fillMaxSize()) {
@@ -183,19 +190,19 @@ fun progressBars() {
         when(metric){
             "Calories" -> {
                 //POR ALGUNA RAZON, SI QUIERO USAR STATS.ALGO AL PRINCIPIO SE ROMPE TODO
-                value = stats.calories
+                value = 45//stats.calories
             }
             "Proteins" -> {
-                value = stats.protein
+                value = 56//stats.protein
             }
             "Fats" -> {
-                value = stats.fats
+                value = 34//stats.fats
             }
             "Sodium" -> {
-                value = stats.sodium
+                value = 34//stats.sodium
             }
             "Sugar" ->{
-                value = stats.sugar
+                value = 22//stats.sugar
             }
         }
 

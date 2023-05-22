@@ -63,19 +63,19 @@ fun getValues(): List<Float> {
 
         when(metric){
             "Calories" -> {
-                value = stats.calories
+                value = 22//stats.calories
             }
             "Proteins" -> {
-                value = stats.protein
+                value = 34//stats.protein
             }
             "Fats" -> {
-                value = stats.fats
+                value = 56//stats.fats
             }
             "Sodium" -> {
-                value = stats.sodium
+                value = 22//stats.sodium
             }
             "Sugar" -> {
-                value = stats.sugar
+                value = 56//stats.sugar
             }
         }
 

@@ -33,6 +33,10 @@ fun incrementDate() {
 fun decrementDay() {
     DateSelected.pickedDate = DateSelected.pickedDate.minusDays(1)
 }
+
+fun todayDate(){
+    DateSelected.pickedDate = LocalDate.now()
+}
 @Composable
 fun showDate(){
     Text(

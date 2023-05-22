@@ -57,6 +57,7 @@ import kotlinx.coroutines.delay
 import androidx.compose.ui.platform.LocalContext
 import com.app.kekomi.Views.ProgressBarWithText
 import com.app.kekomi.Views.getGoals
+import com.app.kekomi.entities.Stats
 import com.app.kekomi.storage.userPreferences
 
 import kotlin.math.round
@@ -71,42 +72,50 @@ fun BarChartByTimePeriod( selectedTimePeriod: String){
     when (selectedTimePeriod) {
         "Week" -> {
             // agarro data los ultimos 7 dias, una barra por dia
-            var weekValues = repository.getWeekStats()
+            var weekValues = repository.getWeekStats().reversed()
+
+
+            var weekCalories : List<Float> = listOf()
+
+            for (day in weekValues){
+                weekCalories += day.calories.toFloat()
+            }
 
             barChartCall(dataPair = mapOf(
-                Pair("Mon", 116f),
-                Pair("Tue", 33.25f),
-                Pair("Wed", 70f),
-                Pair("Thu", 79f),
-                Pair("Fri", 89f),
-                Pair("Sat", 99f),
-                Pair("Sun", 35f),
+                Pair("Mon", weekCalories[0]),
+                Pair("Tue", weekCalories[1]),
+                Pair("Wed", weekCalories[2]),
+                Pair("Thu", weekCalories[3]),
+                Pair("Fri", weekCalories[4]),
+                Pair("Sat", weekCalories[5]),
+                Pair("Sun", weekCalories[6]),
 
             ))
         }
         "Month" -> {
             // agarro los ultimos 28 dias (a fines practicos), una barra por semana
+            /*
             barChartCall(dataPair = mapOf(
                 Pair("Week 1", 116f),
                 Pair("Week 2", 33.25f),
                 Pair("Week 3", 70f),
                 Pair("Week 4", 79f),
-            ))
+            ))*/
         }
         "6Months" -> {
             // agarro los ultimos 6 meses, una barra por mes
-            barChartCall(dataPair = mapOf(
+            /*barChartCall(dataPair = mapOf(
                 Pair("Jan", 116f),
                 Pair("Feb", 33.25f),
                 Pair("Mar", 70f),
                 Pair("Apr", 79f),
                 Pair("May", 89f),
                 Pair("Jun", 99f),
-            ))
+            ))*/
         }
         "Year" -> {
             // agarro los ultimos 12 meses, una barra por mes
-            barChartCall(dataPair = mapOf(
+            /*barChartCall(dataPair = mapOf(
                 Pair("Jan", 116f),
                 Pair("Feb", 33.25f),
                 Pair("Mar", 70f),
@@ -118,7 +127,7 @@ fun BarChartByTimePeriod( selectedTimePeriod: String){
                 Pair("Sep", 154f),
                 Pair("Nov", 100f),
                 Pair("Dec", 15f)
-            ))
+            ))*/
         }
     }
 }
@@ -142,6 +151,7 @@ fun barChartCall(dataPair:  Map<Any, Float>){
         }
 
         Chart(
+            //TODO DE LOS STATS HAY QUE SACAR LA LISTA DE CALORIES, SODIUM, ETC
             data = dataPair,
             label="${metric}",
             isExpanded = showChart1
@@ -151,6 +161,34 @@ fun barChartCall(dataPair:  Map<Any, Float>){
     }
 }
 
+//TODO ESTA FUNCION
+@Composable
+fun GetValues(metric: String){
+    val context = LocalContext.current
+    val repository = FoodRepository(context)
+    val stats = repository.getStatsFrom(DateSelected.pickedDate)
+
+    var value: Int = 0
+
+        when(metric){
+            "Calories" -> {
+                value = 22//stats.calories
+            }
+            "Proteins" -> {
+                value = 34//stats.protein
+            }
+            "Fats" -> {
+                value = 56//stats.fats
+            }
+            "Sodium" -> {
+                value = 22//stats.sodium
+            }
+            "Sugar" -> {
+                value = 56//stats.sugar
+            }
+        }
+
+}
 
 @Composable
 fun Chart(
