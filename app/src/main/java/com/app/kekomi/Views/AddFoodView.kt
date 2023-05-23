@@ -1,5 +1,6 @@
 package com.app.kekomi.Views
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -11,10 +12,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,10 +26,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.app.kekomi.R
 import com.app.kekomi.apis.foodApi.ApiFoodService
+import com.app.kekomi.apis.foodApi.FoodResponse
 import com.app.kekomi.storage.FoodRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -48,6 +50,8 @@ fun AddFoodView(navController: NavHostController) {
         FoodRepository(context)
     }
 
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -62,11 +66,20 @@ fun AddFoodView(navController: NavHostController) {
         ) {
             TextButton(
                 onClick = {
+
                     navController.popBackStack()
                 },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
             ) {
                 Icon(Icons.Default.Close, contentDescription = "Localized description", tint = Color.Black)
+            }
+            TextButton(
+                onClick = {
+                    getFood("Banana")
+                },
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Localized description", tint = Color.Black)
             }
         }
 
@@ -166,15 +179,32 @@ fun SearchBar(
 private fun getRetrofit(): Retrofit {
     return Retrofit.Builder()
         .baseUrl("https://api.edamam.com/api/food-database/v2/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 }
 
-fun getFood(foodName:String){
-    CoroutineScope(Dispatchers.IO).launch {
-        val call = getRetrofit().create(ApiFoodService::class.java).getFoodByName("parser",api_id, api_key, foodName)
-    }
+fun getFood(foodName: String) {
+    val apiService = getRetrofit().create(ApiFoodService::class.java)
+    val call: Call<FoodResponse> = apiService.getFoodByName(api_id, api_key, foodName)
+
+    call.enqueue(object : Callback<FoodResponse> {
+        override fun onResponse(call: Call<FoodResponse>, response: Response<FoodResponse>) {
+            if (response.isSuccessful) {
+                val foodResponse: FoodResponse? = response.body()
+                // Process the foodResponse here
+                Log.d("Main", "Success! $foodResponse")
+            } else {
+                Log.e("Main", "Request failed with code: ${response.code()}")
+            }
+        }
+
+        override fun onFailure(call: Call<FoodResponse>, t: Throwable) {
+            Log.e("Main", "Request failed: ${t.message}")
+        }
+    })
 }
+
+
 
 
 

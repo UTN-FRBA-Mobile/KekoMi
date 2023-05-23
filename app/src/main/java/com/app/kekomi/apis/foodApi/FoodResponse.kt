@@ -1,11 +1,11 @@
 package com.app.kekomi.apis.foodApi
 
-data class FoodResponse(  val parsed: List<Food>)
+data class FoodResponse(  val parsed: List<ParsedFood>,
+val text:String)
 
-
-
-
-
+data class ParsedFood(
+    val food: Food
+)
 
 data class Food(
     val foodId: String,
