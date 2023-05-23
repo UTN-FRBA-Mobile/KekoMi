@@ -76,60 +76,29 @@ fun BarChartByTimePeriod( selectedTimePeriod: String){
 
             barChartCall(valuesList = weekValues)
 
-            /*
-            var weekCalories : List<Float> = listOf()
-
-            for (day in weekValues){
-                weekCalories += day.calories.toFloat()
-            }
-
-            barChartCall(dataPair = mapOf(
-                Pair("Mon", weekCalories[0]),
-                Pair("Tue", weekCalories[1]),
-                Pair("Wed", weekCalories[2]),
-                Pair("Thu", weekCalories[3]),
-                Pair("Fri", weekCalories[4]),
-                Pair("Sat", weekCalories[5]),
-                Pair("Sun", weekCalories[6]),
-
-            ))*/
         }
         "Month" -> {
             // agarro los ultimos 28 dias (a fines practicos), una barra por semana
-            /*
-            barChartCall(dataPair = mapOf(
-                Pair("Week 1", 116f),
-                Pair("Week 2", 33.25f),
-                Pair("Week 3", 70f),
-                Pair("Week 4", 79f),
-            ))*/
+
+            var monthValues = repository.getMonthStats().reversed()
+
+            barChartCall(valuesList = monthValues)
         }
         "6Months" -> {
             // agarro los ultimos 6 meses, una barra por mes
-            /*barChartCall(dataPair = mapOf(
-                Pair("Jan", 116f),
-                Pair("Feb", 33.25f),
-                Pair("Mar", 70f),
-                Pair("Apr", 79f),
-                Pair("May", 89f),
-                Pair("Jun", 99f),
-            ))*/
+
+            /*
+            var sixMonthsValues = repository.get6MonthStats().reversed()
+
+            barChartCall(valuesList = sixMonthsValues)*/
         }
         "Year" -> {
             // agarro los ultimos 12 meses, una barra por mes
-            /*barChartCall(dataPair = mapOf(
-                Pair("Jan", 116f),
-                Pair("Feb", 33.25f),
-                Pair("Mar", 70f),
-                Pair("Apr", 79f),
-                Pair("May", 89f),
-                Pair("Jun", 99f),
-                Pair("Jul", 35f),
-                Pair("Aug", 110f),
-                Pair("Sep", 154f),
-                Pair("Nov", 100f),
-                Pair("Dec", 15f)
-            ))*/
+
+            /*
+            var yearValues = repository.getYearStats().reversed()
+
+            barChartCall(valuesList = yearValues)*/
         }
     }
 }
@@ -151,9 +120,7 @@ fun barChartCall(valuesList: List<Stats>){
 
         val valuesByMetric: List<Float> = getValuesByMetric(metric = metric, statsList = valuesList)
 
-        val datesList: List<String> = getDatesForValues(valuesByMetric.count())
-
-        //val dataPair: Map<Any, Float> = getDataPair(values = valuesByMetric, dates = datesList)
+        val dataPair: Map<Any, Float> = getDataPair(valuesList = valuesByMetric)
 
         var showChart1 by remember {
             mutableStateOf(false)
@@ -161,14 +128,7 @@ fun barChartCall(valuesList: List<Stats>){
 
         Chart(
             //TODO DE LOS STATS HAY QUE SACAR LA LISTA DE CALORIES, SODIUM, ETC
-            data = mapOf(
-                Pair("Mon", valuesByMetric[0]),
-                Pair("Tue", valuesByMetric[1]),
-                Pair("Wed", valuesByMetric[2]),
-                Pair("Thu", valuesByMetric[3]),
-                Pair("Fri", valuesByMetric[4]),
-                Pair("Sat", valuesByMetric[5]),
-                Pair("Sun", valuesByMetric[6])),
+            data = dataPair,
             label="${metric}",
             isExpanded = showChart1
         ) {
@@ -178,25 +138,55 @@ fun barChartCall(valuesList: List<Stats>){
 }
 
 @Composable
-fun getDatesForValues(listCount: Int): List<String> {
+fun getDataPair(valuesList: List<Float>): Map<Any, Float> {
 
-    var datesList : List<String> = listOf()
+    val listCount = valuesList.count()
+    var dataPair : Map<Any, Float> = mapOf()
 
     when(listCount){
         7 ->{
-            datesList = listOf("Mon", "Tue","Wed", "Thu", "Fri", "Sat", "Sun")
+            dataPair = mapOf(
+                Pair("Mon", valuesList[0]),
+                Pair("Tue", valuesList[1]),
+                Pair("Wed", valuesList[2]),
+                Pair("Thu", valuesList[3]),
+                Pair("Fri", valuesList[4]),
+                Pair("Sat", valuesList[5]),
+                Pair("Sun", valuesList[6]))
         }
         4 ->{
-            datesList = listOf("Week 1", "Week 2","Week 3", "Week 4")
+            dataPair = mapOf(
+                Pair("Week 1", valuesList[0]),
+                Pair("Week 2", valuesList[1]),
+                Pair("Week 3", valuesList[2]),
+                Pair("Week 4", valuesList[3]))
         }
         6 ->{
-        datesList = listOf("Jan", "Feb","Apr", "May", "Jun", "Jul")
+            dataPair = mapOf(
+                Pair("Jan", valuesList[0]),
+                Pair("Feb", valuesList[1]),
+                Pair("Mar", valuesList[2]),
+                Pair("Apr", valuesList[3]),
+                Pair("May", valuesList[4]),
+                Pair("Jun", valuesList[5]))
         }
         12 ->{
-            datesList = listOf("Jan", "Feb","Apr", "May", "Jun", "Jul","Aug", "Sep","Oct", "Nov", "Dec")
+            dataPair = mapOf(
+                Pair("Jan", valuesList[0]),
+                Pair("Feb", valuesList[1]),
+                Pair("Mar", valuesList[2]),
+                Pair("Apr", valuesList[3]),
+                Pair("May", valuesList[4]),
+                Pair("Jun", valuesList[5]),
+                Pair("Jul", valuesList[6]),
+                Pair("Aug", valuesList[7]),
+                Pair("Sep", valuesList[8]),
+                Pair("Oct", valuesList[9]),
+                Pair("Nov", valuesList[10]),
+                Pair("Dec", valuesList[11]))
         }
     }
-    return datesList
+    return dataPair
 }
 
 @Composable
