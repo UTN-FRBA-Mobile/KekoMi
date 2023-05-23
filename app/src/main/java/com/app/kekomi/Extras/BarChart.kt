@@ -74,7 +74,9 @@ fun BarChartByTimePeriod( selectedTimePeriod: String){
             // agarro data los ultimos 7 dias, una barra por dia
             var weekValues = repository.getWeekStats().reversed()
 
+            barChartCall(valuesList = weekValues)
 
+            /*
             var weekCalories : List<Float> = listOf()
 
             for (day in weekValues){
@@ -90,7 +92,7 @@ fun BarChartByTimePeriod( selectedTimePeriod: String){
                 Pair("Sat", weekCalories[5]),
                 Pair("Sun", weekCalories[6]),
 
-            ))
+            ))*/
         }
         "Month" -> {
             // agarro los ultimos 28 dias (a fines practicos), una barra por semana
@@ -135,7 +137,7 @@ fun BarChartByTimePeriod( selectedTimePeriod: String){
 
 
 @Composable
-fun barChartCall(dataPair:  Map<Any, Float>){
+fun barChartCall(valuesList: List<Stats>){
 
     val context = LocalContext.current
     // scope
@@ -146,13 +148,27 @@ fun barChartCall(dataPair:  Map<Any, Float>){
     val metrics = com.app.kekomi.Views.getCheckedItems(dataStore)
 
     for (metric in metrics) {
+
+        val valuesByMetric: List<Float> = getValuesByMetric(metric = metric, statsList = valuesList)
+
+        val datesList: List<String> = getDatesForValues(valuesByMetric.count())
+
+        //val dataPair: Map<Any, Float> = getDataPair(values = valuesByMetric, dates = datesList)
+
         var showChart1 by remember {
             mutableStateOf(false)
         }
 
         Chart(
             //TODO DE LOS STATS HAY QUE SACAR LA LISTA DE CALORIES, SODIUM, ETC
-            data = dataPair,
+            data = mapOf(
+                Pair("Mon", valuesByMetric[0]),
+                Pair("Tue", valuesByMetric[1]),
+                Pair("Wed", valuesByMetric[2]),
+                Pair("Thu", valuesByMetric[3]),
+                Pair("Fri", valuesByMetric[4]),
+                Pair("Sat", valuesByMetric[5]),
+                Pair("Sun", valuesByMetric[6])),
             label="${metric}",
             isExpanded = showChart1
         ) {
@@ -161,33 +177,54 @@ fun barChartCall(dataPair:  Map<Any, Float>){
     }
 }
 
-//TODO ESTA FUNCION
 @Composable
-fun GetValues(metric: String){
-    val context = LocalContext.current
-    val repository = FoodRepository(context)
-    val stats = repository.getStatsFrom(DateSelected.pickedDate)
+fun getDatesForValues(listCount: Int): List<String> {
 
-    var value: Int = 0
+    var datesList : List<String> = listOf()
 
+    when(listCount){
+        7 ->{
+            datesList = listOf("Mon", "Tue","Wed", "Thu", "Fri", "Sat", "Sun")
+        }
+        4 ->{
+            datesList = listOf("Week 1", "Week 2","Week 3", "Week 4")
+        }
+        6 ->{
+        datesList = listOf("Jan", "Feb","Apr", "May", "Jun", "Jul")
+        }
+        12 ->{
+            datesList = listOf("Jan", "Feb","Apr", "May", "Jun", "Jul","Aug", "Sep","Oct", "Nov", "Dec")
+        }
+    }
+    return datesList
+}
+
+@Composable
+fun getValuesByMetric(metric: String,statsList: List<Stats>): List<Float> {
+
+    var valuesByMetric: List<Float> = listOf()
+
+    for(stat in statsList){
         when(metric){
             "Calories" -> {
-                value = 22//stats.calories
+                valuesByMetric += stat.calories.toFloat()
             }
             "Proteins" -> {
-                value = 34//stats.protein
+                valuesByMetric += stat.protein.toFloat()
             }
             "Fats" -> {
-                value = 56//stats.fats
+                valuesByMetric += stat.fats.toFloat()
             }
             "Sodium" -> {
-                value = 22//stats.sodium
+                valuesByMetric += stat.sodium.toFloat()
             }
             "Sugar" -> {
-                value = 56//stats.sugar
+                valuesByMetric += stat.sugar.toFloat()
             }
         }
+    }
 
+    return valuesByMetric
 }
 
 @Composable
