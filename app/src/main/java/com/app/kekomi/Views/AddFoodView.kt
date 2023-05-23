@@ -27,7 +27,18 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.app.kekomi.R
+import com.app.kekomi.apis.foodApi.ApiFoodService
 import com.app.kekomi.storage.FoodRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
+
+val api_id= "b0e8bca6"
+val api_key= "abef3893c7d61e39cd4f1f573733d8e8"
+
 
 @Composable
 fun AddFoodView(navController: NavHostController) {
@@ -148,6 +159,20 @@ fun SearchBar(
                 )
             }
         }
+    }
+}
+
+
+private fun getRetrofit(): Retrofit {
+    return Retrofit.Builder()
+        .baseUrl("https://api.edamam.com/api/food-database/v2/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+}
+
+fun getFood(foodName:String){
+    CoroutineScope(Dispatchers.IO).launch {
+        val call = getRetrofit().create(ApiFoodService::class.java).getFoodByName("parser",api_id, api_key, foodName)
     }
 }
 
