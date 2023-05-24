@@ -75,7 +75,7 @@ fun AddFoodView(navController: NavHostController) {
             }
             TextButton(
                 onClick = {
-                    getFood("Banana")
+                    autoComplete("Ban")
                 },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
             ) {
@@ -178,7 +178,7 @@ fun SearchBar(
 
 private fun getRetrofit(): Retrofit {
     return Retrofit.Builder()
-        .baseUrl("https://api.edamam.com/api/food-database/v2/")
+        .baseUrl("https://api.edamam.com/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 }
@@ -202,6 +202,29 @@ fun getFood(foodName: String) {
             Log.e("Main", "Request failed: ${t.message}")
         }
     })
+}
+
+fun autoComplete(text:String){
+    val apiService = getRetrofit().create(ApiFoodService::class.java)
+    val call: Call<List<String>> = apiService.autoComplete(api_id, api_key, text)
+
+    call.enqueue(object : Callback<List<String>> {
+        override fun onResponse(call: Call<List<String>>, response: Response<List<String>>) {
+            if (response.isSuccessful) {
+                val autoComplete: List<String>? = response.body()
+                // Process the foodResponse here
+                Log.d("Main", "Success! $autoComplete")
+            } else {
+                Log.e("Main", "Request failed with code: ${response.code()}")
+            }
+        }
+
+        override fun onFailure(call: Call<List<String>>, t: Throwable) {
+            Log.e("Main", "Request failed: ${t.message}")
+        }
+    })
+
+
 }
 
 
