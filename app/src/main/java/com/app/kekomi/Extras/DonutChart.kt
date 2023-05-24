@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.app.kekomi.storage.FoodRepository
 import com.app.kekomi.storage.userPreferences
-import org.apache.commons.lang3.tuple.MutablePair
 import java.lang.Math.ceil
 
 @Composable

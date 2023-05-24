@@ -6,6 +6,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.temporal.WeekFields
+import java.util.*
 
 
 class FoodRepository(context: Context) {
@@ -39,23 +41,57 @@ class FoodRepository(context: Context) {
         return db.getStatsFrom(date.dayOfMonth, date.monthValue, date.year)
     }
 
-    //Devuelve una lista ordenada del día más reciente al más viejo de la semana
+    //Devuelve una lista ordenada del día más viejo al más reciente de la semana
     fun getWeekStats(): List<Stats>{
-        return db.getWeekStats()
+        var date = LocalDate.now()
+        val result: MutableList<Stats> = mutableListOf()
+        for (i in 1 .. 7) {
+            result.add(getStatsFrom(date))
+            date = date.minusDays(1)
+        }
+        return result.reversed()
     }
 
-    //Devuelve una lista ordenada de la semana más reciente a la más vieja del mes
+    fun getWeekStatsFrom(weekNumber: Int, year: Int): Stats{
+        return db.getWeekStatsFrom(weekNumber, year)
+    }
+
+    fun getMonthStatsFrom(month: Int, year: Int): Stats{
+        return db.getMonthStatsFrom(month, year)
+    }
+
+    //Devuelve una lista ordenada de la semana más vieja a la más reciente del mes
     fun getMonthStats(): List<Stats>{
-        return db.getMonthStats()
+        var date = LocalDate.now()
+        var weekNumber: Int
+        val result: MutableList<Stats> = mutableListOf()
+        for (i in 1 .. 4) {
+            weekNumber = date.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear())
+            result.add(getWeekStatsFrom(weekNumber, date.year))
+            date = date.minusWeeks(1)
+        }
+        return result.reversed()
     }
 
-    //Devuelve una lista ordenada del mes más reciente al mas viejo de los 6 meses
+    //Devuelve una lista ordenada del mes más viejo al mas reciente de los 6 meses
     fun get6MonthStats(): List<Stats>{
-        return db.get6MonthStats()
+        var date = LocalDate.now()
+        val result: MutableList<Stats> = mutableListOf()
+        for (i in 1 .. 6) {
+            result.add(getMonthStatsFrom(date.monthValue, date.year))
+            date = date.minusMonths(1)
+        }
+        return result.reversed()
     }
 
-    //Devuelve una lista ordenada del mes más reciente al mas viejo del año
+    //Devuelve una lista ordenada del mes más viejo al mas reciente del año
     fun getYearStats(): List<Stats>{
-        return db.getYearStats()
+        var date = LocalDate.now()
+        val result: MutableList<Stats> = mutableListOf()
+        for (i in 1 .. 12) {
+            result.add(getMonthStatsFrom(date.monthValue, date.year))
+            date = date.minusMonths(1)
+        }
+        return result.reversed()
     }
 }

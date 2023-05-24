@@ -20,38 +20,27 @@ interface FoodDao {
             "group by day,month,year")
     fun getStatsFrom(day: Int, month: Int, year: Int): Stats
 
+    @Query("Select sum(calories*quantity) as calories, " +
+            "sum(sodium*quantity) as sodium, " +
+            "sum(sugar*quantity) as sugar, " +
+            "sum(fats*quantity) as fats, " +
+            "sum(protein*quantity) as protein from food " +
+            "where week_number = :weekNumber and year = :year " +
+            "group by week_number")
+    fun getWeekStatsFrom(weekNumber: Int, year: Int): Stats
+
+    @Query("Select sum(calories*quantity) as calories, " +
+            "sum(sodium*quantity) as sodium, " +
+            "sum(sugar*quantity) as sugar, " +
+            "sum(fats*quantity) as fats, " +
+            "sum(protein*quantity) as protein from food " +
+            "where month = :month and year = :year " +
+            "group by month")
+    fun getMonthStatsFrom(month: Int, year: Int): Stats
+
     @Update
     fun updateFood(food: Food)
 
     @Delete
     fun deleteFood(food: Food)
-    @Query("Select sum(calories*quantity) as calories, " +
-            "sum(sodium*quantity) as sodium, " +
-            "sum(sugar*quantity) as sugar, " +
-            "sum(fats*quantity) as fats, " +
-            "sum(protein*quantity) as protein from food " +
-            "group by day,month,year order by year DESC,month DESC,day DESC limit 7")
-    fun getWeekStats(): List<Stats>
-    @Query("Select sum(calories*quantity) as calories, " +
-            "sum(sodium*quantity) as sodium, " +
-            "sum(sugar*quantity) as sugar, " +
-            "sum(fats*quantity) as fats, " +
-            "sum(protein*quantity) as protein from food " +
-            "group by week_number, year order by year DESC, week_number DESC limit 4")
-    fun getMonthStats(): List<Stats>
-    @Query("Select sum(calories*quantity) as calories, " +
-            "sum(sodium*quantity) as sodium, " +
-            "sum(sugar*quantity) as sugar, " +
-            "sum(fats*quantity) as fats, " +
-            "sum(protein*quantity) as protein from food " +
-            "group by month,year order by year DESC, month DESC limit 6")
-    fun get6MonthStats(): List<Stats>
-    @Query("Select sum(calories*quantity) as calories, " +
-            "sum(sodium*quantity) as sodium, " +
-            "sum(sugar*quantity) as sugar, " +
-            "sum(fats*quantity) as fats, " +
-            "sum(protein*quantity) as protein from food " +
-            "group by month,year order by year DESC, month DESC limit 12")
-    fun getYearStats(): List<Stats>
-
 }

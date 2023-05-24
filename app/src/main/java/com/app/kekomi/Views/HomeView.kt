@@ -37,7 +37,7 @@ fun HomeView(navController: NavHostController) {
 
     val context = LocalContext.current
     val repository = FoodRepository(context)
-    var food = remember { mutableStateListOf<Food>() }
+    val food = remember { mutableStateListOf<Food>() }
 
     Column {
         TopAppBar(
