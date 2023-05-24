@@ -1,5 +1,6 @@
 package com.app.kekomi.Views
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -28,9 +29,9 @@ import com.app.kekomi.R
 import com.app.kekomi.apis.foodApi.ApiFoodService
 import com.app.kekomi.apis.foodApi.FoodResponse
 import com.app.kekomi.storage.FoodRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -45,11 +46,11 @@ val api_key= "abef3893c7d61e39cd4f1f573733d8e8"
 @Composable
 fun AddFoodView(navController: NavHostController) {
 
+
     val context = LocalContext.current
     val repo: FoodRepository by lazy {
         FoodRepository(context)
     }
-
 
 
     Column(
@@ -66,24 +67,24 @@ fun AddFoodView(navController: NavHostController) {
         ) {
             TextButton(
                 onClick = {
-
                     navController.popBackStack()
                 },
+
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
             ) {
                 Icon(Icons.Default.Close, contentDescription = "Localized description", tint = Color.Black)
             }
-            TextButton(
-                onClick = {
-                    autoComplete("Ban")
-                },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Localized description", tint = Color.Black)
-            }
+//            TextButton(
+//                onClick = {
+//                    autoComplete("Ban")
+//                },
+//                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+//            ) {
+//                Icon(Icons.Default.Add, contentDescription = "Localized description", tint = Color.Black)
+//            }
         }
 
-        SearchBar(onSearch = {}, onClear = {}, navController)
+        SearchBar( onClear = {}, navController)
 
     }
 }
@@ -92,12 +93,20 @@ fun AddFoodView(navController: NavHostController) {
 
 @Composable
 fun SearchBar(
-    onSearch: (String) -> Unit,
     onClear: () -> Unit,
     navController: NavHostController
 ) {
     var text by remember { mutableStateOf("") }
+    var autoCompleteResults by remember { mutableStateOf(emptyList<String>()) }
     val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(text) {
+        // Delay for autocomplete when user stops typing
+       // delay(500) // Adjust the delay time as needed
+
+        // Call the autoComplete function and update the results
+        autoCompleteResults = autoComplete(text)
+    }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -125,7 +134,6 @@ fun SearchBar(
                 value = text,
                 onValueChange = { newText ->
                     text = newText
-                    onSearch(newText)
                 },
                 textStyle = TextStyle(color = Color.Black),
                 modifier = Modifier
@@ -136,7 +144,6 @@ fun SearchBar(
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 keyboardActions = KeyboardActions(onSearch = {
                     focusManager.clearFocus()
-                    onSearch(text)
                 }),
             )
             IconButton(onClick = {
@@ -173,6 +180,13 @@ fun SearchBar(
             }
         }
     }
+
+    // Display the autocomplete results below the search bar
+    Column(modifier = Modifier.padding(start = 10.dp, end = 10.dp)) {
+        for (result in autoCompleteResults) {
+            Text(text = result)
+        }
+    }
 }
 
 
@@ -204,27 +218,18 @@ fun getFood(foodName: String) {
     })
 }
 
-fun autoComplete(text:String){
-    val apiService = getRetrofit().create(ApiFoodService::class.java)
-    val call: Call<List<String>> = apiService.autoComplete(api_id, api_key, text)
+suspend fun autoComplete(text: String): List<String> {
+    return withContext(Dispatchers.IO) {
+        val apiService = getRetrofit().create(ApiFoodService::class.java)
+        val call: Call<List<String>> = apiService.autoComplete(api_id, api_key, text)
+        val response = call.execute()
 
-    call.enqueue(object : Callback<List<String>> {
-        override fun onResponse(call: Call<List<String>>, response: Response<List<String>>) {
-            if (response.isSuccessful) {
-                val autoComplete: List<String>? = response.body()
-                // Process the foodResponse here
-                Log.d("Main", "Success! $autoComplete")
-            } else {
-                Log.e("Main", "Request failed with code: ${response.code()}")
-            }
+        if (response.isSuccessful) {
+            response.body() ?: emptyList()
+        } else {
+            emptyList()
         }
-
-        override fun onFailure(call: Call<List<String>>, t: Throwable) {
-            Log.e("Main", "Request failed: ${t.message}")
-        }
-    })
-
-
+    }
 }
 
 
