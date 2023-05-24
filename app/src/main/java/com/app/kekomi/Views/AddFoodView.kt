@@ -2,15 +2,13 @@ package com.app.kekomi.Views
 
 import android.annotation.SuppressLint
 import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -21,9 +19,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.app.kekomi.R
 import com.app.kekomi.apis.foodApi.ApiFoodService
@@ -122,6 +123,7 @@ fun SearchBar(
                     color = Color.Gray,
                     shape = RoundedCornerShape(percent = 10)
                 ),
+
             verticalAlignment = Alignment.CenterVertically
         ) {
             Spacer(Modifier.width(2.dp))
@@ -135,7 +137,7 @@ fun SearchBar(
                 onValueChange = { newText ->
                     text = newText
                 },
-                textStyle = TextStyle(color = Color.Black),
+                textStyle = TextStyle(color = Color.Black, fontSize = 25.sp),
                 modifier = Modifier
                     .weight(1f)
                     .padding(end = 8.dp),
@@ -182,10 +184,27 @@ fun SearchBar(
     }
 
     // Display the autocomplete results below the search bar
-    Column(modifier = Modifier.padding(start = 10.dp, end = 10.dp)) {
+    Column(modifier = Modifier.padding(start = 15.dp, end = 10.dp)) {
         for (result in autoCompleteResults) {
-            Text(text = result)
+            TextButton(
+                onClick = {
+                    Log.d("Main", result)
+                    text = result
+                },
+
+            ) {
+                Text(
+                    text = result,
+                    fontSize = 25.sp,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center
+                )
+
+            }
         }
+
+
+
     }
 }
 
