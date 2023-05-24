@@ -190,32 +190,24 @@ fun getDataPair(valuesList: List<Float>): Map<Any, Float> {
 }
 
 @Composable
-fun getValuesByMetric(metric: String,statsList: List<Stats>): List<Float> {
+fun getValuesByMetric(metric: String, statsList: List<Stats>): List<Float> {
+    val valuesByMetric: MutableList<Float> = mutableListOf()
 
-    var valuesByMetric: List<Float> = listOf()
-
-    for(stat in statsList){
-        when(metric){
-            "Calories" -> {
-                valuesByMetric += stat.calories.toFloat()
-            }
-            "Proteins" -> {
-                valuesByMetric += stat.protein.toFloat()
-            }
-            "Fats" -> {
-                valuesByMetric += stat.fats.toFloat()
-            }
-            "Sodium" -> {
-                valuesByMetric += stat.sodium.toFloat()
-            }
-            "Sugar" -> {
-                valuesByMetric += stat.sugar.toFloat()
-            }
+    for (stat in statsList) {
+        val value: Float = when (metric) {
+            "Calories" -> stat?.calories?.toFloat() ?: 0f
+            "Proteins" -> stat?.protein?.toFloat() ?: 0f
+            "Fats" -> stat?.fats?.toFloat() ?: 0f
+            "Sodium" -> stat?.sodium?.toFloat() ?: 0f
+            "Sugar" -> stat?.sugar?.toFloat() ?: 0f
+            else -> 0f
         }
+        valuesByMetric.add(value)
     }
 
     return valuesByMetric
 }
+
 
 @Composable
 fun Chart(
