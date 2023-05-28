@@ -1,12 +1,10 @@
 package com.app.kekomi.Views
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -19,7 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -32,13 +29,8 @@ import com.app.kekomi.R
 import com.app.kekomi.apis.foodApi.ApiFoodService
 import com.app.kekomi.apis.foodApi.FoodNutrients
 import com.app.kekomi.apis.foodApi.FoodResponse
-import com.app.kekomi.apis.foodApi.PostModel
 import com.app.kekomi.storage.FoodRepository
-import com.app.kekomi.ui.theme.lightBlueGreen
-import com.google.gson.Gson
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import org.json.JSONArray
@@ -48,7 +40,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import kotlin.math.round
 
 
 val api_id= "b0e8bca6"
@@ -326,60 +317,69 @@ fun addSingleFood(text: String) {
         }
         val nutrientsResponse = nutrientResponseState.value
         if (nutrientsResponse != null) {
-            showFoodDetails(nutrientResponseState)
+
+            Column(
+                modifier = Modifier
+                    .padding(20.dp)
+                    .fillMaxWidth()
+            ) {
+                showFoodDetails("Calories", nutrientResponseState.value!!.calories)
+                showFoodDetails("Proteins", nutrientResponseState.value!!.totalNutrients.PROCNT.quantity.toString())
+                showFoodDetails("Sugar", nutrientResponseState.value!!.totalNutrients.SUGAR.quantity.toString())
+                showFoodDetails("Sodium", nutrientResponseState.value!!.totalNutrients.NA.quantity.toString()) //esta en mg
+                showFoodDetails("Fat", nutrientResponseState.value!!.totalNutrients.FAT.quantity.toString() )
+            }
 
         }
 
     }
 }
 @Composable
-fun showFoodDetails(nutrientResponseState: MutableState<FoodNutrients?>) {
+fun showFoodDetails(metricName: String, metric: String) {
     val focusManager = LocalFocusManager.current
-    val caloriesValue = remember { mutableStateOf(nutrientResponseState.value?.calories ?: "") }
+    var inputValue by remember { mutableStateOf(metric) }
 
-    Column(
-        modifier = Modifier
-            .padding(20.dp)
-            .fillMaxWidth()
-    ) {
+
         Row(
             modifier = Modifier.padding(bottom = 15.dp),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Calories:",
+                text = metricName,
                 style = TextStyle(fontSize = 20.sp),
-                modifier = Modifier
-                    .padding(end = 8.dp)
-                    .align(Alignment.CenterVertically)
+                modifier = Modifier.padding(end = 10.dp)
             )
 
-         OutlinedTextField(
-                value = caloriesValue.value,
-                onValueChange = { newValue ->
-                    caloriesValue.value = newValue
-                },
-                placeholder = { Text("") },
-                modifier = Modifier
-                    .padding(end = 10.dp)
-                    .width(70.dp)
-                    .height(48.dp),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
-                    }
-                ),
-                textStyle = TextStyle(textAlign = TextAlign.Center, fontSize = 15.sp),
-                visualTransformation = SuffixVisualTransformation(" g"),
-                shape = RoundedCornerShape(10.dp),
-            )
+            Box(modifier = Modifier.weight(1f)) {
+                OutlinedTextField(
+                    value = inputValue,
+                    onValueChange = { newValue ->
+                       inputValue = newValue
+                    },
+                    placeholder = { Text("") },
+                    modifier = Modifier
+                        .padding(start = 50.dp, end = 10.dp)
+                        .width(100.dp)
+                        .height(48.dp),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            focusManager.clearFocus()
+                        }
+                    ),
+                    textStyle = TextStyle(textAlign = TextAlign.Center, fontSize = 15.sp),
+                    visualTransformation = SuffixVisualTransformation(" g"),
+                    shape = RoundedCornerShape(10.dp),
+                )
+            }
         }
-    }
+
 }
+
 
 
 
