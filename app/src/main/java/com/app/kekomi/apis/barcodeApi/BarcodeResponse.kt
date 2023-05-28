@@ -3,6 +3,7 @@ package com.app.kekomi.apis.barcodeApi
 import android.util.Log
 import com.app.kekomi.Views.api_id
 import com.app.kekomi.Views.api_key
+import com.app.kekomi.apis.FinalNutrients
 import com.app.kekomi.apis.foodApi.ApiFoodService
 import com.app.kekomi.apis.foodApi.Food
 import com.app.kekomi.apis.foodApi.FoodResponse
@@ -21,15 +22,8 @@ data class BarcodeFood(
     val id: Int,
     val barcode: String,
     val food: String,
-    val nutrients: BarcodeNutrients
-)
-
-data class BarcodeNutrients(
-    val calories: Int,
-    val fats: Int,
-    val sugar: Int,
-    val sodium: Int,
-    val protein: Int
+    val weight: Int,
+    val nutrients: FinalNutrients
 )
 
 
