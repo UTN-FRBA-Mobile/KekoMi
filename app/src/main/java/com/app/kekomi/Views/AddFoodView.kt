@@ -26,9 +26,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.app.kekomi.R
+import com.app.kekomi.apis.FinalFood
+import com.app.kekomi.apis.FinalNutrients
+import com.app.kekomi.apis.FoodSource
+import com.app.kekomi.apis.barcodeApi.BarcodeFood
+import com.app.kekomi.apis.barcodeApi.getFoodByBarcode
 import com.app.kekomi.apis.foodApi.ApiFoodService
 import com.app.kekomi.apis.foodApi.FoodNutrients
 import com.app.kekomi.apis.foodApi.FoodResponse
+import com.app.kekomi.apis.foodApi.Nutrient
 import com.app.kekomi.storage.FoodRepository
 import kotlinx.coroutines.*
 import okhttp3.MediaType
@@ -106,11 +112,13 @@ fun SearchBar(
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(text) {
-        // Delay for autocomplete when user stops typing
-       // delay(500) // Adjust the delay time as needed
-
-        // Call the autoComplete function and update the results
-        autoCompleteResults = autoComplete(text)
+        // Delay
+        // delay(500)
+        if(text.toDoubleOrNull() != null){
+            hadSearched = true
+        }else{
+            autoCompleteResults = autoComplete(text)
+        }
     }
 
     Row(
@@ -494,7 +502,50 @@ suspend fun autoComplete(text: String): List<String> {
     }
 }
 
+@Composable
+fun createFood(text: String): FinalFood? {
+    val foodResponseState = remember { mutableStateOf<FoodResponse?>(null) }
+    val nutrientResponseState = remember { mutableStateOf<FoodNutrients?>(null) }
+    val barcodeResponseState = remember { mutableStateOf<List<BarcodeFood>?>(null) }
+    val finalFood = remember { mutableStateOf<FinalFood?>(null) }
 
+    if(text.toDoubleOrNull() == null && text != ""){//si es null, es un texto
+        getFood(text) { foodResponse ->
+            foodResponseState.value = foodResponse
+        }
+        val foodResponse = foodResponseState.value
+        if (foodResponse != null) {
+//        Text("${foodResponse.parsed.joinToString(",")}")
+            getNutrients(foodResponse.parsed.first().food.foodId){foodNutrients ->
+                nutrientResponseState.value = foodNutrients
+            }
+            val nutrientsResponse = nutrientResponseState.value
+            if(nutrientsResponse != null){
+                val food = foodResponse.parsed.first().food
+                val calories = Nutrient(nutrientsResponse.calories.toDouble(), "kcal")
+                val totalNutrients = nutrientsResponse.totalNutrients
+                val finalNutrients = FinalNutrients(calories, totalNutrients.FAT, totalNutrients.SUGAR, totalNutrients.NA, totalNutrients.PROCNT)
+                finalFood.value = FinalFood(food.foodId, food.label, nutrientsResponse.totalWeight.toDouble().toInt(), finalNutrients, food.image, FoodSource.FOODAPI)
+            }
+        }
+
+    }else{//aca es barcode
+        Log.d("BARCODE:", "hay barcode")
+        getFoodByBarcode(text) { listFood ->
+            barcodeResponseState.value = listFood
+        }
+        val barcodeResponse = barcodeResponseState.value
+        if (barcodeResponse != null) {
+            val barcodeFood = barcodeResponse?.find{it.barcode === text}
+            if (barcodeFood != null) {
+                finalFood.value = FinalFood(barcodeFood.id.toString(), barcodeFood.food,barcodeFood.weight, barcodeFood.nutrients,"",
+                    FoodSource.BARCODE)
+            }
+        }
+    }
+    Log.d("Main::", "${finalFood.value}")
+    return finalFood.value
+}
 
 
 
