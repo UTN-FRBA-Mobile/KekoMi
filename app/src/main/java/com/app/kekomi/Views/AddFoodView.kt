@@ -22,7 +22,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -32,6 +34,7 @@ import com.app.kekomi.apis.foodApi.FoodNutrients
 import com.app.kekomi.apis.foodApi.FoodResponse
 import com.app.kekomi.apis.foodApi.PostModel
 import com.app.kekomi.storage.FoodRepository
+import com.app.kekomi.ui.theme.lightBlueGreen
 import com.google.gson.Gson
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,6 +48,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import kotlin.math.round
 
 
 val api_id= "b0e8bca6"
@@ -91,6 +95,7 @@ fun AddFoodView(navController: NavHostController) {
 //                Icon(Icons.Default.Add, contentDescription = "Localized description", tint = Color.Black)
 //            }
         }
+        dropDownMenu()
 
         SearchBar( onClear = {}, navController)
 
@@ -190,7 +195,9 @@ fun SearchBar(
                 )
             }
         }
+
     }
+
 
     if(hadSearched){
         addSingleFood(text)
@@ -222,65 +229,162 @@ fun SearchBar(
         }
     }
 }
+@Preview
+@Composable
+fun dropDownMenu() {
+    val foodOptions = listOf("Breakfast", "Lunch", "Dinner", "Snacks")
+    val isDropdownExpanded = remember { mutableStateOf(false) }
+    val selectedFoodOption = remember { mutableStateOf(foodOptions[0]) }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(top = 5.dp, start = 10.dp, end = 10.dp, bottom = 15.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(text = "Please select the type of meal",
+            style = TextStyle(fontSize = 18.sp),
+            modifier = Modifier.padding(5.dp)
+        )
+
+        Box(
+            modifier = Modifier
+                .background(Color.LightGray)
+                .border(
+                    BorderStroke(1.dp, Color.LightGray),
+                    shape = RoundedCornerShape(percent = 15)
+                )
+                .clickable { isDropdownExpanded.value = !isDropdownExpanded.value }
+                .padding(5.dp)
+
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 5.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Text(
+                    text = selectedFoodOption.value,
+                    style = TextStyle(fontSize = 20.sp)
+                )
+                Icon(
+                    imageVector = Icons.Filled.ArrowDropDown,
+                    contentDescription = "Dropdown Arrow",
+                    modifier = Modifier
+                        .padding(start = 5.dp)
+                        .size(25.dp),
+                )
+            }
+            DropdownMenu(
+                expanded = isDropdownExpanded.value,
+                onDismissRequest = { isDropdownExpanded.value = false },
+                modifier = Modifier.border(
+                    BorderStroke(1.dp, Color.Black),
+                    shape = RoundedCornerShape(percent = 10)
+                )
+            ) {
+                foodOptions.forEach { option ->
+                    DropdownMenuItem(onClick = {
+                        selectedFoodOption.value = option
+                        isDropdownExpanded.value = false
+                    }) {
+                        Text(
+                            text = option,
+                            style = TextStyle(fontSize = 20.sp)
+                        )
+                    }
+                }
+            }
+        }
+
+
+    }
+}
+
+
+
+
 
 
 @Composable
 fun addSingleFood(text: String) {
-    val foodOptions = listOf("Breakfast", "Lunch", "Dinner", "Snacks")
+
     val foodResponseState = remember { mutableStateOf<FoodResponse?>(null) }
     val nutrientResponseState = remember { mutableStateOf<FoodNutrients?>(null) }
-    val isDropdownExpanded = remember { mutableStateOf(false) }
-    val selectedFoodOption = remember { mutableStateOf(foodOptions[0]) }
 
-    getFood(text) { foodResponse ->
+
+    getFood(text) { foodResponse: FoodResponse ->
         foodResponseState.value = foodResponse
     }
 
     val foodResponse = foodResponseState.value
-    Column(modifier = Modifier.padding(top = 50.dp)) {
-        Box(
-            modifier = Modifier
-                .clickable { isDropdownExpanded.value = !isDropdownExpanded.value }
-                .background(Color.LightGray)
-                .padding(16.dp)
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(selectedFoodOption.value)
-                Icon(
-                    imageVector = Icons.Filled.ArrowDropDown,
-                    contentDescription = "Dropdown Arrow",
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-            }
-        }
-        DropdownMenu(
-            expanded = isDropdownExpanded.value,
-            onDismissRequest = { isDropdownExpanded.value = false }
-        ) {
-            foodOptions.forEach { option ->
-                DropdownMenuItem(onClick = {
-                    selectedFoodOption.value = option
-                    isDropdownExpanded.value = false
-                }) {
-                    Text(option)
-                }
-            }
-        }
-    }
+
+
     if (foodResponse != null) {
 //        Text("${foodResponse.parsed.joinToString(",")}")
-        getNutrients(foodResponse.parsed.first().food.foodId){foodNutrients ->
+        getNutrients(foodResponse.parsed.first().food.foodId) { foodNutrients ->
             nutrientResponseState.value = foodNutrients
         }
         val nutrientsResponse = nutrientResponseState.value
-        if(nutrientsResponse != null){
-            Text("${nutrientResponseState.value?.totalNutrients}")
+        if (nutrientsResponse != null) {
+            showFoodDetails(nutrientResponseState)
+
+        }
+
+    }
+}
+@Composable
+fun showFoodDetails(nutrientResponseState: MutableState<FoodNutrients?>) {
+    val focusManager = LocalFocusManager.current
+    val caloriesValue = remember { mutableStateOf(nutrientResponseState.value?.calories ?: "") }
+
+    Column(
+        modifier = Modifier
+            .padding(20.dp)
+            .fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.padding(bottom = 15.dp),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Text(
+                text = "Calories:",
+                style = TextStyle(fontSize = 20.sp),
+                modifier = Modifier
+                    .padding(end = 8.dp)
+                    .align(Alignment.CenterVertically)
+            )
+
+         OutlinedTextField(
+                value = caloriesValue.value,
+                onValueChange = { newValue ->
+                    caloriesValue.value = newValue
+                },
+                placeholder = { Text("") },
+                modifier = Modifier
+                    .padding(end = 10.dp)
+                    .width(70.dp)
+                    .height(48.dp),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                    }
+                ),
+                textStyle = TextStyle(textAlign = TextAlign.Center, fontSize = 15.sp),
+                visualTransformation = SuffixVisualTransformation(" g"),
+                shape = RoundedCornerShape(10.dp),
+            )
         }
     }
 }
 
 
-private fun getRetrofit(): Retrofit {
+
+
+fun getRetrofit(): Retrofit {
     return Retrofit.Builder()
         .baseUrl("https://api.edamam.com/")
         .addConverterFactory(GsonConverterFactory.create())

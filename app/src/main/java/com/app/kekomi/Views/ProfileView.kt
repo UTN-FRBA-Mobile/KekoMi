@@ -114,9 +114,6 @@ fun PesoYAltura(dataStore: userPreferences, scope: CoroutineScope) {
         inputValueW = initialValueW
     }
 
-
-
-
     val outlineTextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
         focusedBorderColor = Color(0xFF008080), // change the border color when focused
         textColor = Color.Black, // change the text color
