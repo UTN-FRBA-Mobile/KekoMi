@@ -201,6 +201,7 @@ fun SearchBar(
     if(hadSearched){
         addSingleFood(text)
     }
+
     else{
         // Display the autocomplete results below the search bar
         Column(modifier = Modifier.padding(start = 15.dp, end = 10.dp)) {
@@ -536,7 +537,8 @@ fun createFood(text: String): FinalFood? {
         }
         val barcodeResponse = barcodeResponseState.value
         if (barcodeResponse != null) {
-            val barcodeFood = barcodeResponse?.find{it.barcode === text}
+            Log.d("Main:", "Text is $text")
+            val barcodeFood = barcodeResponse.first()
             if (barcodeFood != null) {
                 finalFood.value = FinalFood(barcodeFood.id.toString(), barcodeFood.food,barcodeFood.weight, barcodeFood.nutrients,"",
                     FoodSource.BARCODE)
