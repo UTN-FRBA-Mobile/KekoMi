@@ -18,9 +18,9 @@ enum class FoodSource {
 }
 
 data class FinalNutrients(
-    val calories: Nutrient,
-    val fats: Nutrient,
-    val sugar: Nutrient,
-    val sodium: Nutrient,
-    val protein: Nutrient
+    val calories: Nutrient?= Nutrient(0.0, ""),
+    val fats: Nutrient?= Nutrient(0.0, ""),
+    val sugar: Nutrient?= Nutrient(0.0, ""),
+    val sodium: Nutrient?= Nutrient(0.0, ""),
+    val protein: Nutrient?= Nutrient(0.0, "")
 )

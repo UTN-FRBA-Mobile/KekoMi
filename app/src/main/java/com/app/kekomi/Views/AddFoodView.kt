@@ -308,45 +308,33 @@ fun dropDownMenu() {
 @Composable
 fun addSingleFood(text: String) {
 
-    val foodResponseState = remember { mutableStateOf<FoodResponse?>(null) }
-    val nutrientResponseState = remember { mutableStateOf<FoodNutrients?>(null) }
-
-
-    getFood(text) { foodResponse: FoodResponse ->
-        foodResponseState.value = foodResponse
-    }
-
-    val foodResponse = foodResponseState.value
-
-
-    if (foodResponse != null) {
-//        Text("${foodResponse.parsed.joinToString(",")}")
-        getNutrients(foodResponse.parsed.first().food.foodId) { foodNutrients ->
-            nutrientResponseState.value = foodNutrients
-        }
-        val nutrientsResponse = nutrientResponseState.value
-        if (nutrientsResponse != null) {
-
-            Column(
-                modifier = Modifier
-                    .padding(20.dp)
-                    .fillMaxWidth()
-            ) {
-                showFoodDetails("Calories", nutrientResponseState.value!!.calories)
-                showFoodDetails("Proteins", nutrientResponseState.value!!.totalNutrients.PROCNT.quantity.toString())
-                showFoodDetails("Sugar", nutrientResponseState.value!!.totalNutrients.SUGAR.quantity.toString())
-                showFoodDetails("Sodium", nutrientResponseState.value!!.totalNutrients.NA.quantity.toString()) //esta en mg
-                showFoodDetails("Fat", nutrientResponseState.value!!.totalNutrients.FAT.quantity.toString() )
+    val food = createFood(text = text)
+    
+    if(food != null){
+        val nutrients = food?.nutrients
+        Column(
+            modifier = Modifier
+                .padding(20.dp)
+                .fillMaxWidth()
+        ) {
+            if (nutrients != null) {
+                showFoodDetails("Calories", nutrients.calories)
+                showFoodDetails("Proteins", nutrients.protein)
+                showFoodDetails("Sugar", nutrients.sugar)
+                showFoodDetails("Sodium", nutrients.sodium) //esta en mg
+                showFoodDetails("Fat", nutrients.fats)
             }
-
-        }
-
+        }        
     }
+    else{
+        Text(text = "$text was not found")
+    }
+
 }
 @Composable
-fun showFoodDetails(metricName: String, metric: String) {
+fun showFoodDetails(metricName: String, nutrient: Nutrient?) {
     val focusManager = LocalFocusManager.current
-    var inputValue by remember { mutableStateOf(metric) }
+    var inputValue by remember { mutableStateOf(String.format("%.2f",nutrient?.quantity))}
 
 
         Row(
@@ -381,7 +369,7 @@ fun showFoodDetails(metricName: String, metric: String) {
                         }
                     ),
                     textStyle = TextStyle(textAlign = TextAlign.Center, fontSize = 15.sp),
-                    visualTransformation = SuffixVisualTransformation(" g"),
+                    visualTransformation = SuffixVisualTransformation(" ${nutrient?.unit}"),
                     shape = RoundedCornerShape(10.dp),
                 )
             }
@@ -537,12 +525,14 @@ fun createFood(text: String): FinalFood? {
         }
         val barcodeResponse = barcodeResponseState.value
         if (barcodeResponse != null) {
-            Log.d("Main:", "Text is $text")
-            val barcodeFood = barcodeResponse.first()
-            if (barcodeFood != null) {
-                finalFood.value = FinalFood(barcodeFood.id.toString(), barcodeFood.food,barcodeFood.weight, barcodeFood.nutrients,"",
-                    FoodSource.BARCODE)
-            }
+            if (barcodeResponse.isNotEmpty()) {
+                Log.d("Main:", "Text is $text")
+                val barcodeFood = barcodeResponse.first()
+                if (barcodeFood != null) {
+                    finalFood.value = FinalFood(barcodeFood.id.toString(), barcodeFood.food,barcodeFood.weight, barcodeFood.nutrients,"",
+                        FoodSource.BARCODE)
+                }
+            }         
         }
     }
     Log.d("Main::", "${finalFood.value}")
