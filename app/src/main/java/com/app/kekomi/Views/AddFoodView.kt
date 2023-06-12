@@ -21,10 +21,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.app.kekomi.BottomNav.BottomNavItem
+import com.app.kekomi.Extras.DateSelected
 import com.app.kekomi.R
 import com.app.kekomi.apis.FinalFood
 import com.app.kekomi.apis.FinalNutrients
@@ -35,6 +38,8 @@ import com.app.kekomi.apis.foodApi.ApiFoodService
 import com.app.kekomi.apis.foodApi.FoodNutrients
 import com.app.kekomi.apis.foodApi.FoodResponse
 import com.app.kekomi.apis.foodApi.Nutrient
+import com.app.kekomi.entities.Food
+import com.app.kekomi.entities.Meal
 import com.app.kekomi.storage.FoodRepository
 import kotlinx.coroutines.*
 import okhttp3.MediaType
@@ -46,6 +51,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.temporal.WeekFields
+import java.util.*
 
 
 val api_id= "b0e8bca6"
@@ -61,6 +68,7 @@ fun AddFoodView(navController: NavHostController, scannedValue: String?) {
     val repo: FoodRepository by lazy {
         FoodRepository(context)
     }
+    val dropdownViewModel: DropdownViewModel = viewModel()
 
 
     Column(
@@ -77,7 +85,7 @@ fun AddFoodView(navController: NavHostController, scannedValue: String?) {
         ) {
             TextButton(
                 onClick = {
-                    navController.popBackStack()
+                    navController.navigate(BottomNavItem.Home.screen_route)
                 },
 
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
@@ -93,9 +101,8 @@ fun AddFoodView(navController: NavHostController, scannedValue: String?) {
 //                Icon(Icons.Default.Add, contentDescription = "Localized description", tint = Color.Black)
 //            }
         }
-        dropDownMenu()
-
-        SearchBar( onClear = {}, navController, scannedValue)
+        dropDownMenu( dropdownViewModel)
+        SearchBar( dropdownViewModel.selectedFoodOption.value, onClear = {}, navController, scannedValue)
 
     }
 }
@@ -104,6 +111,7 @@ fun AddFoodView(navController: NavHostController, scannedValue: String?) {
 
 @Composable
 fun SearchBar(
+    selectedMeal: String,
     onClear: () -> Unit,
     navController: NavHostController,
     scannedValue: String?
@@ -204,7 +212,7 @@ fun SearchBar(
 
 
     if(hadSearched){
-        addSingleFood(text)
+        addSingleFood(text, selectedMeal, navController)
     }
 
     else{
@@ -234,10 +242,16 @@ fun SearchBar(
         }
     }
 }
-@Preview
+
+class DropdownViewModel : ViewModel() {
+    val foodOptions = listOf("Breakfast", "Lunch", "Dinner", "Snack")
+    val selectedFoodOption = mutableStateOf(foodOptions[0])
+}
+
+
 @Composable
-fun dropDownMenu() {
-    val foodOptions = listOf("Breakfast", "Lunch", "Dinner", "Snacks")
+fun dropDownMenu(dropdownViewModel: DropdownViewModel) {
+    val foodOptions = listOf("Breakfast", "Lunch", "Dinner", "Snack")
     val isDropdownExpanded = remember { mutableStateOf(false) }
     val selectedFoodOption = remember { mutableStateOf(foodOptions[0]) }
 
@@ -290,6 +304,7 @@ fun dropDownMenu() {
                 foodOptions.forEach { option ->
                     DropdownMenuItem(onClick = {
                         selectedFoodOption.value = option
+                        dropdownViewModel.selectedFoodOption.value = option
                         isDropdownExpanded.value = false
                     }) {
                         Text(
@@ -311,7 +326,7 @@ fun dropDownMenu() {
 
 
 @Composable
-fun addSingleFood(text: String) {
+fun addSingleFood(text: String, selectedMeal: String, navController: NavHostController) {
 
     val food = createFood(text = text)
     
@@ -328,6 +343,8 @@ fun addSingleFood(text: String) {
                 showFoodDetails("Sugar", nutrients.sugar)
                 showFoodDetails("Sodium", nutrients.sodium) //esta en mg
                 showFoodDetails("Fat", nutrients.fats)
+
+                addButton(food, selectedMeal, navController)
             }
         }        
     }
@@ -336,6 +353,42 @@ fun addSingleFood(text: String) {
     }
 
 }
+
+@Composable
+fun addButton(food: FinalFood, selectedMeal: String, navController: NavHostController) {
+    val context = LocalContext.current
+    val repository = FoodRepository(context)
+
+    Button(
+        onClick = {
+            repository.insertFood(
+                Food(foodName = food.name,
+                    calories = food.nutrients.calories?.quantity?.toInt()!!,
+                    quantity = 1,
+                    protein = food.nutrients.protein?.quantity?.toInt()!!,
+                    sugar = food.nutrients.sugar?.quantity?.toInt()!!,
+                    fats = food.nutrients.fats?.quantity?.toInt()!!,
+                    sodium = food.nutrients.sodium?.quantity?.toInt()!!,
+                    day = DateSelected.pickedDate.dayOfMonth,
+                    week_number = DateSelected.pickedDate.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()),
+                    month = DateSelected.pickedDate.monthValue,
+                    year = DateSelected.pickedDate.year,
+                    meal = Meal.valueOf(selectedMeal.toUpperCase(Locale.ROOT)))
+            )
+            navController.navigate(BottomNavItem.Home.screen_route)
+        },
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = Color(android.graphics.Color.parseColor("#008080"))
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+            .padding(16.dp)
+    ) {
+        Text("+     Add food", fontSize = 20.sp, color = Color.White)
+    }
+}
+
 @Composable
 fun showFoodDetails(metricName: String, nutrient: Nutrient?) {
     val focusManager = LocalFocusManager.current
@@ -359,6 +412,7 @@ fun showFoodDetails(metricName: String, nutrient: Nutrient?) {
                     onValueChange = { newValue ->
                        inputValue = newValue
                     },
+                    enabled = false,
                     placeholder = { Text("") },
                     modifier = Modifier
                         .padding(start = 50.dp, end = 10.dp)
