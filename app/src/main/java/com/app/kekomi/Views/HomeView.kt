@@ -107,12 +107,6 @@ fun HomeView(navController: NavHostController) {
                         onClick = {
                             val scanned = "0"
                             navController.navigate("AddFoodView/$scanned")
-                           repository.insertFood(Food(foodName = "hamburguesa", calories = 23, quantity = 2,
-                                protein = 32, sugar = 12, fats = 13, sodium = 42, day = DateSelected.pickedDate.dayOfMonth,
-                                week_number = DateSelected.pickedDate.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()),
-                                month = DateSelected.pickedDate.monthValue,
-                                year = DateSelected.pickedDate.year,
-                                meal = Meal.BREAKFAST))
                         },
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = Color(android.graphics.Color.parseColor("#008080"))
