@@ -120,10 +120,14 @@ fun SearchBar(
     var autoCompleteResults by remember { mutableStateOf(emptyList<String>()) }
     var hadSearched by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
+    var scannedValueLoaded by remember { mutableStateOf(false) } // Track if scannedValue has been loaded
 
-    if(scannedValue != "0"){
-        text = scannedValue!!;
+    if (scannedValue != "0" && !scannedValueLoaded) {
+        text = scannedValue!!
+        scannedValueLoaded = true
     }
+
+
     LaunchedEffect(text) {
         // Delay
         // delay(500)
@@ -133,6 +137,7 @@ fun SearchBar(
             autoCompleteResults = autoComplete(text)
         }
     }
+
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -195,6 +200,7 @@ fun SearchBar(
         ) {
             IconButton(
                 onClick = {
+                    scannedValueLoaded = false
                     navController.navigate("CodeBarScannerView")
                 }
             ) {
