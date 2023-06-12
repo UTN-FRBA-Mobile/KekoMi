@@ -52,8 +52,9 @@ val api_id= "b0e8bca6"
 val api_key= "abef3893c7d61e39cd4f1f573733d8e8"
 
 
+
 @Composable
-fun AddFoodView(navController: NavHostController) {
+fun AddFoodView(navController: NavHostController, scannedValue: String?) {
 
 
     val context = LocalContext.current
@@ -94,7 +95,7 @@ fun AddFoodView(navController: NavHostController) {
         }
         dropDownMenu()
 
-        SearchBar( onClear = {}, navController)
+        SearchBar( onClear = {}, navController, scannedValue)
 
     }
 }
@@ -104,13 +105,17 @@ fun AddFoodView(navController: NavHostController) {
 @Composable
 fun SearchBar(
     onClear: () -> Unit,
-    navController: NavHostController
+    navController: NavHostController,
+    scannedValue: String?
 ) {
     var text by remember { mutableStateOf("") }
     var autoCompleteResults by remember { mutableStateOf(emptyList<String>()) }
     var hadSearched by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
+    if(scannedValue != "0"){
+        text = scannedValue!!;
+    }
     LaunchedEffect(text) {
         // Delay
         // delay(500)

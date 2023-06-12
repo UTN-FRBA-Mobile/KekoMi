@@ -20,6 +20,7 @@ class userPreferences(private val context: Context) {
         var NAME_KEY = stringPreferencesKey("user_name")
         var WEIGHT_KEY = stringPreferencesKey("user_weight")
         var HEIGHT_KEY = stringPreferencesKey("user_height")
+        var SCANNED_VALUE_KEY = stringPreferencesKey("scanned_value")
         var CALORIES_STATE_KEY = booleanPreferencesKey("user_calories_state")
         var SODIUM_STATE_KEY = booleanPreferencesKey("user_sodium_state")
         var SUGAR_STATE_KEY = booleanPreferencesKey("user_sugar_state")
@@ -45,6 +46,17 @@ class userPreferences(private val context: Context) {
             preferences[NAME_KEY] = name
         }
     }
+
+    suspend fun saveScannedValue(scannedValue: String){
+        context.dataStore.edit { preferences ->
+            preferences[SCANNED_VALUE_KEY] = scannedValue
+        }
+    }
+
+    val getScannedValue: Flow<String> = context.dataStore.data
+        .map{ preferences ->
+            preferences[SCANNED_VALUE_KEY]?:""
+        }
 
     val getHeight: Flow<String?> = context.dataStore.data
         .map { preferences ->

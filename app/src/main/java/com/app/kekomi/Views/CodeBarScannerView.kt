@@ -37,17 +37,21 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import com.app.kekomi.BarcodeAnalyser.BarCodeAnalyser
 import com.app.kekomi.storage.FoodRepository
+import com.app.kekomi.storage.userPreferences
+import kotlinx.coroutines.launch
 
 
 //@ExperimentalPermissionsApi
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CodeBarScannerView(navController: NavHostController) {
     //Ask for permission if not have
     // TODO ver de hacerlo de otra manera
-//    val cameraPermissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
-//    LaunchedEffect(Unit) {
-//        cameraPermissionState.launchPermissionRequest()
-//    }
+    val cameraPermissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
+    LaunchedEffect(Unit) {
+        cameraPermissionState.launchPermissionRequest()
+    }
+
 
     val barcodeValue = remember { mutableStateOf("") }
         Surface(color = MaterialTheme.colors.background) {
@@ -76,8 +80,7 @@ fun CodeBarScannerView(navController: NavHostController) {
                 CameraPreview { scannedValue ->
                     barcodeValue.value = scannedValue
                     Toast.makeText(context, barcodeValue.value, Toast.LENGTH_SHORT).show()
-                    navController.popBackStack()
-                    //TODO hay que mandarle el scannedValue a AddFoodView
+                    navController.navigate("AddFoodView/$scannedValue")
                 }
             }
         }
