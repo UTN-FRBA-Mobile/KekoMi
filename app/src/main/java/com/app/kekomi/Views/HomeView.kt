@@ -88,9 +88,10 @@ fun HomeView(navController: NavHostController) {
                     Column(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(16.dp),
+                            .padding(start=16.dp, end=20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        Text("Goals:", fontSize = 26.sp, color = Color.Black, modifier=Modifier.padding(bottom = 10.dp))
                         progressBars()
 
                     }

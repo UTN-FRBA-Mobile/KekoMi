@@ -59,6 +59,8 @@ import com.app.kekomi.Views.ProgressBarWithText
 import com.app.kekomi.Views.getGoals
 import com.app.kekomi.entities.Stats
 import com.app.kekomi.storage.userPreferences
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 import kotlin.math.round
 
@@ -72,7 +74,7 @@ fun BarChartByTimePeriod( selectedTimePeriod: String){
     when (selectedTimePeriod) {
         "Week" -> {
             // agarro data los ultimos 7 dias, una barra por dia
-            var weekValues = repository.getWeekStats().reversed()
+            var weekValues = repository.getWeekStats()
 
             barChartCall(valuesList = weekValues)
 
@@ -80,25 +82,25 @@ fun BarChartByTimePeriod( selectedTimePeriod: String){
         "Month" -> {
             // agarro los ultimos 28 dias (a fines practicos), una barra por semana
 
-            var monthValues = repository.getMonthStats().reversed()
+            var monthValues = repository.getMonthStats()
 
             barChartCall(valuesList = monthValues)
         }
         "6Months" -> {
             // agarro los ultimos 6 meses, una barra por mes
 
-            /*
-            var sixMonthsValues = repository.get6MonthStats().reversed()
 
-            barChartCall(valuesList = sixMonthsValues)*/
+            var sixMonthsValues = repository.get6MonthStats()
+
+            barChartCall(valuesList = sixMonthsValues)
         }
         "Year" -> {
             // agarro los ultimos 12 meses, una barra por mes
 
-            /*
-            var yearValues = repository.getYearStats().reversed()
 
-            barChartCall(valuesList = yearValues)*/
+            var yearValues = repository.getYearStats()
+
+            barChartCall(valuesList = yearValues)
         }
     }
 }
@@ -154,7 +156,7 @@ fun getDataPair(valuesList: List<Float>): Map<Any, Float> {
                 Pair("Sat", valuesList[5]),
                 Pair("Sun", valuesList[6]))
         }
-        4 ->{
+        4 ->{//TODO ESTO
             dataPair = mapOf(
                 Pair("Week 1", valuesList[0]),
                 Pair("Week 2", valuesList[1]),
@@ -163,27 +165,27 @@ fun getDataPair(valuesList: List<Float>): Map<Any, Float> {
         }
         6 ->{
             dataPair = mapOf(
-                Pair("Jan", valuesList[0]),
-                Pair("Feb", valuesList[1]),
-                Pair("Mar", valuesList[2]),
-                Pair("Apr", valuesList[3]),
-                Pair("May", valuesList[4]),
-                Pair("Jun", valuesList[5]))
+                Pair("${decrementMonth(5)}", valuesList[0]),
+                Pair("${decrementMonth(4)}", valuesList[1]),
+                Pair("${decrementMonth(3)}", valuesList[2]),
+                Pair("${decrementMonth(2)}", valuesList[3]),
+                Pair("${decrementMonth(1)}", valuesList[4]),
+                Pair("${LocalDate.now().format(DateTimeFormatter.ofPattern("MMM"))}", valuesList[5]))
         }
         12 ->{
             dataPair = mapOf(
-                Pair("Jan", valuesList[0]),
-                Pair("Feb", valuesList[1]),
-                Pair("Mar", valuesList[2]),
-                Pair("Apr", valuesList[3]),
-                Pair("May", valuesList[4]),
-                Pair("Jun", valuesList[5]),
-                Pair("Jul", valuesList[6]),
-                Pair("Aug", valuesList[7]),
-                Pair("Sep", valuesList[8]),
-                Pair("Oct", valuesList[9]),
-                Pair("Nov", valuesList[10]),
-                Pair("Dec", valuesList[11]))
+                Pair("${decrementMonth(11)}", valuesList[0]),
+                Pair("${decrementMonth(10)}", valuesList[1]),
+                Pair("${decrementMonth(9)}", valuesList[2]),
+                Pair("${decrementMonth(8)}", valuesList[3]),
+                Pair("${decrementMonth(7)}", valuesList[4]),
+                Pair("${decrementMonth(6)}", valuesList[5]),
+                Pair("${decrementMonth(5)}", valuesList[6]),
+                Pair("${decrementMonth(4)}", valuesList[7]),
+                Pair("${decrementMonth(3)}", valuesList[8]),
+                Pair("${decrementMonth(2)}", valuesList[9]),
+                Pair("${decrementMonth(1)}", valuesList[10]),
+                Pair("${LocalDate.now().format(DateTimeFormatter.ofPattern("MMM"))}", valuesList[11]))
         }
     }
     return dataPair
@@ -307,7 +309,7 @@ fun Chart(
                 end = 30.dp
             )
             .pointerInput(Unit) {
-                this.detectTapGestures(onPress = {
+               /* this.detectTapGestures(onPress = {
                     chosenBar = detectPosition(
                         screenSize = screenSize,
                         offset = it,
@@ -317,7 +319,7 @@ fun Chart(
                     if (chosenBar >= 0) {
                         chosenBarKey = data.toList()[chosenBar].first.toString()
                     }
-                })
+                })*/
             },
             onDraw = {
                 screenSize = size
@@ -356,13 +358,13 @@ fun Chart(
                         paint
                     )
                     //--------------------(showing the bar label)--------------------//
-                    if (chosenBarKey == item.key.toString()) {
+                    if (1==1 /*chosenBarKey == item.key.toString()*/) {
                         val localLabelColor = Color(
                             ColorUtils.blendARGB(
                                 Color.White.toArgb(), barColor.toArgb(), 0.4f
                             )
                         )
-                        drawRoundRect(
+                        /*drawRoundRect(
                             color = localLabelColor,
                             topLeft = Offset(x = topLeft.x - 40f, y = topLeft.y - 100),
                             size = Size(140f, 80f),
@@ -380,12 +382,12 @@ fun Chart(
                                 paint = androidx.compose.ui.graphics.Paint().apply {
                                     color = localLabelColor
                                 })
-                        }
+                        }*/
 
                         drawContext.canvas.nativeCanvas.drawText(
                             item.value.toInt().toString(),
                             topLeft.x + 25,
-                            topLeft.y - 50,
+                            topLeft.y - 10,
                             paint
                         )
                     }
