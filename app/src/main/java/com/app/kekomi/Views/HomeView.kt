@@ -180,10 +180,19 @@ fun progressBars() {
         val goal = goals[index]
         Log.d("goal", goal)
 
-        var value: Int = 0
+        //var value: Int = 0
         val stats = repository.getStatsFrom(DateSelected.pickedDate)
+    //TODO MUESTRA SIEMPRE LOS STATS PARA LA MISMA FECHA ???
+        val value: Float = when (metric) {
+            "Calories" -> stats?.calories?.toFloat() ?: 0f
+            "Proteins" -> stats?.protein?.toFloat() ?: 0f
+            "Fats" -> stats?.fats?.toFloat() ?: 0f
+            "Sodium" -> stats?.sodium?.toFloat() ?: 0f
+            "Sugar" -> stats?.sugar?.toFloat() ?: 0f
+            else -> 0f
+        }
 
-        when(metric){
+       /* when(metric){
             "Calories" -> {
                 //POR ALGUNA RAZON, SI QUIERO USAR STATS.ALGO AL PRINCIPIO SE ROMPE TODO
                 value = 45//stats.calories
@@ -200,7 +209,7 @@ fun progressBars() {
             "Sugar" ->{
                 value = 22//stats.sugar
             }
-        }
+        }*/
 
         var percentage by remember { mutableStateOf(0f) }
 
@@ -218,7 +227,7 @@ fun progressBars() {
             }
         }
 
-        //SI NO HAY GOAL, NO SE DEBERIA MOSTRAR LA BARRA. ESTO ESTA BIEN????
+        //SI NO HAY GOAL, NO SE DEBERIA MOSTRAR LA BARRA.
         if (goal.isNotEmpty()) {
             ProgressBarWithText(percentage, metric)
         }

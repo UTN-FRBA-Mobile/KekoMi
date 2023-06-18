@@ -80,7 +80,7 @@ fun BarChartByTimePeriod( selectedTimePeriod: String){
 
         }
         "Month" -> {
-            // agarro los ultimos 28 dias (a fines practicos), una barra por semana
+            // una barra por semana
 
             var monthValues = repository.getMonthStats()
 
