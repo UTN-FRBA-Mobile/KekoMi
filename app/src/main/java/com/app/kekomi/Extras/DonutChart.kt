@@ -29,7 +29,13 @@ fun getMetrics(): List<String> {
     // datastore
     val dataStore = userPreferences(context)
 
-    return getCheckedItems(dataStore = dataStore)
+    val metrics: List<String> = getCheckedItems(dataStore = dataStore)
+
+    return if(metrics.isEmpty()){
+        listOf("EMPTY", "EMPTY")
+    }else{
+        metrics
+    }
 }
 
 @Composable
@@ -57,25 +63,15 @@ fun getValues(): List<Float> {
 
     for (metric in metrics) {
 
-        var value: Int = 0
         val stats = repository.getStatsFrom(DateSelected.pickedDate)
 
-        when(metric){
-            "Calories" -> {
-                value = 22//stats.calories
-            }
-            "Proteins" -> {
-                value = 34//stats.protein
-            }
-            "Fats" -> {
-                value = 56//stats.fats
-            }
-            "Sodium" -> {
-                value = 22//stats.sodium
-            }
-            "Sugar" -> {
-                value = 56//stats.sugar
-            }
+        val value: Float = when (metric) {
+            "Calories" -> stats?.calories?.toFloat() ?: 0f
+            "Proteins" -> stats?.protein?.toFloat() ?: 0f
+            "Fats" -> stats?.fats?.toFloat() ?: 0f
+            "Sodium" -> stats?.sodium?.toFloat() ?: 0f
+            "Sugar" -> stats?.sugar?.toFloat() ?: 0f
+            else -> 0f
         }
 
         floatValues += value.toFloat()
@@ -84,18 +80,26 @@ fun getValues(): List<Float> {
     return floatValues
 }
 
+@Composable
+fun getColors(values: List<Float>): List<Color>{
 
+    var colores:List<Color> = if(areAllZero(values)){
+        listOf(Color.Gray, Color.Gray, Color.Gray, Color.Gray)
+    }else{
+        listOf(
+            Color(android.graphics.Color.parseColor("#008080")),
+            Color(android.graphics.Color.parseColor("#195e5e")),
+            Color(android.graphics.Color.parseColor("#669494")),
+            Color(android.graphics.Color.parseColor("#99b7b7"))
+        )
+    }
+    return colores
+}
 @Preview
 @Composable
 fun DonutChart(
-    values: List<Float> = getValues(), //listOf(65f, 40f, 25f, 20f) LISTA
-    colors: List<Color> = listOf(
-        Color(android.graphics.Color.parseColor("#008080")),
-        Color(android.graphics.Color.parseColor("#195e5e")),
-        Color(android.graphics.Color.parseColor("#669494")),
-        Color(android.graphics.Color.parseColor("#99b7b7"))
-    ),
-
+    values: List<Float> = getValues(),
+    colors: List<Color> = getColors(values),
     legend: List<String> = getMetrics()
 ){
     Column(
@@ -110,6 +114,7 @@ fun DonutChart(
 
         // Calculate the number of rows required based on number of items
         val numberOfRows = ceil(legend.size / 2.0).toInt()
+
 
         for (rowIndex in 0 until numberOfRows) {
                 Row(
@@ -127,13 +132,22 @@ fun DonutChart(
                         val proportions = values.map {
                             it * 100 / sumOfValues
                         }
-                            DisplayLegend(color = colors[legendIndex], legend = legend[legendIndex], value = proportions[legendIndex])
+                        if(legend[0]!="EMPTY") {
+                            DisplayLegend(
+                                color = colors[legendIndex],
+                                legend = legend[legendIndex],
+                                value = proportions[legendIndex]
+                            )
+                        }
                     }
                 }
         }
     }
 }
 
+fun areAllZero(list: List<Float>): Boolean {
+    return list.all { it == 0f }
+}
 @Composable
 fun CreateArcs(values: List<Float>, colors: List<Color>, size: Dp = 100.dp, thickness: Dp = 25.dp){
     // Sum of all the values

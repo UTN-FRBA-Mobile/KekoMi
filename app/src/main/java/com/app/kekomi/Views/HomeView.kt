@@ -6,6 +6,7 @@ package com.app.kekomi.Views
 import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+//import androidx.compose.foundation.layout.RowScopeInstance.align
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -88,8 +90,9 @@ fun HomeView(navController: NavHostController) {
                     Column(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(start=16.dp, end=20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                            .padding(start = 16.dp, end = 20.dp),
+                        horizontalAlignment = Alignment.Start
+
                     ) {
                         Text("Goals:", fontSize = 26.sp, color = Color.Black, modifier=Modifier.padding(bottom = 10.dp))
                         progressBars()
@@ -120,7 +123,12 @@ fun HomeView(navController: NavHostController) {
                         Text("+     Add food", fontSize = 20.sp, color = Color.White)
                     }
                 }
-                Column() {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(start = 20.dp),
+                    horizontalAlignment = Alignment.Start
+                ) {
                     LaunchedEffect(DateSelected.pickedDate){
                         food.clear()
                         food.addAll(repository.getAllFood(DateSelected.pickedDate))
@@ -175,14 +183,14 @@ fun progressBars() {
     val metrics = getCheckedItems(dataStore)
     val goals = getGoals(dataStore = dataStore)
 
+
     for (metric in metrics) {
         val index = metrics.indexOf(metric)
         val goal = goals[index]
         Log.d("goal", goal)
 
-        //var value: Int = 0
         val stats = repository.getStatsFrom(DateSelected.pickedDate)
-    //TODO MUESTRA SIEMPRE LOS STATS PARA LA MISMA FECHA ???
+
         val value: Float = when (metric) {
             "Calories" -> stats?.calories?.toFloat() ?: 0f
             "Proteins" -> stats?.protein?.toFloat() ?: 0f
@@ -191,33 +199,15 @@ fun progressBars() {
             "Sugar" -> stats?.sugar?.toFloat() ?: 0f
             else -> 0f
         }
-
-       /* when(metric){
-            "Calories" -> {
-                //POR ALGUNA RAZON, SI QUIERO USAR STATS.ALGO AL PRINCIPIO SE ROMPE TODO
-                value = 45//stats.calories
-            }
-            "Proteins" -> {
-                value = 56//stats.protein
-            }
-            "Fats" -> {
-                value = 34//stats.fats
-            }
-            "Sodium" -> {
-                value = 34//stats.sodium
-            }
-            "Sugar" ->{
-                value = 22//stats.sugar
-            }
-        }*/
+        Log.d(metric, "${value}")
 
         var percentage by remember { mutableStateOf(0f) }
 
-        LaunchedEffect(goal) {
+
             if (goal.isNotEmpty()) {
                 val goalF = goal.toFloat()
                 if(value < goalF){
-                    val percentageDec = (value * 100 / goalF).toFloat()
+                    var percentageDec = (value * 100 / goalF).toFloat()
                     percentage = (Math.round(percentageDec * 10.0) / 10.0).toFloat()
                     Log.d("p", percentage.toString())
                 }
@@ -225,8 +215,8 @@ fun progressBars() {
                     percentage = 100F
                 }
             }
-        }
 
+        Log.d("${metric}PP", "${percentage}")
         //SI NO HAY GOAL, NO SE DEBERIA MOSTRAR LA BARRA.
         if (goal.isNotEmpty()) {
             ProgressBarWithText(percentage, metric)
@@ -242,7 +232,7 @@ fun ProgressBarWithText(percentage: Float, label: String) {
         progress = percentage
     }
 
-    Text("${label}: ${progress }%", fontWeight = FontWeight.Bold)
+    Text("${label}: ${progress }%", fontWeight = FontWeight.Bold, textAlign = TextAlign.Start)
     Spacer(modifier = Modifier.height(4.dp))
     LinearProgressIndicator(
         progress = progress/100,
@@ -277,12 +267,17 @@ fun FoodButton(food: Food, navController: NavHostController) {
     ) {
 
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
-                Column (Modifier.align(Alignment.CenterVertically)){
+                Column (
+                    Modifier
+                        .weight(1f)
+                        .align(Alignment.CenterVertically)){
 
                     Text(text = food.foodName, fontWeight = FontWeight.Bold)
                 }
-                Spacer(modifier = Modifier.width(120.dp))
-                Column {
+                //Spacer(modifier = Modifier.width(120.dp))
+                Column (
+                    horizontalAlignment = Alignment.End
+                        ){
                     Text(text = food.quantity.toString() + " UNITS", fontSize = 13.sp)
                     Spacer(Modifier.height(2.dp))
                     Text(text = food.calories.toString() + " KCAL", fontSize = 13.sp)
