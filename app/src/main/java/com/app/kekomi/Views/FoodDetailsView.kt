@@ -117,7 +117,7 @@ fun Item(
     val focusManager = LocalFocusManager.current
     OutlinedTextField(
         value = inputValueG.toString(),
-        onValueChange = { newValue -> inputValueG = newValue.toInt() },
+        onValueChange = { newValue -> inputValueG = if(newValue == "") 0 else newValue.toInt() },
         label = { Text("Set goal", fontSize = 15.sp, textAlign = TextAlign.Center) },
         placeholder = { Text("") },
         modifier = Modifier
