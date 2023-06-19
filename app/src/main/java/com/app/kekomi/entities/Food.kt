@@ -3,6 +3,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 
+
 @Entity(tableName = "food")
 data class Food(
     @PrimaryKey(autoGenerate = true)

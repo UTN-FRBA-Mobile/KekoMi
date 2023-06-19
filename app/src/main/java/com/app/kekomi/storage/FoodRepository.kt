@@ -14,6 +14,10 @@ class FoodRepository(context: Context) {
 
     var db: FoodDao = AppDatabase.getInstance(context)?.foodDao()!!
 
+    fun getFood(foodId: Int): Food {
+        return db.getFood(foodId)
+    }
+
     //Fetch All the Food
     fun getAllFood(date: LocalDate): List<Food> {
         return db.getAllFood(date.dayOfMonth, date.monthValue, date.year)

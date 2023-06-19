@@ -263,7 +263,9 @@ fun FoodGroup(foodGroup:String, food: MutableList<Food>, navController: NavHostC
 }@Composable
 fun FoodButton(food: Food, navController: NavHostController) {
     Button(
-        onClick = { navController.navigate("FoodDetailsView") },
+        onClick = {
+            navController.navigate("FoodDetailsView/" + food.foodId)
+                  },
         colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
         modifier = Modifier
             .width(330.dp)

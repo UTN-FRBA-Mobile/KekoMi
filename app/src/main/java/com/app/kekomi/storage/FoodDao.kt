@@ -9,6 +9,9 @@ interface FoodDao {
     @Insert
     fun insertFood(food: Food)
 
+    @Query("Select * from food where foodId = :foodId")
+    fun getFood(foodId: Int): Food
+
     @Query("Select * from food f where day = :day AND month = :month AND year = :year")
     fun getAllFood(day: Int, month: Int, year: Int): List<Food>
 

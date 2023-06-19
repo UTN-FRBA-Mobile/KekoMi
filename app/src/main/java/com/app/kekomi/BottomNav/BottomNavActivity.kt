@@ -21,8 +21,11 @@ fun NavigationGraph(navController: NavHostController) {
         composable("AddFoodView") {
             AddFoodView(navController)
         }
-        composable("FoodDetailsView") {
-            FoodDetailsView(navController)
+        composable("FoodDetailsView/{foodId}") { navBackStackEntry ->
+            val foodId = navBackStackEntry.arguments?.getString("foodId")
+            if (foodId != null) {
+                FoodDetailsView(navController, foodId.toInt())
+            }
         }
         composable("CodeBarScannerView") {
             CodeBarScannerView(navController)
