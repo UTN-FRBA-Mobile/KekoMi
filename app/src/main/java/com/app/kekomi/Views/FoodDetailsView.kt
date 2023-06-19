@@ -59,33 +59,50 @@ fun FoodDetailsView(navController: NavHostController, foodId: Int) {
                 )
             }
         }
-        Text(text = food.value.foodName)
+        Text(
+            text = food.value.foodName,
+            textAlign = TextAlign.Center,
+            fontSize = 30.sp,
+            modifier = Modifier
+                .padding(bottom = 10.dp)
+                .fillMaxWidth()
+        )
         Item(food, NutritionItem.CALORIES)
         Item(food, NutritionItem.SODIUM)
         Item(food, NutritionItem.SUGAR)
         Item(food, NutritionItem.FATS)
         Item(food, NutritionItem.PROTEINS)
-        TextButton(
+        Spacer(modifier = Modifier.weight(1f))
+        OutlinedButton(
             onClick = {
                 repository.updateFood(food.value)
             },
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF008080)),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 40.dp, end = 50.dp, bottom = 30.dp)
         ) {
-            Icon(
-                Icons.Default.Close,
-                contentDescription = "Localized description",
-                tint = Color.Black
-            )
+            Text("Save", color = Color.White, fontSize = 20.sp)
         }
     }
 }
 
-enum class NutritionItem {
-    CALORIES,
-    SODIUM,
-    SUGAR,
-    FATS,
-    PROTEINS
+enum class NutritionItem(val descriptor: String) {
+    CALORIES("Calories"),
+    SODIUM("Sodium"),
+    SUGAR("Sugar"),
+    FATS("Fats"),
+    PROTEINS("Proteins");
+
+    override fun toString(): String {
+        return descriptor
+    }
+
+    companion object {
+        fun getEnum(value: String): NutritionItem {
+            return values().first { it.descriptor == value }
+        }
+    }
 }
 
 @Composable
@@ -94,11 +111,11 @@ fun Item(
     nutritionItem: NutritionItem
 ){
     val initialValue = when (nutritionItem) {
-        NutritionItem.CALORIES -> food.value.calories
-        NutritionItem.SODIUM -> food.value.sodium
-        NutritionItem.SUGAR -> food.value.sugar
-        NutritionItem.FATS -> food.value.fats
-        NutritionItem.PROTEINS -> food.value.protein
+        NutritionItem.CALORIES -> food.value.calories.toString()
+        NutritionItem.SODIUM -> food.value.sodium.toString()
+        NutritionItem.SUGAR -> food.value.sugar.toString()
+        NutritionItem.FATS -> food.value.fats.toString()
+        NutritionItem.PROTEINS -> food.value.protein.toString()
     }
 
     var inputValueG by remember { mutableStateOf(initialValue)}
@@ -116,13 +133,13 @@ fun Item(
     )
     val focusManager = LocalFocusManager.current
     OutlinedTextField(
-        value = inputValueG.toString(),
-        onValueChange = { newValue -> inputValueG = if(newValue == "") 0 else newValue.toInt() },
-        label = { Text("Set goal", fontSize = 15.sp, textAlign = TextAlign.Center) },
+        value = inputValueG,
+        onValueChange = { newValue -> inputValueG = newValue },
+        label = { Text("Set $nutritionItem", fontSize = 15.sp, textAlign = TextAlign.Center) },
         placeholder = { Text("") },
         modifier = Modifier
-            .padding(end = 10.dp)
-            .width(100.dp)
+            .padding(start = 20.dp, end = 30.dp, bottom = 10.dp)
+            .fillMaxWidth()
             .height(55.dp),
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Number,
@@ -132,20 +149,20 @@ fun Item(
             onDone = {
                 focusManager.clearFocus()
                 when (nutritionItem) {
-                    NutritionItem.CALORIES -> food.value.calories = inputValueG.toInt()
-                    NutritionItem.SODIUM -> food.value.sodium = inputValueG.toInt()
-                    NutritionItem.SUGAR -> food.value.sugar = inputValueG.toInt()
-                    NutritionItem.FATS -> food.value.fats = inputValueG.toInt()
-                    NutritionItem.PROTEINS -> food.value.protein = inputValueG.toInt()
+                    NutritionItem.CALORIES -> food.value.calories = if (inputValueG == "") 0 else inputValueG.toInt()
+                    NutritionItem.SODIUM -> food.value.sodium = if (inputValueG == "") 0 else inputValueG.toInt()
+                    NutritionItem.SUGAR -> food.value.sugar = if (inputValueG == "") 0 else inputValueG.toInt()
+                    NutritionItem.FATS -> food.value.fats = if (inputValueG == "") 0 else inputValueG.toInt()
+                    NutritionItem.PROTEINS -> food.value.protein = if (inputValueG == "") 0 else inputValueG.toInt()
                 }
             }
         ),
         textStyle = TextStyle(textAlign = TextAlign.End, fontSize = 15.sp),
-       /* visualTransformation = if (item != "Calories") {
+        visualTransformation = if (nutritionItem != NutritionItem.CALORIES) {
             SuffixVisualTransformation(" g")
         } else {
             SuffixVisualTransformation("  ")
-        },*/
+        },
         colors = outlineTextFieldColors,
         shape = RoundedCornerShape(percent = 10)
     )
