@@ -37,6 +37,7 @@ import java.util.concurrent.Executors
 import com.app.kekomi.BarcodeAnalyser.BarCodeAnalyser
 import com.app.kekomi.storage.FoodRepository
 import com.app.kekomi.storage.userPreferences
+import com.google.common.util.concurrent.ListenableFuture
 import kotlinx.coroutines.launch
 
 
