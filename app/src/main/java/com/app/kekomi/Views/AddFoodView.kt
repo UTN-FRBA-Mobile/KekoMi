@@ -41,6 +41,7 @@ import com.app.kekomi.apis.foodApi.Nutrient
 import com.app.kekomi.entities.Food
 import com.app.kekomi.entities.Meal
 import com.app.kekomi.storage.FoodRepository
+import com.app.kekomi.ui.theme.principalColor
 import kotlinx.coroutines.*
 import okhttp3.MediaType
 import okhttp3.RequestBody
@@ -384,7 +385,7 @@ fun addButton(food: FinalFood, selectedMeal: String, navController: NavHostContr
             navController.navigate(BottomNavItem.Home.screen_route)
         },
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color(android.graphics.Color.parseColor("#008080"))
+            backgroundColor = principalColor
         ),
         modifier = Modifier
             .fillMaxWidth()

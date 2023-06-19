@@ -25,6 +25,7 @@ import androidx.navigation.NavHostController
 import com.app.kekomi.entities.Food
 import com.app.kekomi.storage.FoodRepository
 import com.app.kekomi.storage.userPreferences
+import com.app.kekomi.ui.theme.principalColor
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -77,7 +78,7 @@ fun FoodDetailsView(navController: NavHostController, foodId: Int) {
             onClick = {
                 repository.updateFood(food.value)
             },
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF008080)),
+            colors = ButtonDefaults.buttonColors(backgroundColor = principalColor),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 40.dp, end = 50.dp, bottom = 30.dp)
@@ -125,9 +126,9 @@ fun Item(
     }
 
     val outlineTextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
-        focusedBorderColor = Color(0xFF008080), // change the border color when focused
+        focusedBorderColor = principalColor, // change the border color when focused
         textColor = Color.Black, // change the text color
-        focusedLabelColor = Color(0xFF008080),
+        focusedLabelColor = principalColor,
         unfocusedBorderColor = Color.Gray,
         disabledBorderColor = Color.Gray
     )

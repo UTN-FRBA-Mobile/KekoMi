@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.kekomi.R
 import com.app.kekomi.storage.userPreferences
+import com.app.kekomi.ui.theme.principalColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -41,7 +42,7 @@ import kotlinx.coroutines.launch
 fun ProfileView() {
     Column{
         TopAppBar(
-            backgroundColor = Color(android.graphics.Color.parseColor("#008080")),
+            backgroundColor = principalColor,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
@@ -73,7 +74,7 @@ fun ProfileView() {
             Text(text = "Select what you wish to track:",
                 modifier = Modifier.padding(top=20.dp),
                 fontSize = 26.sp,
-                color = Color(android.graphics.Color.parseColor("#008080")))
+                color = principalColor)
             CheckBoxes()
 
         }
@@ -115,9 +116,9 @@ fun PesoYAltura(dataStore: userPreferences, scope: CoroutineScope) {
     }
 
     val outlineTextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
-        focusedBorderColor = Color(0xFF008080), // change the border color when focused
+        focusedBorderColor = principalColor, // change the border color when focused
         textColor = Color.Black, // change the text color
-        focusedLabelColor = Color(0xFF008080),
+        focusedLabelColor = principalColor,
         unfocusedBorderColor = Color.Gray,
         disabledBorderColor = Color.Gray,
 
@@ -190,9 +191,9 @@ fun TextBox(s: String, dataStore: userPreferences, scope: CoroutineScope){
     }
     val focusManager = LocalFocusManager.current
     val outlineTextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
-        focusedBorderColor = Color(0xFF008080), // change the border color when focused
+        focusedBorderColor = principalColor, // change the border color when focused
         textColor = Color.Black, // change the text color
-        focusedLabelColor = Color(0xFF008080),
+        focusedLabelColor = principalColor,
         unfocusedBorderColor = Color.Gray,
         disabledBorderColor = Color.Gray,
 
@@ -346,9 +347,9 @@ fun Goal(
     }
 
     val outlineTextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
-        focusedBorderColor = Color(0xFF008080), // change the border color when focused
+        focusedBorderColor = principalColor, // change the border color when focused
         textColor = Color.Black, // change the text color
-        focusedLabelColor = Color(0xFF008080),
+        focusedLabelColor = principalColor,
         unfocusedBorderColor = Color.Gray,
         disabledBorderColor = Color.Gray
     )

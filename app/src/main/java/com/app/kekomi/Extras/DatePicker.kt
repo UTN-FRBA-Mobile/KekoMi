@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.kekomi.ui.theme.principalColor
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
@@ -92,7 +93,7 @@ fun DatePicker() {
         datepicker(
             initialDate = DateSelected.pickedDate,
             title = "Pick a date",
-            colors = DatePickerDefaults.colors(headerBackgroundColor = Color.Gray,dateActiveBackgroundColor = Color(android.graphics.Color.parseColor("#008080")))
+            colors = DatePickerDefaults.colors(headerBackgroundColor = Color.Gray,dateActiveBackgroundColor = principalColor)
         ) {
             DateSelected.pickedDate = it
         }

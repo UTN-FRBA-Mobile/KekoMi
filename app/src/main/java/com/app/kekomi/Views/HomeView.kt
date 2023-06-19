@@ -30,6 +30,7 @@ import com.app.kekomi.entities.Food
 import com.app.kekomi.entities.Meal
 import com.app.kekomi.storage.FoodRepository
 import com.app.kekomi.storage.userPreferences
+import com.app.kekomi.ui.theme.principalColor
 import java.time.temporal.WeekFields
 import java.util.*
 
@@ -43,7 +44,7 @@ fun HomeView(navController: NavHostController) {
 
     Column {
         TopAppBar(
-            backgroundColor = Color(android.graphics.Color.parseColor("#008080")),
+            backgroundColor = principalColor,
             navigationIcon = {
                 DatePicker()
             },
@@ -113,7 +114,7 @@ fun HomeView(navController: NavHostController) {
                             navController.navigate("AddFoodView/$scanned")
                         },
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Color(android.graphics.Color.parseColor("#008080"))
+                            backgroundColor = principalColor
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -237,7 +238,7 @@ fun ProgressBarWithText(percentage: Float, label: String) {
     LinearProgressIndicator(
         progress = progress/100,
         modifier = Modifier.width(200.dp),
-        color = Color(android.graphics.Color.parseColor("#008080"))
+        color = principalColor
     )
     Spacer(modifier = Modifier.height(10.dp))
 }
@@ -263,9 +264,10 @@ fun FoodButton(food: Food, navController: NavHostController) {
                   },
         colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
         modifier = Modifier
-            .width(330.dp)
+            .fillMaxWidth()
             .height(50.dp)
-            .border(3.dp, Color(0xFF008080), RoundedCornerShape(15))
+            .padding(end = 30.dp)
+            .border(3.dp, principalColor, RoundedCornerShape(15))
     ) {
 
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {

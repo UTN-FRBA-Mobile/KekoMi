@@ -46,6 +46,8 @@ import com.app.kekomi.Extras.BarChartByTimePeriod
 
 import com.app.kekomi.Extras.DonutChart
 import com.app.kekomi.Extras.SelectableCalendar
+import com.app.kekomi.ui.theme.principalColor
+
 //import com.app.kekomi.Extras.TestBarChart
 
 
@@ -54,7 +56,7 @@ import com.app.kekomi.Extras.SelectableCalendar
 fun CalendarView() {
     Column {
         TopAppBar(
-            backgroundColor = Color(android.graphics.Color.parseColor("#008080")),
+            backgroundColor = principalColor,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
@@ -111,7 +113,7 @@ private fun ButtonToggleGroup(
 
             val border = if (selected) BorderStroke(
                 width = 3.dp,
-                color = Color(android.graphics.Color.parseColor("#008080"))
+                color = principalColor
             ) else ButtonDefaults.outlinedBorder
 
             val shape = when (index) {

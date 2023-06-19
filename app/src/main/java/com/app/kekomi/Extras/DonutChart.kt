@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.app.kekomi.storage.FoodRepository
 import com.app.kekomi.storage.userPreferences
+import com.app.kekomi.ui.theme.principalColor
 import java.lang.Math.ceil
 
 @Composable
@@ -87,7 +88,7 @@ fun getColors(values: List<Float>): List<Color>{
         listOf(Color.Gray, Color.Gray, Color.Gray, Color.Gray)
     }else{
         listOf(
-            Color(android.graphics.Color.parseColor("#008080")),
+            principalColor,
             Color(android.graphics.Color.parseColor("#195e5e")),
             Color(android.graphics.Color.parseColor("#669494")),
             Color(android.graphics.Color.parseColor("#99b7b7"))

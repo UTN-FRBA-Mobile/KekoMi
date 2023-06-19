@@ -34,7 +34,7 @@ package com.app.kekomi.widget
 // fontSize = 16.sp,
 // textAlign = TextAlign.Center,
 // ),
-// modifier = GlanceModifier.fillMaxSize().background(color=Color(android.graphics.Color.parseColor("#008080")))
+// modifier = GlanceModifier.fillMaxSize().background(color=principalColor)
 // )*/
 // }
 // Column() {
