@@ -18,8 +18,9 @@ fun NavigationGraph(navController: NavHostController) {
         composable(BottomNavItem.Profile.screen_route) {
             ProfileView()
         }
-        composable("AddFoodView") {
-            AddFoodView(navController)
+        composable("AddFoodView/{scannedValue}") { backStackEntry ->
+            val scannedValue = backStackEntry.arguments?.getString("scannedValue")
+            AddFoodView(navController, scannedValue)
         }
         composable("FoodDetailsView/{foodId}") { navBackStackEntry ->
             val foodId = navBackStackEntry.arguments?.getString("foodId")

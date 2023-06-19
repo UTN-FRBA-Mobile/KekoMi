@@ -24,4 +24,24 @@ data class Nutrients(
     val FIBTG: Double
 )
 
+data class FoodNutrients(
+    val calories: String,
+    val totalWeight: String,
+    val totalNutrients: TotalNutrients,
+)
+data class TotalNutrients (
+    val SUGAR: Nutrient,
+    val PROCNT: Nutrient,
+    val FAT: Nutrient,
+    val NA: Nutrient
+)
 
+data class Nutrient (
+    val quantity: Double,
+    val unit: String
+)
+
+data class PostModel(
+    val quantity: Int = 1,
+    val foodId: String
+)

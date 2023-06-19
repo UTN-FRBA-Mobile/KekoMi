@@ -34,6 +34,13 @@ fun decrementDay() {
     DateSelected.pickedDate = DateSelected.pickedDate.minusDays(1)
 }
 
+fun decrementMonth(months: Int): String {
+    var month:String = LocalDate.now().minusMonths(months.toLong()).format(DateTimeFormatter.ofPattern("MMM"))
+
+    return month
+
+}
+
 fun todayDate(){
     DateSelected.pickedDate = LocalDate.now()
 }

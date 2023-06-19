@@ -1,12 +1,10 @@
 package com.app.kekomi.Views
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -19,39 +17,58 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.app.kekomi.BottomNav.BottomNavItem
+import com.app.kekomi.Extras.DateSelected
 import com.app.kekomi.R
+import com.app.kekomi.apis.FinalFood
+import com.app.kekomi.apis.FinalNutrients
+import com.app.kekomi.apis.FoodSource
+import com.app.kekomi.apis.barcodeApi.BarcodeFood
+import com.app.kekomi.apis.barcodeApi.getFoodByBarcode
 import com.app.kekomi.apis.foodApi.ApiFoodService
+import com.app.kekomi.apis.foodApi.FoodNutrients
 import com.app.kekomi.apis.foodApi.FoodResponse
+import com.app.kekomi.apis.foodApi.Nutrient
+import com.app.kekomi.entities.Food
+import com.app.kekomi.entities.Meal
 import com.app.kekomi.storage.FoodRepository
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import okhttp3.MediaType
+import okhttp3.RequestBody
+import org.json.JSONArray
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.temporal.WeekFields
+import java.util.*
 
 
 val api_id= "b0e8bca6"
 val api_key= "abef3893c7d61e39cd4f1f573733d8e8"
 
 
+
 @Composable
-fun AddFoodView(navController: NavHostController) {
+fun AddFoodView(navController: NavHostController, scannedValue: String?) {
 
 
     val context = LocalContext.current
     val repo: FoodRepository by lazy {
         FoodRepository(context)
     }
+    val dropdownViewModel: DropdownViewModel = viewModel()
 
 
     Column(
@@ -68,7 +85,7 @@ fun AddFoodView(navController: NavHostController) {
         ) {
             TextButton(
                 onClick = {
-                    navController.popBackStack()
+                    navController.navigate(BottomNavItem.Home.screen_route)
                 },
 
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
@@ -84,8 +101,8 @@ fun AddFoodView(navController: NavHostController) {
 //                Icon(Icons.Default.Add, contentDescription = "Localized description", tint = Color.Black)
 //            }
         }
-
-        SearchBar( onClear = {}, navController)
+        dropDownMenu( dropdownViewModel)
+        SearchBar( dropdownViewModel.selectedFoodOption.value, onClear = {}, navController, scannedValue)
 
     }
 }
@@ -94,20 +111,33 @@ fun AddFoodView(navController: NavHostController) {
 
 @Composable
 fun SearchBar(
+    selectedMeal: String,
     onClear: () -> Unit,
-    navController: NavHostController
+    navController: NavHostController,
+    scannedValue: String?
 ) {
     var text by remember { mutableStateOf("") }
     var autoCompleteResults by remember { mutableStateOf(emptyList<String>()) }
+    var hadSearched by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
+    var scannedValueLoaded by remember { mutableStateOf(false) } // Track if scannedValue has been loaded
+
+    if (scannedValue != "0" && !scannedValueLoaded) {
+        text = scannedValue!!
+        scannedValueLoaded = true
+    }
+
 
     LaunchedEffect(text) {
-        // Delay for autocomplete when user stops typing
-       // delay(500) // Adjust the delay time as needed
-
-        // Call the autoComplete function and update the results
-        autoCompleteResults = autoComplete(text)
+        // Delay
+        // delay(500)
+        if(text.toDoubleOrNull() != null){
+            hadSearched = true
+        }else{
+            autoCompleteResults = autoComplete(text)
+        }
     }
+
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -136,6 +166,7 @@ fun SearchBar(
                 value = text,
                 onValueChange = { newText ->
                     text = newText
+                    hadSearched = false
                 },
                 textStyle = TextStyle(color = Color.Black, fontSize = 25.sp),
                 modifier = Modifier
@@ -169,6 +200,7 @@ fun SearchBar(
         ) {
             IconButton(
                 onClick = {
+                    scannedValueLoaded = false
                     navController.navigate("CodeBarScannerView")
                 }
             ) {
@@ -181,42 +213,247 @@ fun SearchBar(
                 )
             }
         }
+
     }
 
-    // Display the autocomplete results below the search bar
-    Column(modifier = Modifier.padding(start = 15.dp, end = 10.dp)) {
-        for (result in autoCompleteResults) {
-            TextButton(
-                onClick = {
-                    Log.d("Main", result)
-                    text = result
-                },
 
+    if(hadSearched){
+        addSingleFood(text, selectedMeal, navController)
+    }
+
+    else{
+        // Display the autocomplete results below the search bar
+        Column(modifier = Modifier.padding(start = 15.dp, end = 10.dp)) {
+            for (result in autoCompleteResults) {
+                TextButton(
+                    onClick = {
+                        Log.d("Main", result)
+                        text = result
+                        hadSearched = true
+                    },
+
+                ) {
+                    Text(
+                        text = result,
+                        fontSize = 25.sp,
+                        color = Color.Black,
+                        textAlign = TextAlign.Center
+                    )
+
+                }
+            }
+
+
+
+        }
+    }
+}
+
+class DropdownViewModel : ViewModel() {
+    val foodOptions = listOf("Breakfast", "Lunch", "Dinner", "Snack")
+    val selectedFoodOption = mutableStateOf(foodOptions[0])
+}
+
+
+@Composable
+fun dropDownMenu(dropdownViewModel: DropdownViewModel) {
+    val foodOptions = listOf("Breakfast", "Lunch", "Dinner", "Snack")
+    val isDropdownExpanded = remember { mutableStateOf(false) }
+    val selectedFoodOption = remember { mutableStateOf(foodOptions[0]) }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(top = 5.dp, start = 10.dp, end = 10.dp, bottom = 15.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(text = "Please select the type of meal",
+            style = TextStyle(fontSize = 18.sp),
+            modifier = Modifier.padding(5.dp)
+        )
+
+        Box(
+            modifier = Modifier
+                .background(Color.LightGray)
+                .border(
+                    BorderStroke(1.dp, Color.LightGray),
+                    shape = RoundedCornerShape(percent = 15)
+                )
+                .clickable { isDropdownExpanded.value = !isDropdownExpanded.value }
+                .padding(5.dp)
+
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 5.dp),
+                horizontalArrangement = Arrangement.End
             ) {
                 Text(
-                    text = result,
-                    fontSize = 25.sp,
-                    color = Color.Black,
-                    textAlign = TextAlign.Center
+                    text = selectedFoodOption.value,
+                    style = TextStyle(fontSize = 20.sp)
                 )
-
+                Icon(
+                    imageVector = Icons.Filled.ArrowDropDown,
+                    contentDescription = "Dropdown Arrow",
+                    modifier = Modifier
+                        .padding(start = 5.dp)
+                        .size(25.dp),
+                )
+            }
+            DropdownMenu(
+                expanded = isDropdownExpanded.value,
+                onDismissRequest = { isDropdownExpanded.value = false },
+                modifier = Modifier.border(
+                    BorderStroke(1.dp, Color.Black),
+                    shape = RoundedCornerShape(percent = 10)
+                )
+            ) {
+                foodOptions.forEach { option ->
+                    DropdownMenuItem(onClick = {
+                        selectedFoodOption.value = option
+                        dropdownViewModel.selectedFoodOption.value = option
+                        isDropdownExpanded.value = false
+                    }) {
+                        Text(
+                            text = option,
+                            style = TextStyle(fontSize = 20.sp)
+                        )
+                    }
+                }
             }
         }
-
 
 
     }
 }
 
 
-private fun getRetrofit(): Retrofit {
+
+
+
+
+@Composable
+fun addSingleFood(text: String, selectedMeal: String, navController: NavHostController) {
+
+    val food = createFood(text = text)
+    
+    if(food != null){
+        val nutrients = food?.nutrients
+        Column(
+            modifier = Modifier
+                .padding(20.dp)
+                .fillMaxWidth()
+        ) {
+            if (nutrients != null) {
+                showFoodDetails("Calories", nutrients.calories)
+                showFoodDetails("Proteins", nutrients.protein)
+                showFoodDetails("Sugar", nutrients.sugar)
+                showFoodDetails("Sodium", nutrients.sodium) //esta en mg
+                showFoodDetails("Fat", nutrients.fats)
+
+                addButton(food, selectedMeal, navController)
+            }
+        }        
+    }
+    else{
+        Text(text = "$text was not found")
+    }
+
+}
+
+@Composable
+fun addButton(food: FinalFood, selectedMeal: String, navController: NavHostController) {
+    val context = LocalContext.current
+    val repository = FoodRepository(context)
+
+    Button(
+        onClick = {
+            repository.insertFood(
+                Food(foodName = food.name,
+                    calories = food.nutrients.calories?.quantity?.toInt()!!,
+                    quantity = 1,
+                    protein = food.nutrients.protein?.quantity?.toInt()!!,
+                    sugar = food.nutrients.sugar?.quantity?.toInt()!!,
+                    fats = food.nutrients.fats?.quantity?.toInt()!!,
+                    sodium = food.nutrients.sodium?.quantity?.toInt()!!,
+                    day = DateSelected.pickedDate.dayOfMonth,
+                    week_number = DateSelected.pickedDate.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear()),
+                    month = DateSelected.pickedDate.monthValue,
+                    year = DateSelected.pickedDate.year,
+                    meal = Meal.valueOf(selectedMeal.toUpperCase(Locale.ROOT)))
+            )
+            navController.navigate(BottomNavItem.Home.screen_route)
+        },
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = Color(android.graphics.Color.parseColor("#008080"))
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+            .padding(16.dp)
+    ) {
+        Text("+     Add food", fontSize = 20.sp, color = Color.White)
+    }
+}
+
+@Composable
+fun showFoodDetails(metricName: String, nutrient: Nutrient?) {
+    val focusManager = LocalFocusManager.current
+    var inputValue by remember { mutableStateOf(String.format("%.2f",nutrient?.quantity))}
+
+
+        Row(
+            modifier = Modifier.padding(bottom = 15.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = metricName,
+                style = TextStyle(fontSize = 20.sp),
+                modifier = Modifier.padding(end = 10.dp)
+            )
+
+            Box(modifier = Modifier.weight(1f)) {
+                OutlinedTextField(
+                    value = inputValue,
+                    onValueChange = { newValue ->
+                       inputValue = newValue
+                    },
+                    enabled = false,
+                    placeholder = { Text("") },
+                    modifier = Modifier
+                        .padding(start = 50.dp, end = 10.dp)
+                        .width(100.dp)
+                        .height(48.dp),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            focusManager.clearFocus()
+                        }
+                    ),
+                    textStyle = TextStyle(textAlign = TextAlign.Center, fontSize = 15.sp),
+                    visualTransformation = SuffixVisualTransformation(" ${nutrient?.unit}"),
+                    shape = RoundedCornerShape(10.dp),
+                )
+            }
+        }
+
+}
+
+
+
+
+
+fun getRetrofit(): Retrofit {
     return Retrofit.Builder()
         .baseUrl("https://api.edamam.com/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 }
 
-fun getFood(foodName: String) {
+fun getFood(foodName: String, callback: (FoodResponse) -> Unit) {
     val apiService = getRetrofit().create(ApiFoodService::class.java)
     val call: Call<FoodResponse> = apiService.getFoodByName(api_id, api_key, foodName)
 
@@ -224,8 +461,12 @@ fun getFood(foodName: String) {
         override fun onResponse(call: Call<FoodResponse>, response: Response<FoodResponse>) {
             if (response.isSuccessful) {
                 val foodResponse: FoodResponse? = response.body()
-                // Process the foodResponse here
-                Log.d("Main", "Success! $foodResponse")
+                if (foodResponse != null) {
+                    Log.d("Main", "Success! $foodResponse")
+                    callback(foodResponse)
+                } else {
+                    Log.e("Main", "Empty response body")
+                }
             } else {
                 Log.e("Main", "Request failed with code: ${response.code()}")
             }
@@ -236,6 +477,70 @@ fun getFood(foodName: String) {
         }
     })
 }
+
+fun getNutrients(foodId: String, callback: (FoodNutrients) -> Unit) {
+    val apiService = getRetrofit().create(ApiFoodService::class.java)
+    val ingredientsArray = JSONArray().apply {
+        val ingredientObject = JSONObject().apply {
+            put("quantity", 1)
+            put("foodId", foodId)
+        }
+        put(ingredientObject)
+    }
+
+    val requestBodyJson = JSONObject().apply {
+        put("ingredients", ingredientsArray)
+    }.toString()
+
+    val requestBody = RequestBody.create(MediaType.parse("application/json"), requestBodyJson)
+
+
+    val call: Call<FoodNutrients> = apiService.getFoodNutrients(api_id, api_key, requestBody)
+
+    call.enqueue(object : Callback<FoodNutrients> {
+        override fun onResponse(call: Call<FoodNutrients>, response: Response<FoodNutrients>) {
+            if (response.isSuccessful) {
+                val foodResponse: FoodNutrients? = response.body()
+                if (foodResponse != null) {
+                    Log.d("Main", "Success! $foodResponse")
+                    callback(foodResponse)
+                } else {
+                    Log.e("Main", "Empty response body")
+                }
+            } else {
+                Log.e("Main", "Request failed with code: ${response.code()} and ${response.errorBody()
+                    ?.string()}")
+            }
+        }
+
+        override fun onFailure(call: Call<FoodNutrients>, t: Throwable) {
+            Log.e("Main", "Request failed: ${t.message}")
+        }
+    })
+}
+
+
+
+
+//suspend fun getFood(foodName: String): FoodResponse? {
+//    return withContext(Dispatchers.IO) {
+//        val apiService = getRetrofit().create(ApiFoodService::class.java)
+//        val call: Call<FoodResponse> = apiService.getFoodByName(api_id, api_key, foodName)
+//        val response = call.execute()
+//
+//        if (response.isSuccessful) {
+//            val responseBody = response.body()
+//            Log.d("Main:", responseBody.toString())
+//            responseBody
+//        } else {
+//            Log.e("Main:", "Failed to fetch food data: ${response.code()}")
+//            null
+//        }
+//    }
+//}
+
+
+
 
 suspend fun autoComplete(text: String): List<String> {
     return withContext(Dispatchers.IO) {
@@ -251,6 +556,53 @@ suspend fun autoComplete(text: String): List<String> {
     }
 }
 
+@Composable
+fun createFood(text: String): FinalFood? {
+    val foodResponseState = remember { mutableStateOf<FoodResponse?>(null) }
+    val nutrientResponseState = remember { mutableStateOf<FoodNutrients?>(null) }
+    val barcodeResponseState = remember { mutableStateOf<List<BarcodeFood>?>(null) }
+    val finalFood = remember { mutableStateOf<FinalFood?>(null) }
+
+    if(text.toDoubleOrNull() == null && text != ""){//si es null, es un texto
+        getFood(text) { foodResponse ->
+            foodResponseState.value = foodResponse
+        }
+        val foodResponse = foodResponseState.value
+        if (foodResponse != null) {
+//        Text("${foodResponse.parsed.joinToString(",")}")
+            getNutrients(foodResponse.parsed.first().food.foodId){foodNutrients ->
+                nutrientResponseState.value = foodNutrients
+            }
+            val nutrientsResponse = nutrientResponseState.value
+            if(nutrientsResponse != null){
+                val food = foodResponse.parsed.first().food
+                val calories = Nutrient(nutrientsResponse.calories.toDouble(), "kcal")
+                val totalNutrients = nutrientsResponse.totalNutrients
+                val finalNutrients = FinalNutrients(calories, totalNutrients.FAT, totalNutrients.SUGAR, totalNutrients.NA, totalNutrients.PROCNT)
+                finalFood.value = FinalFood(food.foodId, food.label, nutrientsResponse.totalWeight.toDouble().toInt(), finalNutrients, food.image, FoodSource.FOODAPI)
+            }
+        }
+
+    }else{//aca es barcode
+        Log.d("BARCODE:", "hay barcode")
+        getFoodByBarcode(text) { listFood ->
+            barcodeResponseState.value = listFood
+        }
+        val barcodeResponse = barcodeResponseState.value
+        if (barcodeResponse != null) {
+            if (barcodeResponse.isNotEmpty()) {
+                Log.d("Main:", "Text is $text")
+                val barcodeFood = barcodeResponse.first()
+                if (barcodeFood != null) {
+                    finalFood.value = FinalFood(barcodeFood.id.toString(), barcodeFood.food,barcodeFood.weight, barcodeFood.nutrients,"",
+                        FoodSource.BARCODE)
+                }
+            }         
+        }
+    }
+    Log.d("Main::", "${finalFood.value}")
+    return finalFood.value
+}
 
 
 
