@@ -32,7 +32,6 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
-import com.google.common.util.concurrent.ListenableFuture
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import com.app.kekomi.BarcodeAnalyser.BarCodeAnalyser

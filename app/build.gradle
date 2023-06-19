@@ -99,10 +99,10 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.12.0'
 
     //widget
-    //implementation 'androidx.glance:glance:1.0.0-alpha05'
-    //implementation "androidx.glance:glance-appwidget:1.0.0-alpha05"
+    implementation 'androidx.glance:glance:1.0.0-alpha05'
+    implementation "androidx.glance:glance-appwidget:1.0.0-alpha05"
 
     // For Wear-Tiles support
-    //implementation "androidx.glance:glance-wear-tiles:1.0.0-alpha05"
+    implementation "androidx.glance:glance-wear-tiles:1.0.0-alpha05"
 
 }
