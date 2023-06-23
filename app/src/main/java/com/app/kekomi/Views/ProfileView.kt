@@ -100,6 +100,7 @@ fun InformacionPersonal() {
 @Composable
 fun PesoYAltura(dataStore: userPreferences, scope: CoroutineScope) {
     val focusManager = LocalFocusManager.current
+
     val initialValueH = dataStore.getHeight.collectAsState(initial = "").value!!
     var inputValueH by remember { mutableStateOf(initialValueH) }
 
@@ -108,7 +109,6 @@ fun PesoYAltura(dataStore: userPreferences, scope: CoroutineScope) {
     }
 
     val initialValueW = dataStore.getWeight.collectAsState(initial = "").value!!
-
     var inputValueW by remember { mutableStateOf(initialValueW) }
 
     LaunchedEffect(initialValueW) {
@@ -120,14 +120,17 @@ fun PesoYAltura(dataStore: userPreferences, scope: CoroutineScope) {
         textColor = Color.Black, // change the text color
         focusedLabelColor = principalColor,
         unfocusedBorderColor = Color.Gray,
-        disabledBorderColor = Color.Gray,
-
-        )
+        disabledBorderColor = Color.Gray
+    )
 
     Row(modifier = Modifier.fillMaxWidth()) {
         OutlinedTextField(
             value = inputValueW,
-            onValueChange = { newValue -> inputValueW = newValue},
+            onValueChange = { newValue ->
+                // Filter out non-digit characters
+                val filteredValue = newValue.filter { it.isDigit() }
+                inputValueW = filteredValue
+            },
             label = { Text("Weight", fontSize = 18.sp) },
             modifier = Modifier
                 .weight(1f)
@@ -148,12 +151,15 @@ fun PesoYAltura(dataStore: userPreferences, scope: CoroutineScope) {
             textStyle = TextStyle(textAlign = TextAlign.End, fontSize = 20.sp),
             visualTransformation = SuffixVisualTransformation(" kg"),
             colors = outlineTextFieldColors
-
-
         )
+
         OutlinedTextField(
             value = inputValueH,
-            onValueChange = {newValue -> inputValueH = newValue},
+            onValueChange = { newValue ->
+                // Filter out non-digit characters
+                val filteredValue = newValue.filter { it.isDigit() }
+                inputValueH = filteredValue
+            },
             label = { Text("Height", fontSize = 18.sp) },
             modifier = Modifier
                 .weight(1f)
@@ -177,6 +183,7 @@ fun PesoYAltura(dataStore: userPreferences, scope: CoroutineScope) {
         )
     }
 }
+
 
 
 
@@ -356,7 +363,11 @@ fun Goal(
     val focusManager = LocalFocusManager.current
     OutlinedTextField(
         value = inputValueG,
-        onValueChange = { newValue -> inputValueG = newValue },
+        onValueChange = { newValue ->
+            // Filter out non-digit characters
+            val filteredValue = newValue.filter { it.isDigit() }
+            inputValueG = filteredValue
+        },
         label = { Text("Set goal", fontSize = 15.sp, textAlign = TextAlign.Center) },
         placeholder = { Text("") },
         modifier = Modifier
@@ -384,8 +395,8 @@ fun Goal(
         colors = outlineTextFieldColors,
         shape = RoundedCornerShape(percent = 10)
     )
-
 }
+
 @SuppressLint("CoroutineCreationDuringComposition")
 fun updateGoal(value: String, index: Int, dataStore: userPreferences, scope: CoroutineScope) {
     scope.launch {
