@@ -357,7 +357,7 @@ fun addSingleFood(text: String, selectedMeal: String, navController: NavHostCont
                 showFoodDetails("Sodium", nutrients.sodium, quantityState) // esta en mg
                 showFoodDetails("Fat", nutrients.fats, quantityState)
 
-                addButton(food, selectedMeal, navController)
+                addButton(food, selectedMeal, navController, quantityState)
             }
         }
     } else {
@@ -369,9 +369,18 @@ fun addSingleFood(text: String, selectedMeal: String, navController: NavHostCont
 fun showQuantitySelector(initialQuantity: Int, onQuantityChanged: (Int) -> Unit) {
     var quantity by remember { mutableStateOf(initialQuantity) }
 
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(text = "Select Quantity:")
-
+    Row(
+        modifier = Modifier
+        .padding(bottom = 15.dp)
+        .fillMaxWidth()) {
+        Text(
+            text = "Select Quantity",
+            style = TextStyle(fontSize = 20.sp),
+            modifier = Modifier
+                .padding(end = 20.dp)
+                .width(100.dp)
+        )
+        Spacer(modifier = Modifier.weight(1f))
         Row(modifier = Modifier.padding(top = 8.dp)) {
             IconButton(
                 onClick = {
@@ -387,7 +396,15 @@ fun showQuantitySelector(initialQuantity: Int, onQuantityChanged: (Int) -> Unit)
                 )
             }
 
-            Text(text = quantity.toString(), modifier = Modifier.padding(horizontal = 16.dp))
+            Box(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .border(1.dp, Color.Black, RoundedCornerShape(4.dp))
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                    .align(Alignment.CenterVertically)
+            ) {
+                Text(text = quantity.toString())
+            }
 
             IconButton(
                 onClick = {
@@ -402,6 +419,7 @@ fun showQuantitySelector(initialQuantity: Int, onQuantityChanged: (Int) -> Unit)
             }
         }
     }
+
 }
 @Composable
 fun showFoodDetails(metricName: String, nutrient: Nutrient?, quantity: MutableState<Int>) {
@@ -420,17 +438,23 @@ fun showFoodDetails(metricName: String, nutrient: Nutrient?, quantity: MutableSt
     }
 
     Row(
-        modifier = Modifier.padding(bottom = 15.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        modifier = Modifier
+            .padding(bottom = 15.dp)
+            .fillMaxWidth()
     ) {
         Text(
             text = metricName,
             style = TextStyle(fontSize = 20.sp),
-            modifier = Modifier.padding(end = 10.dp)
+            modifier = Modifier
+                .padding(end = 20.dp)
+                .width(100.dp)
         )
 
-        Box(modifier = Modifier.weight(1f)) {
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 10.dp)
+        ) {
             OutlinedTextField(
                 value = inputValue,
                 onValueChange = { newValue ->
@@ -439,9 +463,10 @@ fun showFoodDetails(metricName: String, nutrient: Nutrient?, quantity: MutableSt
                 enabled = false,
                 placeholder = { Text("") },
                 modifier = Modifier
-                    .padding(start = 50.dp, end = 10.dp)
+                    .fillMaxWidth()
                     .width(100.dp)
-                    .height(48.dp),
+                    .height(48.dp)
+                    .padding(end = 10.dp, start = 50.dp),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
@@ -457,12 +482,23 @@ fun showFoodDetails(metricName: String, nutrient: Nutrient?, quantity: MutableSt
             )
         }
     }
+
+
+
+
+
+
 }
 
 
 
 @Composable
-fun addButton(food: FinalFood, selectedMeal: String, navController: NavHostController) {
+fun addButton(
+    food: FinalFood,
+    selectedMeal: String,
+    navController: NavHostController,
+    quantityState: MutableState<Int>
+) {
     val context = LocalContext.current
     val repository = FoodRepository(context)
 
@@ -471,7 +507,7 @@ fun addButton(food: FinalFood, selectedMeal: String, navController: NavHostContr
             repository.insertFood(
                 Food(foodName = food.name,
                     calories = food.nutrients.calories?.quantity?.toInt()!!,
-                    quantity = 1,
+                    quantity = quantityState.value,
                     protein = food.nutrients.protein?.quantity?.toInt()!!,
                     sugar = food.nutrients.sugar?.quantity?.toInt()!!,
                     fats = food.nutrients.fats?.quantity?.toInt()!!,
