@@ -361,9 +361,21 @@ fun addSingleFood(text: String, selectedMeal: String, navController: NavHostCont
             }
         }
     } else {
-        Text(text = "$text was not found")
+        loader()
+//        Text(text = "$text was not found")//aca va el loader
     }
 }
+
+@Composable
+fun loader() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(modifier = Modifier.padding(top = 40.dp), color = principalColor)
+    }
+}
+
 
 @Composable
 fun showQuantitySelector(initialQuantity: Int, onQuantityChanged: (Int) -> Unit) {
@@ -436,7 +448,7 @@ fun showFoodDetails(metricName: String, nutrient: Nutrient?, quantity: MutableSt
         onDispose {
             // Cleanup, if necessary
         }
-    }
+    }//TODO cambiar por Launch effect
 
     Row(
         modifier = Modifier
