@@ -30,10 +30,10 @@ data class FoodNutrients(
     val totalNutrients: TotalNutrients,
 )
 data class TotalNutrients (
-    val SUGAR: Nutrient,
-    val PROCNT: Nutrient,
-    val FAT: Nutrient,
-    val NA: Nutrient
+    val SUGAR: Nutrient?= Nutrient(0.0, ""),
+    val PROCNT: Nutrient?= Nutrient(0.0, ""),
+    val FAT: Nutrient?= Nutrient(0.0, ""),
+    val NA: Nutrient?= Nutrient(0.0, "")
 )
 
 data class Nutrient (

@@ -395,8 +395,8 @@ fun showQuantitySelector(initialQuantity: Int, onQuantityChanged: (Int) -> Unit)
         Spacer(modifier = Modifier.weight(1f))
         Row(
             modifier = Modifier.padding(top = 8.dp)
-                .border(1.dp, Color.Black, RoundedCornerShape(4.dp))
-                .width(100.dp)
+                .border(1.dp, Color.Black, RoundedCornerShape(10.dp))
+                .width(120.dp)
         )
         {
             IconButton(
@@ -473,7 +473,7 @@ fun showFoodDetails(metricName: String, nutrient: Nutrient?, quantity: MutableSt
             enabled = false,
             placeholder = { Text("") },
             modifier = Modifier
-                .width(100.dp)
+                .width(120.dp)
                 .height(48.dp),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
@@ -509,7 +509,7 @@ fun addButton(
 ) {
     val context = LocalContext.current
     val repository = FoodRepository(context)
-
+    Log.d("NAME:",food.name)
     Button(
         onClick = {
             repository.insertFood(
@@ -669,17 +669,21 @@ fun createFood(text: String): FinalFood? {
         }
         val foodResponse = foodResponseState.value
         if (foodResponse != null) {
-//        Text("${foodResponse.parsed.joinToString(",")}")
-            getNutrients(foodResponse.parsed.first().food.foodId){foodNutrients ->
-                nutrientResponseState.value = foodNutrients
-            }
-            val nutrientsResponse = nutrientResponseState.value
-            if(nutrientsResponse != null){
-                val food = foodResponse.parsed.first().food
-                val calories = Nutrient(nutrientsResponse.calories.toDouble(), "kcal")
-                val totalNutrients = nutrientsResponse.totalNutrients
-                val finalNutrients = FinalNutrients(calories, totalNutrients.FAT, totalNutrients.SUGAR, totalNutrients.NA, totalNutrients.PROCNT)
-                finalFood.value = FinalFood(food.foodId, food.label, nutrientsResponse.totalWeight.toDouble().toInt(), finalNutrients, food.image, FoodSource.FOODAPI)
+            if (foodResponse.parsed.isNotEmpty()) {
+    //        Text("${foodResponse.parsed.joinToString(",")}")
+                Log.d("Food:", "${foodResponse}")
+                getNutrients(foodResponse.parsed.first().food.foodId){foodNutrients ->
+                    nutrientResponseState.value = foodNutrients
+                }
+                val nutrientsResponse = nutrientResponseState.value
+                if(nutrientsResponse != null){
+                    Log.d("NUTRIENTS:", "${nutrientsResponse}")
+                    val food = foodResponse.parsed.first().food
+                    val calories = Nutrient(nutrientsResponse.calories.toDouble(), "kcal")
+                    val totalNutrients = nutrientsResponse.totalNutrients
+                    val finalNutrients = FinalNutrients(calories, totalNutrients.FAT, totalNutrients.SUGAR, totalNutrients.NA, totalNutrients.PROCNT)
+                    finalFood.value = FinalFood(food.foodId, food.knownAs, nutrientsResponse.totalWeight.toDouble().toInt(), finalNutrients, food.image, FoodSource.FOODAPI)
+                }
             }
         }
 
