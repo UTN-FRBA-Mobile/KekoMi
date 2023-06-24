@@ -381,7 +381,12 @@ fun showQuantitySelector(initialQuantity: Int, onQuantityChanged: (Int) -> Unit)
                 .width(100.dp)
         )
         Spacer(modifier = Modifier.weight(1f))
-        Row(modifier = Modifier.padding(top = 8.dp)) {
+        Row(
+            modifier = Modifier.padding(top = 8.dp)
+                .border(1.dp, Color.Black, RoundedCornerShape(4.dp))
+                .width(100.dp)
+        )
+        {
             IconButton(
                 onClick = {
                     if (quantity > 1) {
@@ -396,15 +401,11 @@ fun showQuantitySelector(initialQuantity: Int, onQuantityChanged: (Int) -> Unit)
                 )
             }
 
-            Box(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .border(1.dp, Color.Black, RoundedCornerShape(4.dp))
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
-                    .align(Alignment.CenterVertically)
-            ) {
-                Text(text = quantity.toString())
-            }
+            Text(
+                text = quantity.toString(),
+                modifier = Modifier.align(Alignment.CenterVertically) // Center the text vertically
+            )
+
 
             IconButton(
                 onClick = {
@@ -450,37 +451,32 @@ fun showFoodDetails(metricName: String, nutrient: Nutrient?, quantity: MutableSt
                 .width(100.dp)
         )
 
-        Box(
+        Spacer(modifier = Modifier.weight(1f))
+
+        OutlinedTextField(
+            value = inputValue,
+            onValueChange = { newValue ->
+                inputValue = newValue
+            },
+            enabled = false,
+            placeholder = { Text("") },
             modifier = Modifier
-                .weight(1f)
-                .padding(end = 10.dp)
-        ) {
-            OutlinedTextField(
-                value = inputValue,
-                onValueChange = { newValue ->
-                    inputValue = newValue
-                },
-                enabled = false,
-                placeholder = { Text("") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .width(100.dp)
-                    .height(48.dp)
-                    .padding(end = 10.dp, start = 50.dp),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
-                    }
-                ),
-                textStyle = TextStyle(textAlign = TextAlign.Center, fontSize = 15.sp),
-                visualTransformation = SuffixVisualTransformation(" ${nutrient?.unit}"),
-                shape = RoundedCornerShape(10.dp),
-            )
-        }
+                .width(100.dp)
+                .height(48.dp),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    focusManager.clearFocus()
+                }
+            ),
+            textStyle = TextStyle(textAlign = TextAlign.Center, fontSize = 15.sp),
+            visualTransformation = SuffixVisualTransformation(" ${nutrient?.unit}"),
+            shape = RoundedCornerShape(10.dp),
+        )
+
     }
 
 
