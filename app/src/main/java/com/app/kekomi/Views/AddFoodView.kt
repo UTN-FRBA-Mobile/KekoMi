@@ -334,32 +334,132 @@ fun dropDownMenu(dropdownViewModel: DropdownViewModel) {
 
 @Composable
 fun addSingleFood(text: String, selectedMeal: String, navController: NavHostController) {
-
     val food = createFood(text = text)
-    
-    if(food != null){
-        val nutrients = food?.nutrients
+    val quantityState = remember { mutableStateOf(1) }
+
+    if (food != null) {
+        val nutrients = food.nutrients
         Column(
             modifier = Modifier
                 .padding(20.dp)
                 .fillMaxWidth()
         ) {
             if (nutrients != null) {
-                showFoodDetails("Calories", nutrients.calories)
-                showFoodDetails("Proteins", nutrients.protein)
-                showFoodDetails("Sugar", nutrients.sugar)
-                showFoodDetails("Sodium", nutrients.sodium) //esta en mg
-                showFoodDetails("Fat", nutrients.fats)
+                showQuantitySelector(
+                    initialQuantity = quantityState.value
+                ) { newQuantity ->
+                    quantityState.value = newQuantity
+                }
+
+                showFoodDetails("Calories", nutrients.calories, quantityState)
+                showFoodDetails("Proteins", nutrients.protein, quantityState)
+                showFoodDetails("Sugar", nutrients.sugar, quantityState)
+                showFoodDetails("Sodium", nutrients.sodium, quantityState) // esta en mg
+                showFoodDetails("Fat", nutrients.fats, quantityState)
 
                 addButton(food, selectedMeal, navController)
             }
-        }        
-    }
-    else{
+        }
+    } else {
         Text(text = "$text was not found")
     }
-
 }
+
+@Composable
+fun showQuantitySelector(initialQuantity: Int, onQuantityChanged: (Int) -> Unit) {
+    var quantity by remember { mutableStateOf(initialQuantity) }
+
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(text = "Select Quantity:")
+
+        Row(modifier = Modifier.padding(top = 8.dp)) {
+            IconButton(
+                onClick = {
+                    if (quantity > 1) {
+                        quantity -= 1
+                        onQuantityChanged(quantity)
+                    }
+                }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_minus), // Replace with your minus icon resource
+                    contentDescription = "Minus"
+                )
+            }
+
+            Text(text = quantity.toString(), modifier = Modifier.padding(horizontal = 16.dp))
+
+            IconButton(
+                onClick = {
+                    quantity += 1
+                    onQuantityChanged(quantity)
+                }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_plus), // Replace with your plus icon resource
+                    contentDescription = "Plus"
+                )
+            }
+        }
+    }
+}
+@Composable
+fun showFoodDetails(metricName: String, nutrient: Nutrient?, quantity: MutableState<Int>) {
+    val focusManager = LocalFocusManager.current
+
+    var finalQty by remember { mutableStateOf(nutrient?.quantity?.times(quantity.value)?.toFloat()) }
+    var inputValue by remember { mutableStateOf(String.format("%.2f", finalQty)) }
+
+    DisposableEffect(quantity.value) {
+        finalQty = nutrient?.quantity?.times(quantity.value)?.toFloat()
+        inputValue = String.format("%.2f", finalQty)
+
+        onDispose {
+            // Cleanup, if necessary
+        }
+    }
+
+    Row(
+        modifier = Modifier.padding(bottom = 15.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = metricName,
+            style = TextStyle(fontSize = 20.sp),
+            modifier = Modifier.padding(end = 10.dp)
+        )
+
+        Box(modifier = Modifier.weight(1f)) {
+            OutlinedTextField(
+                value = inputValue,
+                onValueChange = { newValue ->
+                    inputValue = newValue
+                },
+                enabled = false,
+                placeholder = { Text("") },
+                modifier = Modifier
+                    .padding(start = 50.dp, end = 10.dp)
+                    .width(100.dp)
+                    .height(48.dp),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                    }
+                ),
+                textStyle = TextStyle(textAlign = TextAlign.Center, fontSize = 15.sp),
+                visualTransformation = SuffixVisualTransformation(" ${nutrient?.unit}"),
+                shape = RoundedCornerShape(10.dp),
+            )
+        }
+    }
+}
+
+
 
 @Composable
 fun addButton(food: FinalFood, selectedMeal: String, navController: NavHostController) {
@@ -396,52 +496,7 @@ fun addButton(food: FinalFood, selectedMeal: String, navController: NavHostContr
     }
 }
 
-@Composable
-fun showFoodDetails(metricName: String, nutrient: Nutrient?) {
-    val focusManager = LocalFocusManager.current
-    var inputValue by remember { mutableStateOf(String.format("%.2f",nutrient?.quantity))}
 
-
-        Row(
-            modifier = Modifier.padding(bottom = 15.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = metricName,
-                style = TextStyle(fontSize = 20.sp),
-                modifier = Modifier.padding(end = 10.dp)
-            )
-
-            Box(modifier = Modifier.weight(1f)) {
-                OutlinedTextField(
-                    value = inputValue,
-                    onValueChange = { newValue ->
-                       inputValue = newValue
-                    },
-                    enabled = false,
-                    placeholder = { Text("") },
-                    modifier = Modifier
-                        .padding(start = 50.dp, end = 10.dp)
-                        .width(100.dp)
-                        .height(48.dp),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            focusManager.clearFocus()
-                        }
-                    ),
-                    textStyle = TextStyle(textAlign = TextAlign.Center, fontSize = 15.sp),
-                    visualTransformation = SuffixVisualTransformation(" ${nutrient?.unit}"),
-                    shape = RoundedCornerShape(10.dp),
-                )
-            }
-        }
-
-}
 
 
 
