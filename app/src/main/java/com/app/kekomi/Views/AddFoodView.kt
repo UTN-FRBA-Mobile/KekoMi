@@ -1,5 +1,9 @@
 package com.app.kekomi.Views
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -23,6 +27,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.updateAll
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -42,6 +49,9 @@ import com.app.kekomi.entities.Food
 import com.app.kekomi.entities.Meal
 import com.app.kekomi.storage.FoodRepository
 import com.app.kekomi.ui.theme.principalColor
+import com.app.kekomi.widget.KekoMiWidget
+import com.app.kekomi.widget.KekoMiWidgetReceiver
+import com.app.kekomi.widget.Widget
 import kotlinx.coroutines.*
 import okhttp3.MediaType
 import okhttp3.RequestBody
@@ -383,8 +393,8 @@ fun showQuantitySelector(initialQuantity: Int, onQuantityChanged: (Int) -> Unit)
 
     Row(
         modifier = Modifier
-        .padding(bottom = 15.dp)
-        .fillMaxWidth()) {
+            .padding(bottom = 15.dp)
+            .fillMaxWidth()) {
         Text(
             text = "Select Quantity",
             style = TextStyle(fontSize = 20.sp),
@@ -394,7 +404,8 @@ fun showQuantitySelector(initialQuantity: Int, onQuantityChanged: (Int) -> Unit)
         )
         Spacer(modifier = Modifier.weight(1f))
         Row(
-            modifier = Modifier.padding(top = 8.dp)
+            modifier = Modifier
+                .padding(top = 8.dp)
                 .border(1.dp, Color.Black, RoundedCornerShape(10.dp))
                 .width(120.dp)
         )
@@ -526,6 +537,7 @@ fun addButton(
                     year = DateSelected.pickedDate.year,
                     meal = Meal.valueOf(selectedMeal.toUpperCase(Locale.ROOT)))
             )
+            updateWidgets(context)
             navController.navigate(BottomNavItem.Home.screen_route)
         },
         colors = ButtonDefaults.buttonColors(
@@ -540,11 +552,21 @@ fun addButton(
     }
 }
 
-
-
-
-
-
+fun updateWidgets(context: Context) {
+    val widgetProvider = KekoMiWidgetReceiver::class.java
+    val comp = ComponentName(context, widgetProvider)
+    val ids = AppWidgetManager.getInstance(context)
+        .getAppWidgetIds(comp)
+    val intent = Intent(context, widgetProvider).apply {
+        this.action = AppWidgetManager
+            .ACTION_APPWIDGET_UPDATE
+        this.putExtra(
+            AppWidgetManager.EXTRA_APPWIDGET_IDS,
+            ids
+        )
+    }
+    context.sendBroadcast(intent)
+}
 
 fun getRetrofit(): Retrofit {
     return Retrofit.Builder()

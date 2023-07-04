@@ -77,6 +77,7 @@ fun FoodDetailsView(navController: NavHostController, foodId: Int) {
         OutlinedButton(
             onClick = {
                 repository.updateFood(food.value)
+                updateWidgets(context)
             },
             colors = ButtonDefaults.buttonColors(backgroundColor = principalColor),
             modifier = Modifier
