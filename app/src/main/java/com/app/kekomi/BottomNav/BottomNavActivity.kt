@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navDeepLink
 import com.app.kekomi.Views.*
 
 @Composable
@@ -18,7 +19,9 @@ fun NavigationGraph(navController: NavHostController) {
         composable(BottomNavItem.Profile.screen_route) {
             ProfileView()
         }
-        composable("AddFoodView/{scannedValue}") { backStackEntry ->
+        composable("AddFoodView/{scannedValue}",deepLinks = listOf(navDeepLink {
+            uriPattern = "kekomi://AddFoodView/{scannedValue}"
+        })) { backStackEntry ->
             val scannedValue = backStackEntry.arguments?.getString("scannedValue")
             AddFoodView(navController, scannedValue)
         }
