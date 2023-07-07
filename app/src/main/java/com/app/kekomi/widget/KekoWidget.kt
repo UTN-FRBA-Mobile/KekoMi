@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
@@ -40,6 +41,7 @@ import androidx.navigation.Navigation.findNavController
 import com.app.kekomi.MainActivity
 import com.app.kekomi.entities.Food
 import com.app.kekomi.storage.FoodRepository
+import com.app.kekomi.ui.theme.principalColor
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -52,45 +54,53 @@ class KekoMiWidget : GlanceAppWidget() {
 }
 
 @Composable
-fun Widget(){
+fun Widget() {
 
  val pref = currentState<Preferences>()
  val calories = pref[stringPreferencesKey("calories")]
  val sodium = pref[stringPreferencesKey("sodium")]
  val sugar = pref[stringPreferencesKey("sugar")]
-
  Column(
-   horizontalAlignment = Alignment.CenterHorizontally,
-   verticalAlignment = Alignment.CenterVertically,
-   modifier = GlanceModifier.background(Color.White)
-  ){
-   Text(
-    text = "Calories " + calories + " kcal",
-    modifier = GlanceModifier.fillMaxWidth(),
-    style = TextStyle(
-     textAlign = TextAlign.Center,
-     color = ColorProvider(MaterialTheme.colors.onSurface),
+  modifier = GlanceModifier.background(Color.Transparent)
+ ) {
+  Row(modifier = GlanceModifier.fillMaxSize(),
+   verticalAlignment = Alignment.Vertical.CenterVertically) {
+   Column(
+    modifier = GlanceModifier.background(Color.Blue)
+     .padding(horizontal = 10.dp)
+   ) {
+    Text(
+     text = "Calories " + calories + " kcal",
+     style = TextStyle(
+      textAlign = TextAlign.Center,
+      color = ColorProvider(MaterialTheme.colors.onSurface),
+     )
     )
-   )
-   Spacer(modifier = GlanceModifier.padding(8.dp))
-   Text(
-    text = "Sodium " +  sodium + " g",
-    modifier = GlanceModifier.fillMaxWidth(),
-    style = TextStyle(
-     textAlign = TextAlign.Center,
-     color = ColorProvider(MaterialTheme.colors.onSurface),
+    Spacer(modifier = GlanceModifier.padding(8.dp))
+    Text(
+     text = "Sodium " + sodium + " g",
+     style = TextStyle(
+      textAlign = TextAlign.Center,
+      color = ColorProvider(MaterialTheme.colors.onSurface),
+     )
     )
-   )
-   Spacer(modifier = GlanceModifier.padding(8.dp))
-   Text(
-    text = "Sugar " + sugar + " g",
-    modifier = GlanceModifier.fillMaxWidth(),
-    style = TextStyle(
-     textAlign = TextAlign.Center,
-     color = ColorProvider(MaterialTheme.colors.onSurface),
+    Spacer(modifier = GlanceModifier.padding(8.dp))
+    Text(
+     text = "Sugar " + sugar + " g",
+     style = TextStyle(
+      textAlign = TextAlign.Center,
+      color = ColorProvider(MaterialTheme.colors.onSurface),
+     )
     )
+   }
+   Button(
+    text = "See more",
+    modifier = GlanceModifier.width(70.dp),
+    colors = ButtonColors(ColorProvider(principalColor), ColorProvider(Color.White)),
+    onClick = actionStartActivity<MainActivity>()
    )
   }
+ }
 }
 
 class KekoMiWidgetReceiver : GlanceAppWidgetReceiver() {
