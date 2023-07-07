@@ -19,9 +19,7 @@ fun NavigationGraph(navController: NavHostController) {
         composable(BottomNavItem.Profile.screen_route) {
             ProfileView()
         }
-        composable("AddFoodView/{scannedValue}",deepLinks = listOf(navDeepLink {
-            uriPattern = "kekomi://AddFoodView/{scannedValue}"
-        })) { backStackEntry ->
+        composable("AddFoodView/{scannedValue}") { backStackEntry ->
             val scannedValue = backStackEntry.arguments?.getString("scannedValue")
             AddFoodView(navController, scannedValue)
         }

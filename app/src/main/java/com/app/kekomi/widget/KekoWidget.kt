@@ -13,12 +13,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.*
 import androidx.glance.action.ActionParameters
+import androidx.glance.action.actionStartActivity
+import androidx.glance.action.clickable
 import androidx.glance.text.Text
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
@@ -34,6 +37,7 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import androidx.navigation.Navigation
 import androidx.navigation.Navigation.findNavController
+import com.app.kekomi.MainActivity
 import com.app.kekomi.entities.Food
 import com.app.kekomi.storage.FoodRepository
 import kotlinx.coroutines.MainScope
@@ -86,25 +90,8 @@ fun Widget(){
      color = ColorProvider(MaterialTheme.colors.onSurface),
     )
    )
-   Button(
-    text = "Add Food +",
-    modifier = GlanceModifier.fillMaxWidth(),
-    onClick = actionRunCallback<UpdateActionCallback>()
-   )
   }
 }
-
-
-class UpdateActionCallback : ActionCallback {
- override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
-  val intent = Intent()
-  intent.data = Uri.parse("kekomi://AddFoodView/0")
-  intent.action = Intent.ACTION_VIEW
-
-  actionStartActivity(intent = intent)
- }
-}
-
 
 class KekoMiWidgetReceiver : GlanceAppWidgetReceiver() {
 
