@@ -65,8 +65,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.time.temporal.WeekFields
 import java.util.*
 
-val api_id= "b0e8bca6"
-val api_key= "abef3893c7d61e39cd4f1f573733d8e8"
+val api_id= "163fdc40"
+val api_key= "05872bd8a7b6f8c0559241685a69ef71"
 
 @Composable
 fun AddFoodView(navController: NavHostController, scannedValue: String?) {
