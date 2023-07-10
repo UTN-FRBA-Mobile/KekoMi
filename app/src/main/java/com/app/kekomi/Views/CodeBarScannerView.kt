@@ -89,7 +89,7 @@ fun CodeBarScannerView(navController: NavHostController) {
 
 @Composable
 fun CameraPreview(onBarcodeScanned: (String) -> Unit) {
-   /* val context = LocalContext.current
+   val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     var preview by remember { mutableStateOf<Preview?>(null) }
     val barCodeVal = remember { mutableStateOf("") }
@@ -148,5 +148,5 @@ fun CameraPreview(onBarcodeScanned: (String) -> Unit) {
                 }
             }, ContextCompat.getMainExecutor(context))
         }
-    )*/
+    )
 }

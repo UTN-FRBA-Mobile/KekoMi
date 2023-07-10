@@ -73,14 +73,12 @@ val api_key= "abef3893c7d61e39cd4f1f573733d8e8"
 
 @Composable
 fun AddFoodView(navController: NavHostController, scannedValue: String?) {
-
-
+    
     val context = LocalContext.current
     val repo: FoodRepository by lazy {
         FoodRepository(context)
     }
     val dropdownViewModel: DropdownViewModel = viewModel()
-
 
     Column(
         modifier = Modifier
@@ -103,22 +101,12 @@ fun AddFoodView(navController: NavHostController, scannedValue: String?) {
             ) {
                 Icon(Icons.Default.Close, contentDescription = "Localized description", tint = Color.Black)
             }
-//            TextButton(
-//                onClick = {
-//                    autoComplete("Ban")
-//                },
-//                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
-//            ) {
-//                Icon(Icons.Default.Add, contentDescription = "Localized description", tint = Color.Black)
-//            }
         }
         dropDownMenu( dropdownViewModel)
         SearchBar( dropdownViewModel.selectedFoodOption.value, onClear = {}, navController, scannedValue)
 
     }
 }
-
-
 
 @Composable
 fun SearchBar(
@@ -138,17 +126,13 @@ fun SearchBar(
         scannedValueLoaded = true
     }
 
-
     LaunchedEffect(text) {
-        // Delay
-        // delay(500)
         if(text.toDoubleOrNull() != null){
             hadSearched = true
         }else{
             autoCompleteResults = autoComplete(text)
         }
     }
-
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -164,7 +148,6 @@ fun SearchBar(
                     color = Color.Gray,
                     shape = RoundedCornerShape(percent = 10)
                 ),
-
             verticalAlignment = Alignment.CenterVertically
         ) {
             Spacer(Modifier.width(2.dp))
@@ -224,9 +207,7 @@ fun SearchBar(
                 )
             }
         }
-
     }
-
 
     if(hadSearched){
         addSingleFood(text, selectedMeal, navController)
@@ -242,20 +223,14 @@ fun SearchBar(
                         text = result
                         hadSearched = true
                     },
-
                 ) {
                     Text(
                         text = result,
                         fontSize = 25.sp,
-                        color = Color.Black,
-                        textAlign = TextAlign.Center
+                        color = Color.Black
                     )
-
                 }
             }
-
-
-
         }
     }
 }
@@ -264,7 +239,6 @@ class DropdownViewModel : ViewModel() {
     val foodOptions = listOf("Breakfast", "Lunch", "Dinner", "Snack")
     val selectedFoodOption = mutableStateOf(foodOptions[0])
 }
-
 
 @Composable
 fun dropDownMenu(dropdownViewModel: DropdownViewModel) {
@@ -332,15 +306,8 @@ fun dropDownMenu(dropdownViewModel: DropdownViewModel) {
                 }
             }
         }
-
-
     }
 }
-
-
-
-
-
 
 @Composable
 fun addSingleFood(text: String, selectedMeal: String, navController: NavHostController) {
@@ -366,13 +333,12 @@ fun addSingleFood(text: String, selectedMeal: String, navController: NavHostCont
                 showFoodDetails("Sugar", nutrients.sugar, quantityState)
                 showFoodDetails("Sodium", nutrients.sodium, quantityState) // esta en mg
                 showFoodDetails("Fat", nutrients.fats, quantityState)
-
+                Spacer(modifier = Modifier.padding(20.dp))
                 addButton(food, selectedMeal, navController, quantityState)
             }
         }
     } else {
         loader()
-//        Text(text = "$text was not found")//aca va el loader
     }
 }
 
@@ -386,7 +352,6 @@ fun loader() {
     }
 }
 
-
 @Composable
 fun showQuantitySelector(initialQuantity: Int, onQuantityChanged: (Int) -> Unit) {
     var quantity by remember { mutableStateOf(initialQuantity) }
@@ -394,7 +359,9 @@ fun showQuantitySelector(initialQuantity: Int, onQuantityChanged: (Int) -> Unit)
     Row(
         modifier = Modifier
             .padding(bottom = 15.dp)
-            .fillMaxWidth()) {
+            .fillMaxWidth(),
+
+    ) {
         Text(
             text = "Select Quantity",
             style = TextStyle(fontSize = 20.sp),
@@ -407,7 +374,8 @@ fun showQuantitySelector(initialQuantity: Int, onQuantityChanged: (Int) -> Unit)
             modifier = Modifier
                 .padding(top = 8.dp)
                 .border(1.dp, Color.Black, RoundedCornerShape(10.dp))
-                .width(120.dp)
+                .width(120.dp),
+            horizontalArrangement = Arrangement.Center
         )
         {
             IconButton(
@@ -428,7 +396,6 @@ fun showQuantitySelector(initialQuantity: Int, onQuantityChanged: (Int) -> Unit)
                 text = quantity.toString(),
                 modifier = Modifier.align(Alignment.CenterVertically) // Center the text vertically
             )
-
 
             IconButton(
                 onClick = {
@@ -459,7 +426,7 @@ fun showFoodDetails(metricName: String, nutrient: Nutrient?, quantity: MutableSt
         onDispose {
             // Cleanup, if necessary
         }
-    }//TODO cambiar por Launch effect
+    }
 
     Row(
         modifier = Modifier
@@ -499,17 +466,8 @@ fun showFoodDetails(metricName: String, nutrient: Nutrient?, quantity: MutableSt
             visualTransformation = SuffixVisualTransformation(" ${nutrient?.unit}"),
             shape = RoundedCornerShape(10.dp),
         )
-
     }
-
-
-
-
-
-
 }
-
-
 
 @Composable
 fun addButton(
@@ -521,6 +479,7 @@ fun addButton(
     val context = LocalContext.current
     val repository = FoodRepository(context)
     Log.d("NAME:",food.name)
+
     Button(
         onClick = {
             repository.insertFood(
@@ -616,7 +575,6 @@ fun getNutrients(foodId: String, callback: (FoodNutrients) -> Unit) {
 
     val requestBody = RequestBody.create(MediaType.parse("application/json"), requestBodyJson)
 
-
     val call: Call<FoodNutrients> = apiService.getFoodNutrients(api_id, api_key, requestBody)
 
     call.enqueue(object : Callback<FoodNutrients> {
@@ -640,29 +598,6 @@ fun getNutrients(foodId: String, callback: (FoodNutrients) -> Unit) {
         }
     })
 }
-
-
-
-
-//suspend fun getFood(foodName: String): FoodResponse? {
-//    return withContext(Dispatchers.IO) {
-//        val apiService = getRetrofit().create(ApiFoodService::class.java)
-//        val call: Call<FoodResponse> = apiService.getFoodByName(api_id, api_key, foodName)
-//        val response = call.execute()
-//
-//        if (response.isSuccessful) {
-//            val responseBody = response.body()
-//            Log.d("Main:", responseBody.toString())
-//            responseBody
-//        } else {
-//            Log.e("Main:", "Failed to fetch food data: ${response.code()}")
-//            null
-//        }
-//    }
-//}
-
-
-
 
 suspend fun autoComplete(text: String): List<String> {
     return withContext(Dispatchers.IO) {
@@ -692,7 +627,6 @@ fun createFood(text: String): FinalFood? {
         val foodResponse = foodResponseState.value
         if (foodResponse != null) {
             if (foodResponse.parsed.isNotEmpty()) {
-    //        Text("${foodResponse.parsed.joinToString(",")}")
                 Log.d("Food:", "${foodResponse}")
                 getNutrients(foodResponse.parsed.first().food.foodId){foodNutrients ->
                     nutrientResponseState.value = foodNutrients
