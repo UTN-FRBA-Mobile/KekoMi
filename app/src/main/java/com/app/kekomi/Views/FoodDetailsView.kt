@@ -108,7 +108,7 @@ fun FoodDetailsView(navController: NavHostController, foodId: Int) {
                         updateWidgets(context)
                         navController.popBackStack()
                     })
-                    { Text(text = "Yes") }
+                    { Text(text = "Yes", color=principalColor) }
                 },
                 title = { Text(text = "Confirm deletion") })
         }
