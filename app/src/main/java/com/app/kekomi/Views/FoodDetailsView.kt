@@ -1,5 +1,6 @@
 package com.app.kekomi.Views
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -22,11 +24,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.app.kekomi.R
 import com.app.kekomi.entities.Food
 import com.app.kekomi.storage.FoodRepository
-import com.app.kekomi.storage.userPreferences
+import com.app.kekomi.ui.theme.Teal200
 import com.app.kekomi.ui.theme.principalColor
-import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun FoodDetailsView(navController: NavHostController, foodId: Int) {
@@ -34,7 +36,7 @@ fun FoodDetailsView(navController: NavHostController, foodId: Int) {
     val context = LocalContext.current
     val repository = FoodRepository(context)
     val food = remember { mutableStateOf(repository.getFood(foodId)) }
-
+    val showAlert = remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -82,9 +84,33 @@ fun FoodDetailsView(navController: NavHostController, foodId: Int) {
             colors = ButtonDefaults.buttonColors(backgroundColor = principalColor),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 40.dp, end = 50.dp, bottom = 30.dp)
+                .padding(start = 40.dp, end = 50.dp, bottom = 10.dp)
         ) {
             Text("Save", color = Color.White, fontSize = 20.sp)
+        }
+        OutlinedButton(
+            onClick = {
+                showAlert.value = true
+            },
+            colors = ButtonDefaults.buttonColors(backgroundColor = Teal200),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 40.dp, end = 50.dp, bottom = 30.dp)
+        ) {
+            Text("Delete", color = Color.White, fontSize = 20.sp)
+        }
+        if (showAlert.value) {
+            AlertDialog(
+                onDismissRequest = {showAlert.value = false},
+                confirmButton = {
+                    TextButton(onClick = {
+                        repository.deleteFood(food.value)
+                        updateWidgets(context)
+                        navController.popBackStack()
+                    })
+                    { Text(text = "Yes") }
+                },
+                title = { Text(text = "Confirm deletion") })
         }
     }
 }
