@@ -309,7 +309,6 @@ fun dropDownMenu(dropdownViewModel: DropdownViewModel) {
     }
 }
 
-
 @Composable
 fun addSingleFood(text: String, selectedMeal: String, navController: NavHostController) {
     val food = createFood(text = text)
@@ -334,7 +333,7 @@ fun addSingleFood(text: String, selectedMeal: String, navController: NavHostCont
                 showFoodDetails("Sugar", nutrients.sugar, quantityState)
                 showFoodDetails("Sodium", nutrients.sodium, quantityState) // esta en mg
                 showFoodDetails("Fat", nutrients.fats, quantityState)
-
+                Spacer(modifier = Modifier.padding(20.dp))
                 addButton(food, selectedMeal, navController, quantityState)
             }
         }
@@ -480,6 +479,7 @@ fun addButton(
     val context = LocalContext.current
     val repository = FoodRepository(context)
     Log.d("NAME:",food.name)
+
     Button(
         onClick = {
             repository.insertFood(
