@@ -1,6 +1,6 @@
 package com.app.kekomi.apis.foodApi
 
-data class FoodResponse(  val parsed: List<ParsedFood>, val text:String)
+data class FoodResponse(  val parsed: List<ParsedFood>, val text:String, val hints: List<ParsedFood>)
 
 data class ParsedFood(
     val food: Food
@@ -12,8 +12,7 @@ data class Food(
     val knownAs: String,
     val nutrients: Nutrients,
     val category: String,
-    val categoryLabel: String,
-    val image: String
+    val categoryLabel: String
 )
 
 data class Nutrients(

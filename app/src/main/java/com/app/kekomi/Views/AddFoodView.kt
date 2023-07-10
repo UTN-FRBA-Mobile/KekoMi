@@ -65,12 +65,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.time.temporal.WeekFields
 import java.util.*
 
-val api_id= "163fdc40"
-val api_key= "05872bd8a7b6f8c0559241685a69ef71"
+val api_id= "b0e8bca6"
+val api_key= "abef3893c7d61e39cd4f1f573733d8e8"
 
 @Composable
 fun AddFoodView(navController: NavHostController, scannedValue: String?) {
-    
+
     val context = LocalContext.current
     val repo: FoodRepository by lazy {
         FoodRepository(context)
@@ -358,7 +358,7 @@ fun showQuantitySelector(initialQuantity: Int, onQuantityChanged: (Int) -> Unit)
             .padding(bottom = 15.dp)
             .fillMaxWidth(),
 
-    ) {
+        ) {
         Text(
             text = "Select Quantity",
             style = TextStyle(fontSize = 20.sp),
@@ -532,28 +532,32 @@ fun getRetrofit(): Retrofit {
 }
 
 fun getFood(foodName: String, callback: (FoodResponse) -> Unit) {
-    val apiService = getRetrofit().create(ApiFoodService::class.java)
-    val call: Call<FoodResponse> = apiService.getFoodByName(api_id, api_key, foodName)
+    if (!foodName.isNullOrBlank()){
+        Log.d("ACAAA:", foodName)
+        val apiService = getRetrofit().create(ApiFoodService::class.java)
+        val call: Call<FoodResponse> = apiService.getFoodByName(api_id, api_key, foodName)
 
-    call.enqueue(object : Callback<FoodResponse> {
-        override fun onResponse(call: Call<FoodResponse>, response: Response<FoodResponse>) {
-            if (response.isSuccessful) {
-                val foodResponse: FoodResponse? = response.body()
-                if (foodResponse != null) {
+        call.enqueue(object : Callback<FoodResponse> {
+            override fun onResponse(call: Call<FoodResponse>, response: Response<FoodResponse>) {
+                if (response.isSuccessful) {
+                    val foodResponse: FoodResponse? = response.body()
+                    if (foodResponse != null) {
 
-                    callback(foodResponse)
+                        callback(foodResponse)
+                    } else {
+                        Log.e("Main", "Empty response body")
+                    }
                 } else {
-                    Log.e("Main", "Empty response body")
+                    Log.e("Main", "Request failed with code: ${response.code()}")
                 }
-            } else {
-                Log.e("Main", "Request failed with code: ${response.code()}")
             }
-        }
 
-        override fun onFailure(call: Call<FoodResponse>, t: Throwable) {
-            Log.e("Main", "Request failed: ${t.message}")
-        }
-    })
+            override fun onFailure(call: Call<FoodResponse>, t: Throwable) {
+                Log.e("Main", "Request failed: ${t.message}")
+            }
+        })
+    }
+
 }
 
 fun getNutrients(foodId: String, callback: (FoodNutrients) -> Unit) {
@@ -623,16 +627,16 @@ fun createFood(text: String): FinalFood? {
         val foodResponse = foodResponseState.value
         if (foodResponse != null) {
             if (foodResponse.parsed.isNotEmpty()) {
-                getNutrients(foodResponse.parsed.first().food.foodId){foodNutrients ->
+                val food = getBestFit(foodResponse, text)
+                getNutrients(food.foodId){foodNutrients ->
                     nutrientResponseState.value = foodNutrients
                 }
                 val nutrientsResponse = nutrientResponseState.value
                 if(nutrientsResponse != null){
-                    val food = foodResponse.parsed.first().food
                     val calories = Nutrient(nutrientsResponse.calories.toDouble(), "kcal")
                     val totalNutrients = nutrientsResponse.totalNutrients
                     val finalNutrients = FinalNutrients(calories, totalNutrients.FAT, totalNutrients.SUGAR, totalNutrients.NA, totalNutrients.PROCNT)
-                    finalFood.value = FinalFood(food.foodId, food.knownAs, nutrientsResponse.totalWeight.toDouble().toInt(), finalNutrients, food.image, FoodSource.FOODAPI)
+                    finalFood.value = FinalFood(food.foodId, food.knownAs, nutrientsResponse.totalWeight.toDouble().toInt(), finalNutrients, FoodSource.FOODAPI)
                 }
             }
         }
@@ -646,13 +650,29 @@ fun createFood(text: String): FinalFood? {
             if (barcodeResponse.isNotEmpty()) {
                 val barcodeFood = barcodeResponse.first()
                 if (barcodeFood != null) {
-                    finalFood.value = FinalFood(barcodeFood.id.toString(), barcodeFood.food,barcodeFood.weight, barcodeFood.nutrients,"",
-                        FoodSource.BARCODE)
+                    finalFood.value = FinalFood(barcodeFood.id.toString(), barcodeFood.food,barcodeFood.weight, barcodeFood.nutrients,FoodSource.BARCODE)
                 }
-            }         
+            }
         }
     }
     return finalFood.value
+}
+
+fun getBestFit(foodResponse: FoodResponse, foodName: String): com.app.kekomi.apis.foodApi.Food {
+
+    val firstFoodName = foodResponse.parsed.first().food.knownAs
+
+    if(firstFoodName.equals(foodName)){
+        return foodResponse.parsed.first().food
+    }
+
+    for(food in foodResponse.hints){
+        if(food.food.label.equals(foodName, ignoreCase = true) || food.food.knownAs.equals(foodName, ignoreCase = true)  ){
+            return  food.food
+        }
+    }
+
+    return foodResponse.parsed.first().food
 }
 
 

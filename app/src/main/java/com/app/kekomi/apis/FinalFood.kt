@@ -8,8 +8,7 @@ data class FinalFood (
     val name: String,
     val weight: Int,
     val nutrients: FinalNutrients,
-    val image: String,
-    val source: Enum<FoodSource>,
+    val source: Enum<FoodSource>
 )
 
 enum class FoodSource {
