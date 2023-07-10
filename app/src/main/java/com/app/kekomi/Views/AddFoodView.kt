@@ -65,11 +65,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.time.temporal.WeekFields
 import java.util.*
 
-
 val api_id= "b0e8bca6"
 val api_key= "abef3893c7d61e39cd4f1f573733d8e8"
-
-
 
 @Composable
 fun AddFoodView(navController: NavHostController, scannedValue: String?) {
@@ -478,7 +475,7 @@ fun addButton(
 ) {
     val context = LocalContext.current
     val repository = FoodRepository(context)
-    Log.d("NAME:",food.name)
+
 
     Button(
         onClick = {
@@ -543,7 +540,7 @@ fun getFood(foodName: String, callback: (FoodResponse) -> Unit) {
             if (response.isSuccessful) {
                 val foodResponse: FoodResponse? = response.body()
                 if (foodResponse != null) {
-                    Log.d("Main", "Success! $foodResponse")
+
                     callback(foodResponse)
                 } else {
                     Log.e("Main", "Empty response body")
@@ -582,7 +579,6 @@ fun getNutrients(foodId: String, callback: (FoodNutrients) -> Unit) {
             if (response.isSuccessful) {
                 val foodResponse: FoodNutrients? = response.body()
                 if (foodResponse != null) {
-                    Log.d("Main", "Success! $foodResponse")
                     callback(foodResponse)
                 } else {
                     Log.e("Main", "Empty response body")
@@ -627,13 +623,11 @@ fun createFood(text: String): FinalFood? {
         val foodResponse = foodResponseState.value
         if (foodResponse != null) {
             if (foodResponse.parsed.isNotEmpty()) {
-                Log.d("Food:", "${foodResponse}")
                 getNutrients(foodResponse.parsed.first().food.foodId){foodNutrients ->
                     nutrientResponseState.value = foodNutrients
                 }
                 val nutrientsResponse = nutrientResponseState.value
                 if(nutrientsResponse != null){
-                    Log.d("NUTRIENTS:", "${nutrientsResponse}")
                     val food = foodResponse.parsed.first().food
                     val calories = Nutrient(nutrientsResponse.calories.toDouble(), "kcal")
                     val totalNutrients = nutrientsResponse.totalNutrients
@@ -644,14 +638,12 @@ fun createFood(text: String): FinalFood? {
         }
 
     }else{//aca es barcode
-        Log.d("BARCODE:", "hay barcode")
         getFoodByBarcode(text) { listFood ->
             barcodeResponseState.value = listFood
         }
         val barcodeResponse = barcodeResponseState.value
         if (barcodeResponse != null) {
             if (barcodeResponse.isNotEmpty()) {
-                Log.d("Main:", "Text is $text")
                 val barcodeFood = barcodeResponse.first()
                 if (barcodeFood != null) {
                     finalFood.value = FinalFood(barcodeFood.id.toString(), barcodeFood.food,barcodeFood.weight, barcodeFood.nutrients,"",
@@ -660,7 +652,6 @@ fun createFood(text: String): FinalFood? {
             }         
         }
     }
-    Log.d("Main::", "${finalFood.value}")
     return finalFood.value
 }
 
