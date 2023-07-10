@@ -63,7 +63,7 @@ fun FoodDetailsView(navController: NavHostController, foodId: Int) {
             }
         }
         Text(
-            text = food.value.foodName,
+            text = food.value.foodName.uppercase(),
             textAlign = TextAlign.Center,
             fontSize = 30.sp,
             modifier = Modifier
@@ -116,7 +116,7 @@ fun FoodDetailsView(navController: NavHostController, foodId: Int) {
                     })
                     { Text(text = "No", color= principalColor) }
                 } ,
-                title = { Text(text = "Confirm deletion") })
+                title = { Text(text = "Are you sure you want to delete " + food.value.foodName.uppercase() + "?" ) })
         }
     }
 }
