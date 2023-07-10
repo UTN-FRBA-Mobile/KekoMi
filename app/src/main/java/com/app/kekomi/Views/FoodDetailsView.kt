@@ -110,6 +110,12 @@ fun FoodDetailsView(navController: NavHostController, foodId: Int) {
                     })
                     { Text(text = "Yes", color=principalColor) }
                 },
+                dismissButton = {
+                    TextButton(onClick = {
+                        showAlert.value = false
+                    })
+                    { Text(text = "No", color= principalColor) }
+                } ,
                 title = { Text(text = "Confirm deletion") })
         }
     }
